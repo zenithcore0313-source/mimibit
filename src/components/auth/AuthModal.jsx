@@ -4,7 +4,8 @@ import {
   ShieldCheck, Heart, Crown, Ticket, Smartphone, AlertCircle, Loader2 
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { signupUser, loginUser } from '../../services/api';
+import { signupUser, loginUser, loginWithSocial } from '../../services/api';
+import { executeKakaoLogin, executeGoogleLogin } from '../../services/socialAuth';
 
 export function AuthModal({ isOpen, onClose, onLoginSuccess }) {
   const [tab, setTab] = useState('login'); // 'login', 'signup'
@@ -18,36 +19,37 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }) {
 
   if (!isOpen) return null;
 
-  // Social Login handler
-  const handleSocialLogin = (provider) => {
-    // Confetti effect
+  // Social Login handler (Kakao & Google OAuth)
+  const handleSocialLogin = async (provider) => {
+    setIsLoading(true);
+    setErrorMessage('');
+
     try {
-      confetti({
-        particleCount: 80,
-        spread: 60,
-        origin: { y: 0.6 }
-      });
-    } catch (e) {}
+      let socialData;
+      if (provider === 'kakao') {
+        socialData = await executeKakaoLogin({ role: selectedRole });
+      } else {
+        socialData = await executeGoogleLogin({ role: selectedRole });
+      }
 
-    const mockUser = {
-      isLoggedIn: true,
-      role: selectedRole,
-      provider: provider,
-      id: `usr_${Date.now()}`,
-      name: selectedRole === 'creator' ? '루나 (Luna Rabbit)' : 'Alex G.',
-      handle: selectedRole === 'creator' ? 'luna_rabbit' : 'alex_supporter',
-      email: provider === 'kakao' ? 'user@kakao.com' : 'user@gmail.com',
-      avatar: selectedRole === 'creator' 
-        ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80'
-        : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80',
-      tier: selectedRole === 'creator' ? null : { name: '골드 래빗', icon: '🥇', level: 3 },
-      carrotsBalance: selectedRole === 'creator' ? 8450 : 3500,
-      tickets: selectedRole === 'creator' ? 0 : 5,
-      settlementPending: selectedRole === 'creator' ? 2617160 : 0
-    };
+      const res = await loginWithSocial(socialData);
 
-    onLoginSuccess(mockUser);
-    onClose();
+      try {
+        confetti({
+          particleCount: 80,
+          spread: 60,
+          origin: { y: 0.6 }
+        });
+      } catch (e) {}
+
+      onLoginSuccess(res.user);
+      onClose();
+    } catch (err) {
+      console.error('[Social Login Error]:', err);
+      setErrorMessage(err.message || '소셜 로그인 중 오류가 발생했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Real Email & Password Auth Submit
@@ -99,41 +101,6 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }) {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  // Quick Demo Fast Login
-  const handleQuickDemo = (roleType) => {
-    if (roleType === 'creator') {
-      onLoginSuccess({
-        isLoggedIn: true,
-        role: 'creator',
-        provider: 'demo',
-        id: 'creator_luna',
-        name: 'Luna Rabbit (루나)',
-        handle: 'luna_rabbit',
-        email: 'luna@mimibit.me',
-        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
-        carrotsBalance: 8450,
-        settlementPending: 2617160,
-        tickets: 0
-      });
-    } else {
-      onLoginSuccess({
-        isLoggedIn: true,
-        role: 'supporter',
-        provider: 'demo',
-        id: 'supporter_alex',
-        name: 'Alex G.',
-        handle: 'alex_g',
-        email: 'alex@mimibit.me',
-        avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80',
-        tier: { name: '골드 래빗', icon: '🥇', level: 3 },
-        carrotsBalance: 3500,
-        tickets: 5,
-        settlementPending: 0
-      });
-    }
-    onClose();
   };
 
   return (
@@ -334,29 +301,6 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }) {
                 </button>
               </span>
             )}
-          </div>
-
-          {/* Quick Demo One-Click Test Bar */}
-          <div className="pt-4 border-t border-[#FCD5DC]">
-            <span className="text-[10px] font-bold text-[#8C7A80] block text-center mb-2">
-              ⚡ 심사용 / 빠른 테스트용 1초 원클릭 계정
-            </span>
-            <div className="grid grid-cols-2 gap-2 text-[11px] font-black">
-              <button
-                type="button"
-                onClick={() => handleQuickDemo('creator')}
-                className="p-2 rounded-xl bg-[#FFF0F2] text-[#E4092B] border border-[#FCD5DC] hover:bg-[#FFE0E5] transition-colors flex items-center justify-center gap-1 cursor-pointer"
-              >
-                <span>🎨 루나(창작자) 체험</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => handleQuickDemo('supporter')}
-                className="p-2 rounded-xl bg-[#FEF3C7] text-[#B45309] border border-[#FDE68A] hover:bg-[#FDE68A] transition-colors flex items-center justify-center gap-1 cursor-pointer"
-              >
-                <span>🥇 Alex(서포터) 체험</span>
-              </button>
-            </div>
           </div>
 
         </div>

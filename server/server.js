@@ -317,6 +317,69 @@ app.post('/api/auth/login', (req, res) => {
   });
 });
 
+// 3-1. SOCIAL LOGIN / SIGNUP (카카오, 구글 간편로그인 & 자동 가입)
+app.post('/api/auth/social', (req, res) => {
+  const { provider, socialId, email, name, avatar, role } = req.body;
+
+  if (!provider) {
+    return res.status(400).json({ success: false, message: '소셜 로그인 제공자(provider)가 필요합니다.' });
+  }
+
+  const cleanEmail = email ? email.trim().toLowerCase() : `${provider}_${socialId || Date.now()}@mimibit.kr`;
+  const cleanName = name || (provider === 'kakao' ? '카카오 서포터' : 'Google 서포터');
+  const userRole = role === 'creator' ? 'creator' : 'supporter';
+
+  const db = readDb();
+  let user = (db.users || []).find(u => (cleanEmail && u.email === cleanEmail) || (socialId && u.socialId === socialId));
+
+  if (!user) {
+    // Auto Sign-Up for new social user
+    const userId = `usr_${provider}_${Date.now()}`;
+    const cleanHandle = `${provider}_${Math.floor(1000 + Math.random() * 9000)}`;
+    const defaultAvatar = avatar || (userRole === 'creator'
+      ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80'
+      : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80');
+
+    user = {
+      id: userId,
+      email: cleanEmail,
+      socialId: socialId || `soc_${Date.now()}`,
+      provider,
+      name: cleanName,
+      handle: cleanHandle,
+      role: userRole,
+      avatar: defaultAvatar,
+      carrotsBalance: 100, // Welcome bonus carrots
+      tickets: 1,
+      createdAt: new Date().toISOString()
+    };
+
+    if (!Array.isArray(db.users)) db.users = [];
+    db.users.push(user);
+    writeDb(db);
+  }
+
+  const token = generateToken(user.id);
+  const safeUser = sanitizeUser(user);
+
+  let creatorProfile = null;
+  if (user.role === 'creator') {
+    const handleClean = (user.handle || '').replace('@', '').toLowerCase();
+    creatorProfile = (db.creators || []).find(c => 
+      c.id.toLowerCase() === handleClean || 
+      (c.handle || '').replace('@', '').toLowerCase() === handleClean
+    ) || null;
+  }
+
+  res.json({
+    success: true,
+    message: `${provider === 'kakao' ? '카카오' : 'Google'} 계정으로 로그인되었습니다.`,
+    user: safeUser,
+    creatorProfile,
+    token
+  });
+});
+
 // 4. GET CURRENT AUTHENTICATED USER (세션 조회)
 app.get('/api/auth/me', (req, res) => {
   const authHeader = req.headers.authorization;

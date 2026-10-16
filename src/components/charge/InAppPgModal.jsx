@@ -50,11 +50,11 @@ export function InAppPgModal({
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="font-heading font-black text-xs text-white">토스페이먼츠(Toss Payments)</span>
-                <span className="text-[9px] bg-blue-500/20 text-blue-300 border border-blue-400/30 px-1.5 py-0.2 rounded font-bold">
-                  TEST PG
+                <span className="text-[9px] bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 px-1.5 py-0.2 rounded font-bold">
+                  PG SECURE
                 </span>
               </div>
-              <p className="text-[10px] text-slate-400">안전결제 샌드박스 (실제 결제금액 0원 청구)</p>
+              <p className="text-[10px] text-slate-400">토스페이먼츠 256-bit SSL 암호화 안전결제</p>
             </div>
           </div>
 
@@ -122,7 +122,7 @@ export function InAppPgModal({
                   스마트폰 카메라 또는 각 카드사 앱으로 스캔
                 </p>
                 <p className="text-[11px] text-slate-400 mt-0.5">
-                  테스트 환경이므로 아래 [테스트 0원 결제 승인] 버튼을 누르면 즉시 완료됩니다.
+                  스마트폰 간편 앱카드 결제 및 QR코드 인증 지원
                 </p>
               </div>
             </div>
@@ -176,13 +176,13 @@ export function InAppPgModal({
             ) : (
               <>
                 <Lock className="w-4 h-4" />
-                <span>{amountData.totalPrice.toLocaleString()}원 테스트 결제 승인하기</span>
+                <span>{amountData.totalPrice.toLocaleString()}원 안전결제 진행하기</span>
               </>
             )}
           </button>
 
           <p className="text-[10px] text-center text-slate-400">
-            * 샌드박스 테스트 결제로 실제 금액이 청구되지 않으며, 즉시 전자 영수증이 발급됩니다.
+            * 전자금융거래법에 의거하여 결제 완료 즉시 전자 영수증이 발행됩니다.
           </p>
         </div>
 

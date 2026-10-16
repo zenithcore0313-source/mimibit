@@ -500,18 +500,16 @@ export function ChargeModal({
                 </div>
               </div>
 
-              {/* Developer Test Fast-Confirm Button */}
-              <div className="pt-3 border-t border-white/10">
-                <button
-                  type="button"
-                  onClick={handleConfirmVirtualAccountDeposit}
-                  className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm cursor-pointer"
-                >
-                  <Sparkles className="w-4 h-4 text-amber-300" />
-                  <span>[시연·테스트용] 즉시 입금 확인 완료 (당근 지급)</span>
-                </button>
-                <p className="text-[10px] text-zinc-500 text-center mt-1">
-                  * 실제 서비스 운영 시 은행 펌뱅킹 가상계좌 입금 통보 웹훅(Webhook)으로 자동 승인됩니다.
+              {/* Commercial Deposit Guide Notice */}
+              <div className="pt-3 border-t border-white/10 text-center">
+                <div className={`p-3 rounded-xl border flex items-center justify-center gap-2 ${
+                  isDark ? 'bg-amber-500/10 border-amber-500/20 text-amber-300' : 'bg-amber-50 border-amber-200 text-amber-800'
+                }`}>
+                  <Clock className="w-4 h-4 shrink-0 text-amber-500" />
+                  <span className="text-xs font-bold">입금 확인 대기중</span>
+                </div>
+                <p className="text-[11px] text-zinc-400 mt-2">
+                  * 위 전용 계좌로 입금해 주시면 은행 펌뱅킹망을 통해 약 1분 이내 당근이 자동 충전됩니다.
                 </p>
               </div>
             </div>
@@ -1056,19 +1054,6 @@ export function ChargeModal({
                         ? `${selectedAmount.totalPrice.toLocaleString()}원 가상계좌 신청` 
                         : `${selectedAmount.totalPrice.toLocaleString()}원 결제하기`}
                     </span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleStartPayment(true)}
-                    className={`w-full py-2.5 rounded-xl font-semibold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
-                      isDark 
-                        ? 'bg-zinc-800 hover:bg-zinc-700 text-zinc-300' 
-                        : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
-                    }`}
-                  >
-                    <Zap className="w-3.5 h-3.5 text-amber-500" />
-                    <span>개발·테스트용 1초 즉시 승인 (0원 결제)</span>
                   </button>
 
                   <div className="text-center text-[10px] text-zinc-500 space-y-0.5 pt-1">
