@@ -1,0 +1,397 @@
+{
+  "creators": [
+    {
+      "id": "star_bunny",
+      "handle": "@star_bunny",
+      "name": "스타 토끼 (Star Bunny)",
+      "category": "일러스트 & 드로잉",
+      "bio": "팬분들에게 전하고 싶은 따뜻한 인사를 남겨주세요.",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
+      "coverImage": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80",
+      "tags": [
+        "#일러스트",
+        "#화보집",
+        "#스타토끼"
+      ],
+      "followers": 1,
+      "supporters": 0,
+      "totalCarrots": 0,
+      "sns": {
+        "instagram": "https://instagram.com",
+        "twitter": "",
+        "youtube": ""
+      },
+      "fundingGoal": {
+        "title": "첫 후원 프로젝트 펀딩",
+        "currentCarrots": 0,
+        "targetCarrots": 5000,
+        "endDate": "2026. 11. 30",
+        "dDay": "D-45"
+      },
+      "bankInfo": {
+        "bank": "토스뱅크",
+        "account": "1000-0000-0000",
+        "holder": "스타 토끼 (Star Bunny)"
+      },
+      "voiceReward": {
+        "title": "스타 토끼 (Star Bunny)의 감사 음성 메모",
+        "duration": "0:15",
+        "message": "응원해 주셔서 진심으로 감사합니다! 더 좋은 창작물로 보답할게요."
+      },
+      "secretPhotos": [],
+      "createdAt": "2026-10-16T10:25:17.959Z"
+    },
+    {
+      "id": "test_creator",
+      "handle": "@test_creator",
+      "name": "테스트창작자",
+      "category": "서브컬처 창작자",
+      "bio": "테스트창작자님의 미미빗 공식 바이오링크입니다 🥕✨",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80",
+      "coverImage": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=80",
+      "tags": [
+        "#신규창작자",
+        "#후원",
+        "#서브컬처"
+      ],
+      "followers": 1,
+      "supporters": 0,
+      "totalCarrots": 0,
+      "sns": {
+        "instagram": "https://instagram.com"
+      },
+      "fundingGoal": {
+        "title": "첫 창작 프로젝트 펀딩",
+        "currentCarrots": 0,
+        "targetCarrots": 5000,
+        "endDate": "2026. 11. 30",
+        "dDay": "D-45"
+      },
+      "bankInfo": {
+        "bank": "토스뱅크",
+        "account": "1000-0000-0000",
+        "holder": "테스트창작자"
+      },
+      "voiceReward": {
+        "title": "테스트창작자의 감사 음성 메모",
+        "duration": "0:15",
+        "message": "응원해 주셔서 진심으로 감사합니다! 항상 보답하는 마음으로 활동할게요."
+      },
+      "secretPhotos": [],
+      "createdAt": "2026-10-16T08:55:58.985Z"
+    },
+    {
+      "id": "luna_rabbit",
+      "handle": "@Luna_Rabbit",
+      "name": "루나 (Luna)",
+      "category": "일러스트 & 드로잉",
+      "bio": "주말마다 감성 포토와 드로잉 일상을 공유해요! 따뜻한 커피 한 잔과 당근 후원은 큰 힘이 됩니다 🥕✨",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
+      "coverImage": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80",
+      "tags": [
+        "#창작자",
+        "#후원",
+        "#일러스트 & 드로잉"
+      ],
+      "followers": 1,
+      "supporters": 0,
+      "fundingGoal": {
+        "title": "첫 후원 프로젝트 펀딩",
+        "currentCarrots": 0,
+        "targetCarrots": 5000,
+        "endDate": "2026. 11. 30",
+        "dDay": "D-45"
+      },
+      "bankInfo": {
+        "bank": "토스뱅크",
+        "account": "1000-0000-0000",
+        "holder": "루나 (Luna)"
+      },
+      "voiceReward": {
+        "title": "루나 (Luna)의 감사 음성 메모",
+        "duration": "0:15",
+        "message": "응원해 주셔서 진심으로 감사합니다! 더 좋은 창작물로 보답할게요."
+      },
+      "totalCarrots": 0,
+      "sns": {
+        "instagram": "https://instagram.com",
+        "twitter": "",
+        "youtube": ""
+      },
+      "secretPhotos": [],
+      "createdAt": "2026-10-16T10:25:02.406Z"
+    },
+    {
+      "id": "mochi_cos",
+      "handle": "@Mochi_Cos",
+      "name": "모치 (Mochi)",
+      "category": "프로 코스튬 플레이어",
+      "bio": "좋아하는 게임 & 애니메이션 캐릭터를 코스프레합니다. 후원해 주시는 분들께 매달 디지털 미공개 화보 팩을 선물해 드려요 📸",
+      "avatar": "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80",
+      "coverImage": "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1200&q=80",
+      "tags": [
+        "#코스프레",
+        "#게임코스어",
+        "#서브컬처",
+        "#화보촬영"
+      ],
+      "followers": 18200,
+      "supporters": 215,
+      "fundingGoal": {
+        "title": "지스타(G-STAR) 메인 코스프레 의상 제작비 펀딩",
+        "currentCarrots": 4200,
+        "targetCarrots": 8000,
+        "endDate": "2026. 11. 10"
+      },
+      "bankInfo": {
+        "bank": "카카오뱅크",
+        "account": "3333-01-9988776",
+        "holder": "모치"
+      }
+    }
+  ],
+  "donations": [],
+  "charges": [
+    {
+      "id": "MMB-20261016-7712",
+      "orderId": "MMB-20261016-7712",
+      "paymentKey": "pk_1792148648045",
+      "amount": 11000,
+      "carrots": 10000,
+      "bonusCarrots": 1000,
+      "totalCarrots": 11000,
+      "userId": "usr_luna_rabbit",
+      "method": "토스페이 (테스트 즉시 승인)",
+      "status": "결제 완료 (승인)",
+      "approvalNo": "62606494",
+      "createdAt": "2026-10-16T11:04:08.053Z"
+    },
+    {
+      "id": "BANK_1792148616362",
+      "orderId": "MMB-VA-20261016-7376",
+      "userId": "usr_luna_rabbit",
+      "userName": "루나 (Luna)",
+      "packageId": "amt_10000",
+      "amount": 11000,
+      "carrots": 10000,
+      "bonusCarrots": 1000,
+      "totalCarrots": 11000,
+      "bankName": "토스뱅크",
+      "virtualAccount": "1000-3685-8802-57",
+      "accountHolder": "주식회사 미미빗 (MIMIBIT)",
+      "depositorName": "루나 (Luna)",
+      "status": "입금 대기 (가상계좌 발급)",
+      "dueDate": "2026-10-19T14:59:59.999Z",
+      "receiptType": "personal",
+      "receiptNumber": "010-1234-5678",
+      "createdAt": "2026-10-16T11:03:36.362Z",
+      "method": "무통장입금 (토스뱅크)"
+    },
+    {
+      "id": "BANK_1792148586446",
+      "orderId": "MMB-VA-20261016-2919",
+      "userId": "usr_luna_rabbit",
+      "userName": "루나 (Luna)",
+      "packageId": "amt_10000",
+      "amount": 11000,
+      "carrots": 10000,
+      "bonusCarrots": 1000,
+      "totalCarrots": 11000,
+      "bankName": "토스뱅크",
+      "virtualAccount": "1000-5506-7532-10",
+      "accountHolder": "주식회사 미미빗 (MIMIBIT)",
+      "depositorName": "루나 (Luna)",
+      "status": "입금 대기 (가상계좌 발급)",
+      "dueDate": "2026-10-19T14:59:59.999Z",
+      "receiptType": "personal",
+      "receiptNumber": "010-1234-5678",
+      "createdAt": "2026-10-16T11:03:06.446Z",
+      "method": "무통장입금 (토스뱅크)"
+    },
+    {
+      "id": "BANK_1792148320917",
+      "orderId": "MMB-VA-20261016-4010",
+      "userId": "usr_luna_rabbit",
+      "userName": "루나 (Luna)",
+      "packageId": "amt_10000",
+      "amount": 11000,
+      "carrots": 10000,
+      "bonusCarrots": 1000,
+      "totalCarrots": 11000,
+      "bankName": "토스뱅크",
+      "virtualAccount": "1000-2035-9470-96",
+      "accountHolder": "주식회사 미미빗 (MIMIBIT)",
+      "depositorName": "루나 (Luna)",
+      "status": "입금 대기 (가상계좌 발급)",
+      "dueDate": "2026-10-19T14:59:59.999Z",
+      "receiptType": "personal",
+      "receiptNumber": "010-1234-5678",
+      "createdAt": "2026-10-16T10:58:40.917Z",
+      "method": "무통장입금 (토스뱅크)"
+    },
+    {
+      "id": "BANK_1792148297261",
+      "orderId": "MMB-VA-20261016-5768",
+      "userId": "usr_luna_rabbit",
+      "userName": "루나 (Luna)",
+      "packageId": "amt_10000",
+      "amount": 11000,
+      "carrots": 10000,
+      "bonusCarrots": 1000,
+      "totalCarrots": 11000,
+      "bankName": "토스뱅크",
+      "virtualAccount": "1000-2325-3414-99",
+      "accountHolder": "주식회사 미미빗 (MIMIBIT)",
+      "depositorName": "루나 (Luna)",
+      "status": "입금 대기 (가상계좌 발급)",
+      "dueDate": "2026-10-19T14:59:59.999Z",
+      "receiptType": "personal",
+      "receiptNumber": "010-1234-5678",
+      "createdAt": "2026-10-16T10:58:17.261Z",
+      "method": "무통장입금 (토스뱅크)"
+    },
+    {
+      "id": "BANK_1792148273813",
+      "orderId": "MMB-VA-20261016-6197",
+      "userId": "usr_luna_rabbit",
+      "userName": "루나 (Luna)",
+      "packageId": "amt_10000",
+      "amount": 11000,
+      "carrots": 10000,
+      "bonusCarrots": 1000,
+      "totalCarrots": 11000,
+      "bankName": "토스뱅크",
+      "virtualAccount": "1000-2350-6650-50",
+      "accountHolder": "주식회사 미미빗 (MIMIBIT)",
+      "depositorName": "루나 (Luna)",
+      "status": "입금 대기 (가상계좌 발급)",
+      "dueDate": "2026-10-19T14:59:59.999Z",
+      "receiptType": "personal",
+      "receiptNumber": "010-1234-5678",
+      "createdAt": "2026-10-16T10:57:53.813Z",
+      "method": "무통장입금 (토스뱅크)"
+    }
+  ],
+  "payouts": [],
+  "messages": [],
+  "users": [
+    {
+      "id": "usr_1792140958984",
+      "email": "test@mimibit.me",
+      "passwordHash": "3329e56ea2019975625c7fe0bd6135181e405d78b2c26db970ab9f9e59ecb78c",
+      "salt": "cd73ff76f6080aad153ee84e9b68884b",
+      "name": "테스트창작자",
+      "handle": "@test_creator",
+      "role": "creator",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80",
+      "bio": "테스트창작자님의 미미빗 바이오링크입니다 🥕✨",
+      "carrotsBalance": 0,
+      "tickets": 0,
+      "tier": null,
+      "settlementPending": 0,
+      "createdAt": "2026-10-16T08:55:58.984Z"
+    }
+  ],
+  "bankTransfers": [
+    {
+      "id": "BANK_1792148616362",
+      "orderId": "MMB-VA-20261016-7376",
+      "userId": "usr_luna_rabbit",
+      "userName": "루나 (Luna)",
+      "packageId": "amt_10000",
+      "amount": 11000,
+      "carrots": 10000,
+      "bonusCarrots": 1000,
+      "totalCarrots": 11000,
+      "bankName": "토스뱅크",
+      "virtualAccount": "1000-3685-8802-57",
+      "accountHolder": "주식회사 미미빗 (MIMIBIT)",
+      "depositorName": "루나 (Luna)",
+      "status": "입금 대기 (가상계좌 발급)",
+      "dueDate": "2026-10-19T14:59:59.999Z",
+      "receiptType": "personal",
+      "receiptNumber": "010-1234-5678",
+      "createdAt": "2026-10-16T11:03:36.362Z"
+    },
+    {
+      "id": "BANK_1792148586446",
+      "orderId": "MMB-VA-20261016-2919",
+      "userId": "usr_luna_rabbit",
+      "userName": "루나 (Luna)",
+      "packageId": "amt_10000",
+      "amount": 11000,
+      "carrots": 10000,
+      "bonusCarrots": 1000,
+      "totalCarrots": 11000,
+      "bankName": "토스뱅크",
+      "virtualAccount": "1000-5506-7532-10",
+      "accountHolder": "주식회사 미미빗 (MIMIBIT)",
+      "depositorName": "루나 (Luna)",
+      "status": "입금 대기 (가상계좌 발급)",
+      "dueDate": "2026-10-19T14:59:59.999Z",
+      "receiptType": "personal",
+      "receiptNumber": "010-1234-5678",
+      "createdAt": "2026-10-16T11:03:06.446Z"
+    },
+    {
+      "id": "BANK_1792148320917",
+      "orderId": "MMB-VA-20261016-4010",
+      "userId": "usr_luna_rabbit",
+      "userName": "루나 (Luna)",
+      "packageId": "amt_10000",
+      "amount": 11000,
+      "carrots": 10000,
+      "bonusCarrots": 1000,
+      "totalCarrots": 11000,
+      "bankName": "토스뱅크",
+      "virtualAccount": "1000-2035-9470-96",
+      "accountHolder": "주식회사 미미빗 (MIMIBIT)",
+      "depositorName": "루나 (Luna)",
+      "status": "입금 대기 (가상계좌 발급)",
+      "dueDate": "2026-10-19T14:59:59.999Z",
+      "receiptType": "personal",
+      "receiptNumber": "010-1234-5678",
+      "createdAt": "2026-10-16T10:58:40.917Z"
+    },
+    {
+      "id": "BANK_1792148297261",
+      "orderId": "MMB-VA-20261016-5768",
+      "userId": "usr_luna_rabbit",
+      "userName": "루나 (Luna)",
+      "packageId": "amt_10000",
+      "amount": 11000,
+      "carrots": 10000,
+      "bonusCarrots": 1000,
+      "totalCarrots": 11000,
+      "bankName": "토스뱅크",
+      "virtualAccount": "1000-2325-3414-99",
+      "accountHolder": "주식회사 미미빗 (MIMIBIT)",
+      "depositorName": "루나 (Luna)",
+      "status": "입금 대기 (가상계좌 발급)",
+      "dueDate": "2026-10-19T14:59:59.999Z",
+      "receiptType": "personal",
+      "receiptNumber": "010-1234-5678",
+      "createdAt": "2026-10-16T10:58:17.261Z"
+    },
+    {
+      "id": "BANK_1792148273813",
+      "orderId": "MMB-VA-20261016-6197",
+      "userId": "usr_luna_rabbit",
+      "userName": "루나 (Luna)",
+      "packageId": "amt_10000",
+      "amount": 11000,
+      "carrots": 10000,
+      "bonusCarrots": 1000,
+      "totalCarrots": 11000,
+      "bankName": "토스뱅크",
+      "virtualAccount": "1000-2350-6650-50",
+      "accountHolder": "주식회사 미미빗 (MIMIBIT)",
+      "depositorName": "루나 (Luna)",
+      "status": "입금 대기 (가상계좌 발급)",
+      "dueDate": "2026-10-19T14:59:59.999Z",
+      "receiptType": "personal",
+      "receiptNumber": "010-1234-5678",
+      "createdAt": "2026-10-16T10:57:53.813Z"
+    }
+  ]
+}

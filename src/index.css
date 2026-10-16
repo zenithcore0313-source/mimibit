@@ -1,0 +1,430 @@
+@import "tailwindcss";
+
+:root {
+  /* Exact Logo Crimson Red (#E4092B) & Deep Wine Shadow (#9A101D) */
+  --primary: #E4092B;
+  --primary-hover: #CC0022;
+  --primary-light: #FFF0F2;
+  --primary-dark: #9A101D;
+  --primary-glow: rgba(228, 9, 43, 0.35);
+  
+  --carrot: #FF6B00;
+  --carrot-light: #FFF4ED;
+  --carrot-glow: rgba(255, 107, 0, 0.35);
+
+  --gold: #FFB703;
+  --gold-glow: rgba(255, 183, 3, 0.45);
+
+  --bg-page: #06080D;
+  --bg-card: #0D111A;
+  
+  --text-main: #FFFFFF;
+  --text-body: #94A3B8;
+  --text-muted: #64748B;
+  
+  --border: rgba(255, 255, 255, 0.1);
+  --border-focus: rgba(228, 9, 43, 0.5);
+
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Apple SD Gothic Neo", sans-serif;
+  --font-heading: "Pretendard Variable", Pretendard, "Plus Jakarta Sans", sans-serif;
+  --font-num: "Outfit", "Plus Jakarta Sans", "Pretendard Variable", sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #06080D;
+  color: #FFFFFF;
+  letter-spacing: -0.02em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Modern Korean Clean Headings */
+.font-heading {
+  font-family: var(--font-heading);
+  letter-spacing: -0.035em;
+  font-weight: 800;
+}
+
+.font-num {
+  font-family: var(--font-num);
+  font-feature-settings: "tnum" 1, "cv05" 1;
+}
+
+.text-pop-shadow {
+  text-shadow: 
+    0 1px 0 #FFFFFF,
+    0 2px 0 rgba(154, 16, 29, 0.12),
+    0 4px 12px rgba(228, 9, 43, 0.2);
+}
+
+.text-gold-shadow {
+  text-shadow: 
+    0 1px 0 #FFF,
+    0 2px 4px rgba(217, 119, 6, 0.3),
+    0 0 10px rgba(255, 183, 3, 0.45);
+}
+
+/* 3D Depth Tactile Cards with Layered Shadows */
+.card-3d-depth {
+  background: #FFFFFF;
+  border: 1.5px solid #FCD5DC;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 4px 0 #FBD0D8,
+    0 8px 24px -4px rgba(228, 9, 43, 0.08);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.card-3d-depth:hover {
+  transform: translateY(-5px);
+  border-color: #E4092B;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 8px 0 #9A101D,
+    0 18px 36px -4px rgba(228, 9, 43, 0.18);
+}
+
+/* Gold / Amber 3D Card Depth */
+.card-3d-gold {
+  background: #FFFFFF;
+  border: 1.5px solid rgba(255, 183, 3, 0.45);
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 4px 0 #FDE68A,
+    0 8px 24px -4px rgba(217, 119, 6, 0.12);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.card-3d-gold:hover {
+  transform: translateY(-5px);
+  border-color: #FFB703;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 8px 0 #B45309,
+    0 20px 40px -4px rgba(217, 119, 6, 0.22);
+}
+
+/* Primary Button matched to MIMIBIT logo */
+.btn-pop-primary {
+  background: linear-gradient(135deg, #E4092B 0%, #FA1A3C 50%, #C70023 100%);
+  color: white;
+  font-weight: 800;
+  border-radius: 18px;
+  box-shadow: 
+    0 4px 0 #9A101D,
+    0 8px 20px rgba(228, 9, 43, 0.35);
+  transition: all 0.15s ease-out;
+}
+
+.btn-pop-primary:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+  box-shadow: 
+    0 5px 0 #9A101D,
+    0 12px 24px rgba(228, 9, 43, 0.45);
+}
+
+.btn-pop-primary:active {
+  transform: translateY(3px);
+  box-shadow: 
+    0 1px 0 #9A101D,
+    0 4px 10px rgba(228, 9, 43, 0.25);
+}
+
+.btn-pop-secondary {
+  background: #FFFFFF;
+  color: #E4092B;
+  border: 2px solid #FCD5DC;
+  box-shadow: 0 3px 0 #FCD5DC;
+  transition: all 0.15s ease;
+}
+
+.btn-pop-secondary:hover {
+  background: #FFF0F2;
+  border-color: #F89CAE;
+}
+
+.btn-pop-secondary:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #FCD5DC;
+}
+
+/* Serrated Zigzag Receipt Bottom Edge */
+.receipt-sawtooth {
+  background: 
+    radial-gradient(circle at 10px -5px, transparent 12px, #FFFFFF 13px) repeat-x;
+  background-size: 20px 20px;
+}
+
+/* Continuous Infinite Horizontal Scroll Marquee */
+@keyframes continuousScrollLeft {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes continuousScrollRight {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+.marquee-track-left {
+  display: flex;
+  width: max-content;
+  animation: continuousScrollLeft 38s linear infinite;
+  will-change: transform;
+}
+
+.marquee-track-right {
+  display: flex;
+  width: max-content;
+  animation: continuousScrollRight 42s linear infinite;
+  will-change: transform;
+}
+
+.marquee-track-left:hover,
+.marquee-track-right:hover {
+  animation-play-state: paused;
+}
+
+/* Phone Mockup Frame */
+.iphone-frame {
+  max-width: 440px;
+  margin: 0 auto;
+  border: 10px solid #140E10;
+  border-radius: 48px;
+  box-shadow: 
+    0 0 0 2px #475569,
+    0 25px 60px rgba(0, 0, 0, 0.35),
+    0 10px 30px rgba(228, 9, 43, 0.2);
+  overflow: hidden;
+  background: #FFF5F6;
+  position: relative;
+}
+
+.iphone-notch {
+  width: 120px;
+  height: 24px;
+  background: #140E10;
+  margin: 0 auto;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #F8B6C3;
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* =====================================================================
+   TOSS / APPLE-GRADE LUXURY LIGHT THEME SYSTEM
+   Maintains Dark Mode as default/primary aesthetic,
+   Provides high-end pearl white & graphite light mode.
+   ===================================================================== */
+[data-theme="light"],
+html.light {
+  --bg-page: #F8F9FA;
+  --bg-surface: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --text-main: #0F172A;
+  --text-body: #334155;
+  --text-muted: #64748B;
+  --border: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] body,
+html.light body {
+  background-color: #F8F9FA !important;
+  color: #0F172A !important;
+}
+
+/* Background canvas overrides in Light mode */
+[data-theme="light"] .bg-\[\#06080D\],
+html.light .bg-\[\#06080D\] {
+  background-color: #F8F9FA !important;
+}
+
+[data-theme="light"] .bg-\[\#0A0D14\],
+html.light .bg-\[\#0A0D14\] {
+  background-color: #FFFFFF !important;
+}
+
+[data-theme="light"] .bg-\[\#0D111A\],
+html.light .bg-\[\#0D111A\] {
+  background-color: #FFFFFF !important;
+}
+
+[data-theme="light"] .bg-slate-900,
+[data-theme="light"] .bg-slate-950,
+html.light .bg-slate-900,
+html.light .bg-slate-950 {
+  background-color: #F1F5F9 !important;
+}
+
+/* Luxury White Cards with Tactile Soft Shadow */
+[data-theme="light"] .bg-white\/\[0\.04\],
+[data-theme="light"] .bg-white\/\[0\.03\],
+[data-theme="light"] .bg-white\/\[0\.06\],
+[data-theme="light"] .bg-white\/5,
+html.light .bg-white\/\[0\.04\],
+html.light .bg-white\/\[0\.03\],
+html.light .bg-white\/\[0\.06\],
+html.light .bg-white\/5 {
+  background-color: #FFFFFF !important;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.03) !important;
+  border-color: rgba(226, 232, 240, 0.9) !important;
+}
+
+[data-theme="light"] .bg-white\/10,
+html.light .bg-white\/10 {
+  background-color: #F1F5F9 !important;
+  border-color: #E2E8F0 !important;
+}
+
+[data-theme="light"] .bg-white\/15,
+[data-theme="light"] .bg-white\/20,
+html.light .bg-white\/15,
+html.light .bg-white\/20 {
+  background-color: #E2E8F0 !important;
+}
+
+/* Glassmorphism Navbar in Light mode */
+[data-theme="light"] header.bg-\[\#06080D\]\/85,
+html.light header.bg-\[\#06080D\]\/85 {
+  background-color: rgba(255, 255, 255, 0.88) !important;
+  border-bottom-color: rgba(226, 232, 240, 0.9) !important;
+  box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.05) !important;
+}
+
+/* Billboard Ticker in Light mode */
+[data-theme="light"] .bg-\[\#181116\],
+html.light .bg-\[\#181116\] {
+  background-color: #FFF5F6 !important;
+  border-bottom-color: #FECDD3 !important;
+  color: #1E293B !important;
+}
+
+[data-theme="light"] .bg-\[\#181116\] p,
+html.light .bg-\[\#181116\] p {
+  color: #1E293B !important;
+}
+
+/* Typography in Light Mode */
+[data-theme="light"] .text-white:not(.keep-white),
+html.light .text-white:not(.keep-white) {
+  color: #0F172A !important;
+}
+
+[data-theme="light"] .text-slate-200,
+[data-theme="light"] .text-slate-300,
+html.light .text-slate-200,
+html.light .text-slate-300 {
+  color: #334155 !important;
+}
+
+[data-theme="light"] .text-slate-400,
+html.light .text-slate-400 {
+  color: #64748B !important;
+}
+
+[data-theme="light"] .text-slate-500,
+html.light .text-slate-500 {
+  color: #94A3B8 !important;
+}
+
+/* Maintain Pure White Text on Accent Buttons & Badges */
+[data-theme="light"] .bg-\[\#E4092B\],
+[data-theme="light"] .bg-\[\#CC0022\],
+[data-theme="light"] .bg-emerald-600,
+[data-theme="light"] .bg-purple-600,
+[data-theme="light"] .bg-indigo-600,
+[data-theme="light"] .btn-pop-primary,
+html.light .bg-\[\#E4092B\],
+html.light .bg-\[\#CC0022\],
+html.light .bg-emerald-600,
+html.light .bg-purple-600,
+html.light .bg-indigo-600,
+html.light .btn-pop-primary {
+  color: #FFFFFF !important;
+}
+
+[data-theme="light"] .bg-\[\#E4092B\] *,
+[data-theme="light"] .bg-\[\#CC0022\] *,
+[data-theme="light"] .btn-pop-primary *,
+html.light .bg-\[\#E4092B\] *,
+html.light .bg-\[\#CC0022\] *,
+html.light .btn-pop-primary * {
+  color: #FFFFFF !important;
+}
+
+/* Subtle light mode border overrides */
+[data-theme="light"] .border-white\/5,
+[data-theme="light"] .border-white\/10,
+[data-theme="light"] .border-white\/15,
+[data-theme="light"] .border-white\/20,
+html.light .border-white\/5,
+html.light .border-white\/10,
+html.light .border-white\/15,
+html.light .border-white\/20 {
+  border-color: #E2E8F0 !important;
+}
+
+/* Subtle ambient glow opacity adjustment */
+[data-theme="light"] .blur-\[160px\],
+[data-theme="light"] .blur-\[180px\],
+[data-theme="light"] .blur-\[200px\],
+html.light .blur-\[160px\],
+html.light .blur-\[180px\],
+html.light .blur-\[200px\] {
+  opacity: 0.28 !important;
+}
+
+/* Dot grid in Light Mode */
+[data-theme="light"] [style*="radial-gradient(circle at 1px 1px, white 1px, transparent 0)"],
+html.light [style*="radial-gradient(circle at 1px 1px, white 1px, transparent 0)"] {
+  background-image: radial-gradient(circle at 1px 1px, #CBD5E1 1px, transparent 0) !important;
+  opacity: 0.25 !important;
+}
+
+/* Scrollytelling 600vh Container in Light Mode */
+[data-theme="light"] .h-\[600vh\],
+html.light .h-\[600vh\] {
+  background-color: #F8F9FA !important;
+}
+
+/* Gradient Text adaptation for Light Mode */
+[data-theme="light"] .bg-clip-text[class*="from-white"],
+html.light .bg-clip-text[class*="from-white"] {
+  background-image: linear-gradient(to right, #0F172A 0%, #334155 70%, #64748B 100%) !important;
+}
+
+[data-theme="light"] .text-white\/40,
+[data-theme="light"] .text-white\/50,
+[data-theme="light"] .text-white\/60,
+[data-theme="light"] .text-white\/70,
+html.light .text-white\/40,
+html.light .text-white\/50,
+html.light .text-white\/60,
+html.light .text-white\/70 {
+  color: #64748B !important;
+}
+
+
