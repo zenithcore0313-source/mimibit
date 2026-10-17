@@ -22,6 +22,7 @@ import { AuthModal } from './components/auth/AuthModal';
 import { MyPageModal } from './components/auth/MyPageModal';
 import { ChargeModal } from './components/charge/ChargeModal';
 import { KakaoSecretMessengerModal } from './components/KakaoSecretMessengerModal';
+import { AdminDashboard } from './components/admin/AdminDashboard';
 
 // Creator & interactive feature components
 import { BillboardTicker } from './components/BillboardTicker';
@@ -62,6 +63,7 @@ export function App() {
   const [isMyPageOpen, setIsMyPageOpen] = useState(false);
   const [isChargeOpen, setIsChargeOpen] = useState(false);
   const [isMessengerOpen, setIsMessengerOpen] = useState(false);
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
 
   // Multi-creator chat rooms (KakaoTalk style)
@@ -172,6 +174,10 @@ export function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace(/^#\/?/, '');
+      if (hash === 'admin') {
+        setIsAdminOpen(true);
+        return;
+      }
       const validPages = ['creators', 'features', 'fees', 'about', 'onboarding', 'faq', 'bio'];
       if (hash === 'bio' || hash.startsWith('@') || hash.startsWith('bio?')) {
         const queryHandle = hash.replace(/^bio\/?(\?)?(creator=)?/, '').replace(/^@/, '');
@@ -502,6 +508,7 @@ export function App() {
         onOpenMyPage={() => setIsMyPageOpen(true)}
         onOpenCharge={() => setIsChargeOpen(true)}
         onOpenMessenger={() => setIsMessengerOpen(true)}
+        onOpenAdmin={() => setIsAdminOpen(true)}
         onLogout={handleLogout}
         onOpenCreatorDemo={() => setActiveModal('creator')}
         onOpenStudio={() => setActiveModal('studio')}
@@ -841,6 +848,14 @@ export function App() {
           setIsMessengerOpen(false);
           setIsChargeOpen(true);
         }}
+      />
+
+      {/* MIMIBIT Master Admin Console (zeze1.sec@gmail.com / root) */}
+      <AdminDashboard
+        isOpen={isAdminOpen}
+        onClose={() => setIsAdminOpen(false)}
+        currentUser={currentUser}
+        theme={theme}
       />
     </div>
   );

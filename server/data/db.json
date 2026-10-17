@@ -276,6 +276,19 @@
   "messages": [],
   "users": [
     {
+      "id": "usr_admin_root",
+      "email": "zeze1.sec@gmail.com",
+      "name": "root",
+      "handle": "root",
+      "role": "admin",
+      "passwordHash": "64e72bbff787049047debb40d09ee9fc735934246caaae896e3bda363c4ca6d3",
+      "salt": "53100712c9388c2aaeb09d74426ed1ec",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80",
+      "carrotsBalance": 999999,
+      "tickets": 999,
+      "createdAt": "2026-10-17T16:28:59.697Z"
+    },
+    {
       "id": "usr_1792140958984",
       "email": "test@mimibit.me",
       "passwordHash": "3329e56ea2019975625c7fe0bd6135181e405d78b2c26db970ab9f9e59ecb78c",
@@ -368,6 +381,45 @@
       "carrotsBalance": 100,
       "tickets": 1,
       "createdAt": "2026-10-16T20:38:23.262Z"
+    },
+    {
+      "id": "usr_google_1792183281816",
+      "email": "google_user_1807@gmail.com",
+      "socialId": "google_1792183281807",
+      "provider": "google",
+      "name": "Google 창작자",
+      "handle": "google_5464",
+      "role": "creator",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80",
+      "carrotsBalance": 100,
+      "tickets": 1,
+      "createdAt": "2026-10-16T20:41:21.816Z"
+    },
+    {
+      "id": "usr_google_1792183287786",
+      "email": "google_user_7779@gmail.com",
+      "socialId": "google_1792183287779",
+      "provider": "google",
+      "name": "Google 서포터",
+      "handle": "google_3149",
+      "role": "supporter",
+      "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80",
+      "carrotsBalance": 100,
+      "tickets": 1,
+      "createdAt": "2026-10-16T20:41:27.786Z"
+    },
+    {
+      "id": "usr_kakao_1792183289998",
+      "email": "kakao_supporter_9991@kakao.com",
+      "socialId": "kakao_1792183289991",
+      "provider": "kakao",
+      "name": "카카오 서포터",
+      "handle": "kakao_9251",
+      "role": "supporter",
+      "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80",
+      "carrotsBalance": 100,
+      "tickets": 1,
+      "createdAt": "2026-10-16T20:41:29.998Z"
     }
   ],
   "bankTransfers": [

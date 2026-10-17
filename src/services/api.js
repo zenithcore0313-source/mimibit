@@ -652,5 +652,76 @@ export async function fetchUserPaymentHistory(userId) {
   return [];
 }
 
+// 12. Fetch Master Admin Overview
+export async function fetchAdminOverview() {
+  try {
+    const token = localStorage.getItem('mimibit_auth_token') || '';
+    const res = await fetch(`${API_BASE_URL}/api/admin/overview`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const data = await res.json();
+    if (data.success && data.data) {
+      return data.data;
+    }
+  } catch (e) {
+    console.warn('[API] Fetch admin overview offline fallback:', e);
+  }
+
+  // Fallback demo metrics if server offline
+  return {
+    metrics: {
+      totalGMV: 2680000,
+      platformRevenue: 268000,
+      totalRechargeKRW: 3500000,
+      pendingPayoutsKRW: 145000,
+      pendingBankTransferCount: 1,
+      totalUsers: 142,
+      totalCreators: 5,
+      totalDonationCount: 88
+    },
+    users: [],
+    creators: [],
+    donations: [],
+    charges: [],
+    bankTransfers: [],
+    payouts: []
+  };
+}
+
+// 13. Admin Complete Creator Payout (정산 송금 완료)
+export async function completePayout(payoutId) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/admin/payouts/${payoutId}/complete`, {
+      method: 'POST'
+    });
+    const data = await res.json();
+    if (data.success) {
+      return data.data;
+    }
+  } catch (e) {
+    console.warn('[API] Complete payout offline fallback:', e);
+  }
+  return { id: payoutId, status: '정산 입금 완료 (송금 완료)' };
+}
+
+// 14. Admin User Carrot Adjustment (CS 당근 수동 조정)
+export async function adjustUserCarrots(userId, amount, reason) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/admin/users/${userId}/carrots`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount, reason })
+    });
+    const data = await res.json();
+    if (data.success) {
+      return data.data;
+    }
+  } catch (e) {
+    console.warn('[API] Adjust carrots offline fallback:', e);
+  }
+  return null;
+}
+
+
 
 

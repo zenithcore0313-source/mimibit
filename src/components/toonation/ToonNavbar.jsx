@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { 
   Sparkles, User, Flame, Calculator, HelpCircle, ArrowRight, Menu, X, 
   PlusCircle, LogIn, LogOut, ChevronDown, ChevronRight, Wallet, Ticket, 
-  ShieldCheck, Copy, Check, MessageCircle, Sun, Moon 
+  ShieldCheck, Copy, Check, MessageCircle, Sun, Moon, Crown 
 } from 'lucide-react';
 
 export function ToonNavbar({ 
@@ -15,6 +15,7 @@ export function ToonNavbar({
   onOpenMyPage, 
   onOpenCharge,
   onOpenMessenger,
+  onOpenAdmin,
   onLogout,
   theme = 'dark',
   onToggleTheme 
@@ -165,6 +166,18 @@ export function ToonNavbar({
             <div className="flex items-center gap-2">
               {/* Supporter Carrot Charge Pill Button */}
               {/* Carrot Charge & Secret Messenger Pill Buttons */}
+              {currentUser?.role === 'admin' && (
+                <button
+                  type="button"
+                  onClick={onOpenAdmin}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-950 font-heading font-black text-xs transition-all shadow-md active:scale-95 cursor-pointer ring-2 ring-amber-300/60"
+                  title="통합 관리자 콘솔"
+                >
+                  <Crown className="w-3.5 h-3.5 fill-slate-950" />
+                  <span>관리자 콘솔</span>
+                </button>
+              )}
+
               <button
                 type="button"
                 onClick={onOpenCharge}
@@ -200,11 +213,13 @@ export function ToonNavbar({
                     <div className="font-heading font-black text-[#140E10] flex items-center gap-1">
                       <span className="truncate max-w-[90px]">{currentUser.name}</span>
                       <span className="text-[10px]">
-                        {currentUser.role === 'creator' ? '🎨' : (currentUser.tier?.icon || '🥕')}
+                        {currentUser.role === 'admin' ? '👑' : currentUser.role === 'creator' ? '🎨' : (currentUser.tier?.icon || '🥕')}
                       </span>
                     </div>
                     <div className="text-[10px] font-bold text-[#E4092B] font-num">
-                      {currentUser.role === 'creator'
+                      {currentUser.role === 'admin'
+                        ? '슈퍼 관리자'
+                        : currentUser.role === 'creator'
                         ? `정산 ${Math.round(currentUser.settlementPending / 10000)}만`
                         : `${currentUser.carrotsBalance.toLocaleString()} 🥕`}
                     </div>
@@ -217,14 +232,34 @@ export function ToonNavbar({
                   <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl border-2 border-slate-200/80 shadow-xl py-2 z-50 text-xs animate-fade-in divide-y divide-slate-100">
                     {/* User Profile Header */}
                     <div className="p-3 bg-slate-50">
-                      <span className="text-[10px] font-black uppercase text-[#E4092B] bg-rose-50 px-2 py-0.5 rounded-full">
-                        {currentUser.role === 'creator' ? 'CREATOR ACCOUNT' : 'SUPPORTER ACCOUNT'}
+                      <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${
+                        currentUser.role === 'admin' 
+                          ? 'text-amber-800 bg-amber-100'
+                          : 'text-[#E4092B] bg-rose-50'
+                      }`}>
+                        {currentUser.role === 'admin' ? 'SYSTEM ADMINISTRATOR' : currentUser.role === 'creator' ? 'CREATOR ACCOUNT' : 'SUPPORTER ACCOUNT'}
                       </span>
                       <div className="font-heading font-black text-sm text-[#140E10] mt-1 truncate">
                         {currentUser.name}
                       </div>
                       <div className="text-[11px] text-[#7A696E] truncate">{currentUser.email}</div>
                     </div>
+
+                    {/* Admin Direct Button in dropdown */}
+                    {currentUser.role === 'admin' && (
+                      <div className="p-2 bg-amber-500/10">
+                        <button
+                          onClick={() => { setUserDropdownOpen(false); onOpenAdmin?.(); }}
+                          className="w-full px-3 py-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-950 font-black text-xs flex items-center justify-between cursor-pointer shadow-xs transition-all"
+                        >
+                          <span className="flex items-center gap-1.5">
+                            <Crown className="w-4 h-4 fill-slate-950" />
+                            <span>통합 관리자 콘솔 열기</span>
+                          </span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    )}
 
                     {/* Creator Specific Options */}
                     {currentUser.role === 'creator' ? (
@@ -477,6 +512,22 @@ export function ToonNavbar({
               >
                 카카오 / 구글 3초 로그인
               </button>
+            ) : currentUser.role === 'admin' ? (
+              <>
+                <button
+                  onClick={() => { setMobileMenuOpen(false); onOpenAdmin?.(); }}
+                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black text-center text-xs flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+                >
+                  <Crown className="w-4 h-4 fill-slate-950" />
+                  <span>👑 통합 관리자 콘솔 열기</span>
+                </button>
+                <button
+                  onClick={() => { setMobileMenuOpen(false); onOpenCharge(); }}
+                  className="w-full py-2.5 rounded-xl bg-rose-50 text-[#E4092B] border border-slate-200/80 font-black text-center text-xs flex items-center justify-center gap-1.5"
+                >
+                  <span>🥕 당근 충전소 (+보너스)</span>
+                </button>
+              </>
             ) : currentUser.role === 'creator' ? (
               <button
                 onClick={() => { setMobileMenuOpen(false); onOpenStudio(); }}
