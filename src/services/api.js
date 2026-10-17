@@ -5,8 +5,11 @@
 
 import { INITIAL_CREATOR, INITIAL_RANKINGS, INITIAL_GUESTBOOK, INITIAL_SECRET_MESSAGES, INITIAL_CHAT_ROOMS } from '../data/initialData';
 
-// AWS Backend API Base URL (defaults to local express server http://localhost:3000)
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+// AWS Backend API Base URL
+// In production (behind Nginx reverse proxy), relative path '' routes directly to same-origin /api.
+// In local dev, Vite proxies /api to http://127.0.0.1:3000.
+// If VITE_API_BASE_URL is explicitly set, it will override.
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 // Initial 4 Default Creators
 export const DEFAULT_CREATORS = [
