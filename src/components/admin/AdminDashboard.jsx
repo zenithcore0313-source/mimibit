@@ -211,10 +211,10 @@ export function AdminDashboard({
           isDark ? 'border-white/10 bg-[#141416]' : 'border-slate-100 bg-white'
         }`}>
           {[
-            { id: 'overview', name: '📊 플랫폼 종합 매출', badge: null },
-            { id: 'transfers', name: '🏦 무통장입금 승인 센터', badge: pendingTransfers.length > 0 ? `${pendingTransfers.length}건 대기` : null },
-            { id: 'payouts', name: '💸 크리에이터 정산·출금 관리', badge: pendingPayouts.length > 0 ? `${pendingPayouts.length}건 대기` : null },
-            { id: 'users', name: '👥 회원 & 지갑 관리 (CS)', badge: `${(data?.users || []).length}명` },
+            { id: 'overview', name: '플랫폼 종합 매출', badge: null },
+            { id: 'transfers', name: '무통장입금 승인 센터', badge: pendingTransfers.length > 0 ? `${pendingTransfers.length}건 대기` : null },
+            { id: 'payouts', name: '크리에이터 정산·출금 관리', badge: pendingPayouts.length > 0 ? `${pendingPayouts.length}건 대기` : null },
+            { id: 'users', name: '회원 & 지갑 관리 (CS)', badge: `${(data?.users || []).length}명` },
           ].map(t => {
             const isActive = activeTab === t.id;
             return (
@@ -704,7 +704,7 @@ export function AdminDashboard({
                                 ? 'bg-purple-500/20 text-purple-300'
                                 : 'bg-blue-500/20 text-blue-300'
                           }`}>
-                            {u.role === 'admin' ? '👑 관리자' : u.role === 'creator' ? '🎨 크리에이터' : '🥕 서포터'}
+                            {u.role === 'admin' ? '관리자' : u.role === 'creator' ? '크리에이터' : '서포터'}
                           </span>
                         </td>
                         <td className="py-2.5 px-3 font-black text-[#E4092B] font-num">

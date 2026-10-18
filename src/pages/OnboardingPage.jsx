@@ -304,9 +304,9 @@ export function OnboardingPage({ onCompleteOnboarding, onBackToHome, onNavigate 
                   className="w-full accent-[#E4092B] cursor-pointer"
                 />
                 <div className="flex justify-between text-[11px] text-slate-500 mt-1">
-                  <span>1,000 🥕 (10만원)</span>
-                  <span>25,000 🥕 (250만원)</span>
-                  <span>50,000 🥕 (500만원)</span>
+                  <span>1,000 당근 (10만원)</span>
+                  <span>25,000 당근 (250만원)</span>
+                  <span>50,000 당근 (500만원)</span>
                 </div>
               </div>
 
@@ -417,7 +417,7 @@ export function OnboardingPage({ onCompleteOnboarding, onBackToHome, onNavigate 
                     disabled={isVerifyingAccount || isAccountVerified}
                     className="px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-all shrink-0 cursor-pointer disabled:opacity-60"
                   >
-                    {isVerifyingAccount ? '확인 중...' : isAccountVerified ? '✓ 실명 인증됨' : '실명 조회'}
+                    {isVerifyingAccount ? '확인 중...' : isAccountVerified ? '실명 인증 완료' : '실명 조회'}
                   </button>
                 </div>
                 {isAccountVerified && (

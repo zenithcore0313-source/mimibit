@@ -482,7 +482,7 @@ export function CreatorBioPage({
                   }`}
                 >
                   <Heart className={`w-4 h-4 ${isFollowing ? 'fill-white text-white' : 'text-white'}`} />
-                  <span>{isFollowing ? '팔로잉 ✓' : '팔로우'}</span>
+                  <span>{isFollowing ? '팔로잉' : '팔로우'}</span>
                 </button>
 
                 <button
@@ -649,7 +649,7 @@ export function CreatorBioPage({
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 flex flex-col justify-between p-3">
                           <div className="flex items-center justify-between">
                             <span className="text-[10px] bg-amber-500 text-slate-950 font-black px-2 py-0.5 rounded-full shadow-md flex items-center gap-1">
-                              <span>👑 root 마스터 열람</span>
+                              <span>ROOT 마스터 열람</span>
                             </span>
                             <span className="text-[10px] text-white/80 bg-black/50 backdrop-blur-md px-2 py-0.5 rounded-full">클릭 시 원본 보기</span>
                           </div>
@@ -758,7 +758,7 @@ export function CreatorBioPage({
                     { amount: 50, label: '간식 선물', price: '5,000원' },
                     { amount: 100, label: '따뜻한 응원', price: '10,000원', isPopular: true },
                     { amount: 300, label: '체리 닉네임', price: '30,000원' },
-                    { amount: 1000, label: '1:1 톡 해금★', price: '100,000원' }
+                    { amount: 1000, label: '1:1 톡 해금', price: '100,000원' }
                   ].map(pkg => {
                     const isSelected = selectedCarrots === pkg.amount && !customCarrots;
                     return (
@@ -778,7 +778,7 @@ export function CreatorBioPage({
                           </span>
                         )}
                         <span className="block font-black text-lg text-white font-num">
-                          {pkg.amount} 🥕
+                          {pkg.amount} 당근
                         </span>
                         <span className="block text-[11px] text-slate-300 mt-1 font-semibold">
                           {pkg.label}

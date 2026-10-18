@@ -233,10 +233,10 @@ export function MyPageModal({
           <div className="p-3 rounded-2xl bg-white border border-[#FCD5DC] shadow-2xs">
             <span className="text-[11px] font-medium text-[#7A696E] block">1:1 시크릿 티켓</span>
             <div className="text-base sm:text-lg font-heading font-black text-[#140E10] font-num mt-0.5">
-              {user.role === 'admin' ? '무제한 🎫' : `${user.tickets || 0}장 🎫`}
+              {user.role === 'admin' ? '무제한 티켓' : `${user.tickets || 0}장`}
             </div>
             <span className="text-[10px] text-[#E4092B] font-bold">
-              {user.role === 'admin' ? '👑 전 채널 마스터 해금' : '비동기 1:1 소통 해금'}
+              {user.role === 'admin' ? '전 채널 마스터 해금' : '비동기 1:1 소통 해금'}
             </span>
           </div>
 
@@ -245,7 +245,7 @@ export function MyPageModal({
               {user.role === 'admin' ? '권한 상태' : '멤버십 티어'}
             </span>
             <div className="text-xs font-black text-[#0284C7] mt-1">
-              {user.role === 'admin' ? '👑 ROOT MASTER (전체 해금)' : isCreatorOrAdmin ? '🎨 파트너 창작자' : '💎 다이아 래빗'}
+              {user.role === 'admin' ? 'ROOT MASTER (전체 해금)' : isCreatorOrAdmin ? '파트너 창작자' : '다이아 래빗'}
             </div>
             <div className="w-full bg-slate-100 h-1.5 rounded-full mt-1.5 overflow-hidden">
               <div className={`h-full rounded-full ${user.role === 'admin' ? 'w-full bg-amber-500' : 'w-[65%] bg-[#E4092B]'}`}></div>
@@ -413,7 +413,7 @@ export function MyPageModal({
                     {/* Cute Preset Avatars */}
                     <div className="pt-2">
                       <span className="text-[10px] font-bold text-[#7A696E] block mb-1.5">
-                        🎨 마음에 드는 추천 캐릭터 아바타를 클릭해보세요:
+                        추천 캐릭터 아바타를 선택해보세요:
                       </span>
                       <div className="grid grid-cols-6 gap-2">
                         {PRESET_AVATARS.map((p) => {

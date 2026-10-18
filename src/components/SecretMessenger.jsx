@@ -127,7 +127,7 @@ export function SecretMessenger({
             onClick={() => onOpenDonate(1000)}
             className="btn-pop-primary w-full py-3.5 text-sm flex items-center justify-center gap-2"
           >
-            <span>🥕</span>
+            <Sparkles className="w-4 h-4 text-white" />
             <span>1,000 당근 후원하고 비밀 라운지 해금하기</span>
           </button>
         </div>

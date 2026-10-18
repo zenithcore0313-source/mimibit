@@ -213,16 +213,16 @@ export function ToonNavbar({
                   <div className="text-left text-xs">
                     <div className="font-heading font-black text-[#140E10] flex items-center gap-1">
                       <span className="truncate max-w-[90px]">{currentUser.name}</span>
-                      <span className="text-[10px]">
-                        {currentUser.role === 'admin' ? '👑' : currentUser.role === 'creator' ? '🎨' : (currentUser.tier?.icon || '🥕')}
-                      </span>
+                      {currentUser.role === 'admin' && (
+                        <span className="text-[9px] bg-amber-100 text-amber-800 px-1 py-0.2 rounded font-bold">ROOT</span>
+                      )}
                     </div>
                     <div className="text-[10px] font-bold text-[#E4092B] font-num">
                       {currentUser.role === 'admin'
                         ? '슈퍼 관리자'
                         : currentUser.role === 'creator'
                         ? `정산 ${Math.round(currentUser.settlementPending / 10000)}만`
-                        : `${currentUser.carrotsBalance.toLocaleString()} 🥕`}
+                        : `${currentUser.carrotsBalance.toLocaleString()} 당근`}
                     </div>
                   </div>
                   <ChevronDown className="w-3.5 h-3.5 text-[#7A696E]" />
@@ -281,7 +281,7 @@ export function ToonNavbar({
                           onClick={() => { setUserDropdownOpen(false); onOpenStudio(); }}
                           className="w-full px-4 py-2 text-left hover:bg-rose-50 font-black text-[#E4092B] flex items-center justify-between cursor-pointer"
                         >
-                          <span>{currentUser.role === 'admin' ? '🎨 크리에이터 스튜디오 (root 마스터)' : '내 크리에이터 스튜디오 열기'}</span>
+                          <span>{currentUser.role === 'admin' ? '크리에이터 스튜디오 (root 마스터)' : '내 크리에이터 스튜디오 열기'}</span>
                           <ArrowRight className="w-3.5 h-3.5" />
                         </button>
 
@@ -305,7 +305,7 @@ export function ToonNavbar({
                       >
                         <span className="flex items-center gap-2">
                           <User className="w-4 h-4 text-[#E4092B]" />
-                          <span className="text-xs">👤 내 프로필 설정 (닉네임/사진)</span>
+                          <span className="text-xs">내 프로필 설정 (닉네임/사진)</span>
                         </span>
                         <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
                       </button>
@@ -327,7 +327,7 @@ export function ToonNavbar({
                         className="w-full px-4 py-2 text-left hover:bg-rose-50 font-black text-[#E4092B] flex items-center justify-between cursor-pointer"
                       >
                         <span className="flex items-center gap-1.5">
-                          <span>🥕 당근 충전하기</span>
+                          <span>당근 충전하기</span>
                           <span className="text-[9px] bg-[#E4092B] text-white px-1.5 py-0.2 rounded-full font-bold">+보너스</span>
                         </span>
                         <PlusCircle className="w-3.5 h-3.5" />
@@ -508,7 +508,7 @@ export function ToonNavbar({
             onClick={() => handleNavClick('bio')}
             className={`block w-full text-left py-2 hover:text-[#E4092B] font-bold text-[#E4092B] ${currentPage === 'bio' ? 'text-[#E4092B]' : ''}`}
           >
-            🔗 크리에이터 바이오링크 실물 홈 (LIVE)
+            크리에이터 바이오링크 실물 홈 (LIVE)
           </button>
           <button 
             onClick={() => handleNavClick('features')}
@@ -550,33 +550,33 @@ export function ToonNavbar({
                   className="w-full py-2.5 rounded-xl bg-white hover:bg-rose-50 text-slate-900 border border-slate-200/80 font-black text-center text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
                 >
                   <User className="w-4 h-4 text-[#E4092B]" />
-                  <span>👤 내 프로필 설정 (닉네임/사진)</span>
+                  <span>내 프로필 설정 (닉네임/사진)</span>
                 </button>
                 <button
                   onClick={() => { setMobileMenuOpen(false); onOpenAdmin?.(); }}
                   className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black text-center text-xs flex items-center justify-center gap-2 shadow-xs cursor-pointer"
                 >
                   <Crown className="w-4 h-4 fill-slate-950" />
-                  <span>👑 통합 관리자 콘솔 열기</span>
+                  <span>통합 관리자 콘솔 열기</span>
                 </button>
                 <button
                   onClick={() => { setMobileMenuOpen(false); onOpenStudio(); }}
                   className="w-full py-2.5 rounded-xl bg-slate-900 text-white font-black text-center text-xs flex items-center justify-center gap-2 shadow-xs cursor-pointer"
                 >
-                  <span>🎨 크리에이터 스튜디오 (root 마스터)</span>
+                  <span>크리에이터 스튜디오 (root 마스터)</span>
                 </button>
                 <button
                   onClick={() => { setMobileMenuOpen(false); onOpenMessenger(); }}
                   className="w-full py-2.5 rounded-xl bg-rose-50 text-[#E4092B] border border-slate-200/80 font-black text-center text-xs flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <MessageCircle className="w-4 h-4 text-rose-500" />
-                  <span>💬 1:1 시크릿톡 VIP 라운지</span>
+                  <span>1:1 시크릿톡 VIP 라운지</span>
                 </button>
                 <button
                   onClick={() => { setMobileMenuOpen(false); onOpenCharge(); }}
                   className="w-full py-2.5 rounded-xl bg-rose-50 text-[#E4092B] border border-slate-200/80 font-black text-center text-xs flex items-center justify-center gap-1.5 cursor-pointer"
                 >
-                  <span>🥕 당근 충전소 (+보너스)</span>
+                  <span>당근 충전소 (+보너스)</span>
                 </button>
                 <button
                   onClick={() => { setMobileMenuOpen(false); onOpenMyPage('sponsorships'); }}
@@ -592,13 +592,13 @@ export function ToonNavbar({
                   className="w-full py-2.5 rounded-xl bg-white hover:bg-rose-50 text-slate-900 border border-slate-200/80 font-black text-center text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
                 >
                   <User className="w-4 h-4 text-[#E4092B]" />
-                  <span>👤 내 프로필 설정 (닉네임/사진)</span>
+                  <span>내 프로필 설정 (닉네임/사진)</span>
                 </button>
                 <button
                   onClick={() => { setMobileMenuOpen(false); onOpenStudio(); }}
                   className="w-full py-2.5 rounded-xl bg-[#E4092B] text-white font-black text-center text-xs cursor-pointer"
                 >
-                  <span>🎨 내 크리에이터 스튜디오</span>
+                  <span>내 크리에이터 스튜디오</span>
                 </button>
                 <button
                   onClick={() => { setMobileMenuOpen(false); onOpenMyPage('sponsorships'); }}
@@ -614,7 +614,7 @@ export function ToonNavbar({
                   className="w-full py-2.5 rounded-xl bg-white hover:bg-rose-50 text-slate-900 border border-slate-200/80 font-black text-center text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
                 >
                   <User className="w-4 h-4 text-[#E4092B]" />
-                  <span>👤 내 프로필 설정 (닉네임/사진)</span>
+                  <span>내 프로필 설정 (닉네임/사진)</span>
                 </button>
                 <button
                   onClick={() => { setMobileMenuOpen(false); onOpenMessenger(); }}
@@ -627,7 +627,7 @@ export function ToonNavbar({
                   onClick={() => { setMobileMenuOpen(false); onOpenCharge(); }}
                   className="w-full py-2.5 rounded-xl bg-rose-50 text-[#E4092B] border border-slate-200/80 font-black text-center text-xs flex items-center justify-center gap-1.5"
                 >
-                  <span>🥕 당근 충전소 (+보너스)</span>
+                  <span>당근 충전소 (+보너스)</span>
                 </button>
                 <button
                   onClick={() => { setMobileMenuOpen(false); onOpenMyPage('sponsorships'); }}

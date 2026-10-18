@@ -358,10 +358,10 @@ export function CreatorStudio({
           isDark ? 'bg-white/5 border border-white/10' : 'bg-white/10'
         }`}>
           {[
-            { id: 'record', label: '🎙️ 15초 보이스 녹음' },
-            { id: 'messages', label: `💌 1:1 질문 답장함${unansweredCount > 0 ? ` (${unansweredCount})` : ''}` },
-            { id: 'settlement', label: '💰 10% 정산 & 출금' },
-            { id: 'settings', label: '⚙️ 펀딩 목표 설정' }
+            { id: 'record', label: '15초 보이스 녹음' },
+            { id: 'messages', label: `1:1 질문 답장함${unansweredCount > 0 ? ` (${unansweredCount})` : ''}` },
+            { id: 'settlement', label: '10% 정산 & 출금' },
+            { id: 'settings', label: '펀딩 목표 설정' }
           ].map(tab => (
             <button
               key={tab.id}
@@ -593,7 +593,7 @@ export function CreatorStudio({
                                 onChange={(e) => setAttachVoiceMap(prev => ({ ...prev, [q.id]: e.target.checked }))}
                                 className="rounded text-[#E4092B] focus:ring-[#E4092B]"
                               />
-                              <span>🎧 보이스 답례 동봉</span>
+                              <span>보이스 답례 동봉</span>
                             </label>
                             <label className="flex items-center gap-1.5 cursor-pointer font-medium">
                               <input
@@ -602,7 +602,7 @@ export function CreatorStudio({
                                 onChange={(e) => setAttachPhotoMap(prev => ({ ...prev, [q.id]: e.target.checked }))}
                                 className="rounded text-[#E4092B] focus:ring-[#E4092B]"
                               />
-                              <span>📸 미공개 화보 B컷 동봉</span>
+                              <span>미공개 화보 B컷 동봉</span>
                             </label>
                           </div>
 

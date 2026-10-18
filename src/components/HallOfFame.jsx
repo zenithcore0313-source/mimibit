@@ -59,7 +59,7 @@ export function HallOfFame({ rankings, onOpenDonate, onSelectSupporter }) {
             className="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-[#FF2E63] to-[#FF7A00] text-white text-xs sm:text-sm font-black shadow-lg shadow-[#FF2E63]/30 hover:scale-105 active:scale-95 transition-all inline-flex items-center gap-2"
           >
             <Zap className="w-4 h-4 fill-white" />
-            <span>첫 번째 서포터로 1위 등록하기 🥕</span>
+            <span>첫 번째 서포터로 1위 등록하기</span>
           </button>
         </div>
       ) : (
@@ -137,7 +137,7 @@ export function HallOfFame({ rankings, onOpenDonate, onSelectSupporter }) {
                 className="mt-3 w-full py-2 rounded-xl bg-gradient-to-r from-[#FF2E63] to-[#FF7A00] text-white text-xs font-black shadow-md hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-1.5"
               >
                 <Zap className="w-3.5 h-3.5 fill-white" />
-                <span>1위 전광판 탈환하기 ({top1.carrots + 50}🥕)</span>
+                <span>1위 전광판 탈환하기 ({(top1.carrots + 50).toLocaleString()} 당근)</span>
               </button>
             </div>
           )}

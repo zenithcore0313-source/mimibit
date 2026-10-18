@@ -83,8 +83,8 @@ export function CreatorHeader({ creator, onOpenDonate, onOpenTiers }) {
               onClick={onOpenTiers}
               className="btn-pop-secondary px-3.5 py-2.5 rounded-2xl text-xs font-extrabold flex items-center gap-1.5"
             >
-              <span>🐰</span>
-              <span className="hidden sm:inline">토끼 등급 혜택</span>
+              <Sparkles className="w-3.5 h-3.5 text-[#E4092B]" />
+              <span className="hidden sm:inline">등급 혜택</span>
               <span className="sm:hidden">티어 혜택</span>
             </button>
 
@@ -92,7 +92,7 @@ export function CreatorHeader({ creator, onOpenDonate, onOpenTiers }) {
               onClick={onOpenDonate}
               className="btn-pop-primary px-5 py-2.5 rounded-2xl text-xs sm:text-sm flex items-center gap-1.5"
             >
-              <span className="text-base">🥕</span>
+              <Heart className="w-3.5 h-3.5 fill-white" />
               <span>당근 후원하기</span>
             </button>
           </div>

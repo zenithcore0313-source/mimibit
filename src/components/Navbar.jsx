@@ -120,7 +120,7 @@ export function Navbar({
             onClick={onOpenDonate}
             className="btn-pop-primary px-3.5 py-2 text-xs flex items-center gap-1.5 active:scale-95"
           >
-            <span className="text-sm">🥕</span>
+            <Heart className="w-3.5 h-3.5 fill-white" />
             <span>당근 후원</span>
           </button>
         </div>

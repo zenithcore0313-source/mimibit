@@ -18,11 +18,11 @@ export function DonationModal({ isOpen, onClose, creator, onCompleteDonation, pr
 
   // Predict tier
   const getPredictedTier = (carrots) => {
-    if (carrots >= 5000) return { name: '당근 로열 래빗 👑', level: 5, color: '#FFB703' };
-    if (carrots >= 3000) return { name: '다이아 래빗 💎', level: 4, color: '#00B4D8' };
-    if (carrots >= 1000) return { name: '골드 래빗 🥇 (시크릿 메신저 해금!)', level: 3, color: '#F59E0B' };
-    if (carrots >= 300) return { name: '실버 래빗 🥈', level: 2, color: '#94A3B8' };
-    return { name: '화이트 래빗 🤍', level: 1, color: '#64748B' };
+    if (carrots >= 5000) return { name: '당근 로열 래빗', level: 5, color: '#FFB703' };
+    if (carrots >= 3000) return { name: '다이아 래빗', level: 4, color: '#00B4D8' };
+    if (carrots >= 1000) return { name: '골드 래빗 (시크릿 메신저 해금)', level: 3, color: '#F59E0B' };
+    if (carrots >= 300) return { name: '실버 래빗', level: 2, color: '#94A3B8' };
+    return { name: '화이트 래빗', level: 1, color: '#64748B' };
   };
 
   const predictedTier = getPredictedTier(finalCarrots);
@@ -116,16 +116,16 @@ export function DonationModal({ isOpen, onClose, creator, onCompleteDonation, pr
                   >
                     {pkg.popular && (
                       <span className="absolute -top-2 right-2 bg-[#FF2E63] text-white text-[9px] font-black px-1.5 py-0.2 rounded-full">
-                        ★ 추천
+                        추천
                       </span>
                     )}
                     {pkg.isRoyal && (
                       <span className="absolute -top-2 right-2 bg-[#FFB703] text-[#78350F] text-[9px] font-black px-1.5 py-0.2 rounded-full">
-                        👑 1위도전
+                        TOP 도전
                       </span>
                     )}
                     <div className="font-outfit font-black text-sm text-[#1D1E2C]">
-                      {pkg.carrots.toLocaleString()}🥕
+                      {pkg.carrots.toLocaleString()} 당근
                     </div>
                     <div className="text-[11px] font-extrabold text-[#FF2E63]">
                       {pkg.price.toLocaleString()}원

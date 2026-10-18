@@ -136,7 +136,7 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }) {
                   : 'text-[#5E5054] hover:text-[#140E10]'
               }`}
             >
-              <span>🥕 서포터(팬)</span>
+              <span>서포터 (팬)</span>
             </button>
             <button
               type="button"
@@ -147,7 +147,7 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }) {
                   : 'text-[#5E5054] hover:text-[#140E10]'
               }`}
             >
-              <span>🎨 크리에이터(창작자)</span>
+              <span>크리에이터 (창작자)</span>
             </button>
           </div>
         </div>

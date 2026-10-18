@@ -128,11 +128,11 @@ export const INITIAL_GUESTBOOK = [];
 export const INITIAL_SECRET_MESSAGES = [];
 
 export const DONATION_PACKAGES = [
-  { carrots: 10, price: 1000, label: '커피 한 입 ☕', tierBenefit: '화이트 래빗 🤍' },
-  { carrots: 300, price: 30000, label: '체리 레드 닉네임 🍒', tierBenefit: '실버 래빗 🥈', recommended: false },
-  { carrots: 1000, price: 100000, label: '1:1 시크릿 메신저 해금 💌', tierBenefit: '골드 래빗 🥇', popular: true },
-  { carrots: 3000, price: 300000, label: '미공개 화보 팩 📸', tierBenefit: '다이아 래빗 💎' },
-  { carrots: 5000, price: 500000, label: '전광판 1위 정복 👑', tierBenefit: '당근 로열 래빗 👑', isRoyal: true }
+  { carrots: 10, price: 1000, label: '커피 한 입', tierBenefit: '화이트 래빗' },
+  { carrots: 300, price: 30000, label: '체리 레드 닉네임', tierBenefit: '실버 래빗', recommended: false },
+  { carrots: 1000, price: 100000, label: '1:1 시크릿 메신저 해금', tierBenefit: '골드 래빗', popular: true },
+  { carrots: 3000, price: 300000, label: '미공개 화보 팩', tierBenefit: '다이아 래빗' },
+  { carrots: 5000, price: 500000, label: '전광판 1위 정복', tierBenefit: '당근 로열 래빗', isRoyal: true }
 ];
 
 // 카카오톡 형식 멀티 크리에이터 1:1 대화방 (클린 웰컴 상태)

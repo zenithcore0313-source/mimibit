@@ -175,7 +175,7 @@ export function ReceiptTicketModal({ isOpen, onClose, donationData, creator }) {
           <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => {
-                const tweetText = `🐰 ${creator.handle} 님에게 ${donationData.carrots}당근을 선물하고 Top 서포터 티켓 획득! #미미빗 #MIMIBIT`;
+                const tweetText = `${creator.handle} 님에게 ${donationData.carrots}당근을 선물하고 Top 서포터 티켓 획득! #미미빗 #MIMIBIT`;
                 window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`, '_blank');
               }}
               className="py-2.5 px-3 rounded-xl bg-[#1DA1F2]/10 hover:bg-[#1DA1F2]/20 text-[#1DA1F2] text-xs font-bold transition-all flex items-center justify-center gap-1.5"

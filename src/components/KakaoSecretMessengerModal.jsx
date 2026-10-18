@@ -320,12 +320,12 @@ export function KakaoSecretMessengerModal({
                     <p className={`text-[11px] truncate mt-0.5 font-normal ${
                       isDark ? 'text-slate-400' : 'text-slate-500'
                     }`}>
-                      {lastMsg?.voiceNote ? '🎧 보이스 메모가 도착했습니다' : lastMsg?.text || '대화가 없습니다.'}
+                      {lastMsg?.voiceNote ? '보이스 메모가 도착했습니다' : lastMsg?.text || '대화가 없습니다.'}
                     </p>
 
                     <div className="flex items-center justify-between mt-1 text-[10px]">
                       <span className={room.isUnlocked || isRoot ? (isDark ? 'text-amber-400 font-bold' : 'text-amber-600 font-bold') : 'text-slate-400'}>
-                        {isRoot ? '👑 root 마스터 무제한 소통' : room.isUnlocked ? `티켓 ${room.tickets}장 보유` : `${room.requiredCarrots} 당근 후원 시 해금`}
+                        {isRoot ? 'ROOT 마스터 무제한 소통' : room.isUnlocked ? `티켓 ${room.tickets}장 보유` : `${room.requiredCarrots} 당근 후원 시 해금`}
                       </span>
                       {room.unreadCount > 0 && (
                         <span className="w-4 h-4 rounded-full bg-[#E4092B] text-white text-[9px] font-bold flex items-center justify-center">
