@@ -196,7 +196,8 @@
       "carrotsBalance": 999999,
       "tickets": 9999,
       "isLoggedIn": true,
-      "createdAt": "2026-10-17T16:28:59.697Z"
+      "createdAt": "2026-10-17T16:28:59.697Z",
+      "bio": "미미빗 최고 관리자"
     },
     {
       "id": "usr_admin_musengche",
