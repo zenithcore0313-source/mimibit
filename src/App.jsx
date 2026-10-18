@@ -44,7 +44,7 @@ import {
   RABBIT_TIERS 
 } from './data/initialData';
 import { X, Smartphone, Monitor, ArrowLeft, Sparkles, CheckCircle2 } from 'lucide-react';
-import { getStoredCreators, findCreatorByIdOrHandle, registerNewCreator, processCreatorDonation } from './services/api';
+import { getStoredCreators, findCreatorByIdOrHandle, registerNewCreator, processCreatorDonation, confirmTossPayment } from './services/api';
 
 export function App() {
   // Page Routing State ('home', 'creators', 'features', 'fees', 'about', 'onboarding', 'faq', 'bio')
@@ -378,6 +378,47 @@ export function App() {
 
     triggerToast(`+${orderData.totalCarrots.toLocaleString()} 🥕 당근 충전이 완료되었습니다! ✨`);
   };
+
+  // Handle Toss Payments Redirect Success Callback
+  useEffect(() => {
+    try {
+      const searchParams = new URLSearchParams(window.location.search);
+      const hash = window.location.hash || '';
+      const queryFromHash = hash.includes('?') ? new URLSearchParams(hash.split('?')[1]) : null;
+      
+      const paymentKey = searchParams.get('paymentKey') || queryFromHash?.get('paymentKey');
+      const orderId = searchParams.get('orderId') || queryFromHash?.get('orderId');
+      const amount = searchParams.get('amount') || queryFromHash?.get('amount');
+
+      if (paymentKey && orderId && amount) {
+        const parsedAmount = parseInt(amount, 10);
+        const estimatedCarrots = Math.round(parsedAmount / 1.1);
+        confirmTossPayment({
+          paymentKey,
+          orderId,
+          amount: parsedAmount,
+          userId: currentUser?.id,
+          carrots: estimatedCarrots,
+          bonusCarrots: 0,
+          method: '토스페이먼츠'
+        }).then(record => {
+          handleChargeSuccess({
+            orderId,
+            chargedCarrots: estimatedCarrots,
+            bonusCarrots: 0,
+            totalCarrots: estimatedCarrots,
+            price: parsedAmount,
+            paymentMethod: '토스페이먼츠'
+          });
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }).catch(err => {
+          console.warn('[Toss redirect confirm]', err);
+        });
+      }
+    } catch (e) {
+      console.warn('Failed to parse payment redirect:', e);
+    }
+  }, []);
 
   // Auth Handlers
   const handleLoginSuccess = (user) => {
