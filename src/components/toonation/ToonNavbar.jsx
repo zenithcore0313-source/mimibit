@@ -232,18 +232,30 @@ export function ToonNavbar({
                 {userDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl border-2 border-slate-200/80 shadow-xl py-2 z-50 text-xs animate-fade-in divide-y divide-slate-100">
                     {/* User Profile Header */}
-                    <div className="p-3 bg-slate-50">
-                      <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${
-                        currentUser.role === 'admin' 
-                          ? 'text-amber-800 bg-amber-100'
-                          : 'text-[#E4092B] bg-rose-50'
-                      }`}>
-                        {currentUser.role === 'admin' ? 'SYSTEM ADMINISTRATOR' : currentUser.role === 'creator' ? 'CREATOR ACCOUNT' : 'SUPPORTER ACCOUNT'}
-                      </span>
-                      <div className="font-heading font-black text-sm text-[#140E10] mt-1 truncate">
-                        {currentUser.name}
+                    <div className="p-3 bg-slate-50 flex items-center justify-between">
+                      <div className="min-w-0 flex-1">
+                        <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${
+                          currentUser.role === 'admin' 
+                            ? 'text-amber-800 bg-amber-100'
+                            : currentUser.role === 'creator'
+                            ? 'text-rose-800 bg-rose-100'
+                            : 'text-[#E4092B] bg-rose-50'
+                        }`}>
+                          {currentUser.role === 'admin' ? 'SYSTEM ADMINISTRATOR' : currentUser.role === 'creator' ? 'CREATOR ACCOUNT' : 'SUPPORTER ACCOUNT'}
+                        </span>
+                        <div className="font-heading font-black text-sm text-[#140E10] mt-1 truncate">
+                          {currentUser.name}
+                        </div>
+                        <div className="text-[11px] text-[#7A696E] truncate">{currentUser.email}</div>
                       </div>
-                      <div className="text-[11px] text-[#7A696E] truncate">{currentUser.email}</div>
+                      <button
+                        type="button"
+                        onClick={() => { setUserDropdownOpen(false); onOpenMyPage('profile'); }}
+                        className="px-2.5 py-1 rounded-xl bg-white hover:bg-rose-50 border border-slate-200 text-[#E4092B] text-[10px] font-bold shadow-2xs cursor-pointer shrink-0 ml-2"
+                        title="프로필 편집"
+                      >
+                        수정
+                      </button>
                     </div>
 
                     {/* Admin Direct Button in dropdown */}
@@ -285,38 +297,51 @@ export function ToonNavbar({
                       </div>
                     )}
 
-                    {/* Supporter & Admin Common Options */}
-                    {currentUser.role !== 'creator' && (
-                      /* Supporter Specific Options */
-                      <div className="py-1">
-                        <button
-                          onClick={() => { setUserDropdownOpen(false); onOpenMessenger(); }}
-                          className="w-full px-4 py-2.5 text-left hover:bg-slate-50 font-bold text-slate-800 flex items-center justify-between cursor-pointer transition-colors"
-                        >
-                          <span className="flex items-center gap-2">
-                            <MessageCircle className="w-4 h-4 text-[#E4092B]" />
-                            <span className="text-xs">1:1 시크릿톡 라운지</span>
-                            <span className="text-[9px] bg-rose-50 text-[#E4092B] border border-rose-100 px-1.5 py-0.2 rounded-full font-bold">VIP</span>
-                          </span>
-                          <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-                        </button>
-                        <button
-                          onClick={() => { setUserDropdownOpen(false); onOpenCharge(); }}
-                          className="w-full px-4 py-2 text-left hover:bg-rose-50 font-black text-[#E4092B] flex items-center justify-between cursor-pointer"
-                        >
-                          <span className="flex items-center gap-1.5">
-                            <span>🥕 당근 충전하기</span>
-                            <span className="text-[9px] bg-[#E4092B] text-white px-1.5 py-0.2 rounded-full font-bold">+보너스</span>
-                          </span>
-                          <PlusCircle className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => { setUserDropdownOpen(false); onOpenMyPage(); }}
-                          className="w-full px-4 py-2 text-left hover:bg-slate-50 font-bold text-[#140E10] flex items-center justify-between cursor-pointer"
-                        >
-                          <span>내 팬덤 지갑 & 마이페이지</span>
-                          <Wallet className="w-3.5 h-3.5 text-[#7A696E]" />
-                        </button>
+                    {/* Common Options: Profile Setting, Charge, Secret Talk, Wallet */}
+                    <div className="py-1">
+                      <button
+                        onClick={() => { setUserDropdownOpen(false); onOpenMyPage('profile'); }}
+                        className="w-full px-4 py-2.5 text-left hover:bg-rose-50 font-black text-slate-800 hover:text-[#E4092B] flex items-center justify-between cursor-pointer transition-colors"
+                      >
+                        <span className="flex items-center gap-2">
+                          <User className="w-4 h-4 text-[#E4092B]" />
+                          <span className="text-xs">👤 내 프로필 설정 (닉네임/사진)</span>
+                        </span>
+                        <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                      </button>
+
+                      <button
+                        onClick={() => { setUserDropdownOpen(false); onOpenMessenger(); }}
+                        className="w-full px-4 py-2 text-left hover:bg-slate-50 font-bold text-slate-800 flex items-center justify-between cursor-pointer transition-colors"
+                      >
+                        <span className="flex items-center gap-2">
+                          <MessageCircle className="w-4 h-4 text-[#E4092B]" />
+                          <span className="text-xs">1:1 시크릿톡 라운지</span>
+                          <span className="text-[9px] bg-rose-50 text-[#E4092B] border border-rose-100 px-1.5 py-0.2 rounded-full font-bold">VIP</span>
+                        </span>
+                        <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                      </button>
+
+                      <button
+                        onClick={() => { setUserDropdownOpen(false); onOpenCharge(); }}
+                        className="w-full px-4 py-2 text-left hover:bg-rose-50 font-black text-[#E4092B] flex items-center justify-between cursor-pointer"
+                      >
+                        <span className="flex items-center gap-1.5">
+                          <span>🥕 당근 충전하기</span>
+                          <span className="text-[9px] bg-[#E4092B] text-white px-1.5 py-0.2 rounded-full font-bold">+보너스</span>
+                        </span>
+                        <PlusCircle className="w-3.5 h-3.5" />
+                      </button>
+
+                      <button
+                        onClick={() => { setUserDropdownOpen(false); onOpenMyPage('sponsorships'); }}
+                        className="w-full px-4 py-2 text-left hover:bg-slate-50 font-bold text-[#140E10] flex items-center justify-between cursor-pointer"
+                      >
+                        <span>내 팬덤 지갑 & 영수증</span>
+                        <Wallet className="w-3.5 h-3.5 text-[#7A696E]" />
+                      </button>
+
+                      {currentUser.role !== 'creator' && (
                         <button
                           onClick={() => { setUserDropdownOpen(false); onOpenCreatorDemo(); }}
                           className="w-full px-4 py-2 text-left hover:bg-slate-50 font-bold text-[#140E10] flex items-center justify-between cursor-pointer"
@@ -324,20 +349,20 @@ export function ToonNavbar({
                           <span>대표 루나 프로필 후원하기</span>
                           <ArrowRight className="w-3.5 h-3.5 text-[#7A696E]" />
                         </button>
-                      </div>
-                    )}
+                      )}
+                    </div>
 
                     {/* Logout */}
                     <div className="pt-1">
-                    <button
-                      onClick={() => { setUserDropdownOpen(false); onLogout(); }}
-                      className="w-full px-4 py-2 text-left text-rose-600 hover:bg-rose-50 font-bold flex items-center gap-1.5 cursor-pointer"
-                    >
-                      <LogOut className="w-3.5 h-3.5" />
-                      <span>로그아웃</span>
-                    </button>
+                      <button
+                        onClick={() => { setUserDropdownOpen(false); onLogout(); }}
+                        className="w-full px-4 py-2 text-left text-rose-600 hover:bg-rose-50 font-bold flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <LogOut className="w-3.5 h-3.5" />
+                        <span>로그아웃</span>
+                      </button>
+                    </div>
                   </div>
-                </div>
               )}
               </div>
             </div>
@@ -521,6 +546,13 @@ export function ToonNavbar({
             ) : currentUser.role === 'admin' ? (
               <>
                 <button
+                  onClick={() => { setMobileMenuOpen(false); onOpenMyPage('profile'); }}
+                  className="w-full py-2.5 rounded-xl bg-white hover:bg-rose-50 text-slate-900 border border-slate-200/80 font-black text-center text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+                >
+                  <User className="w-4 h-4 text-[#E4092B]" />
+                  <span>👤 내 프로필 설정 (닉네임/사진)</span>
+                </button>
+                <button
                   onClick={() => { setMobileMenuOpen(false); onOpenAdmin?.(); }}
                   className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black text-center text-xs flex items-center justify-center gap-2 shadow-xs cursor-pointer"
                 >
@@ -547,21 +579,43 @@ export function ToonNavbar({
                   <span>🥕 당근 충전소 (+보너스)</span>
                 </button>
                 <button
-                  onClick={() => { setMobileMenuOpen(false); onOpenMyPage(); }}
+                  onClick={() => { setMobileMenuOpen(false); onOpenMyPage('sponsorships'); }}
                   className="w-full py-2.5 rounded-xl bg-[#E4092B] text-white font-black text-center text-xs cursor-pointer"
                 >
                   <span>내 팬덤 지갑 & 마이페이지</span>
                 </button>
               </>
             ) : currentUser.role === 'creator' ? (
-              <button
-                onClick={() => { setMobileMenuOpen(false); onOpenStudio(); }}
-                className="w-full py-2.5 rounded-xl bg-[#E4092B] text-white font-black text-center text-xs"
-              >
-                크리에이터 스튜디오
-              </button>
+              <>
+                <button
+                  onClick={() => { setMobileMenuOpen(false); onOpenMyPage('profile'); }}
+                  className="w-full py-2.5 rounded-xl bg-white hover:bg-rose-50 text-slate-900 border border-slate-200/80 font-black text-center text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+                >
+                  <User className="w-4 h-4 text-[#E4092B]" />
+                  <span>👤 내 프로필 설정 (닉네임/사진)</span>
+                </button>
+                <button
+                  onClick={() => { setMobileMenuOpen(false); onOpenStudio(); }}
+                  className="w-full py-2.5 rounded-xl bg-[#E4092B] text-white font-black text-center text-xs cursor-pointer"
+                >
+                  <span>🎨 내 크리에이터 스튜디오</span>
+                </button>
+                <button
+                  onClick={() => { setMobileMenuOpen(false); onOpenMyPage('sponsorships'); }}
+                  className="w-full py-2.5 rounded-xl bg-slate-900 text-white font-black text-center text-xs cursor-pointer"
+                >
+                  <span>내 지갑 & 마이페이지</span>
+                </button>
+              </>
             ) : (
               <>
+                <button
+                  onClick={() => { setMobileMenuOpen(false); onOpenMyPage('profile'); }}
+                  className="w-full py-2.5 rounded-xl bg-white hover:bg-rose-50 text-slate-900 border border-slate-200/80 font-black text-center text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+                >
+                  <User className="w-4 h-4 text-[#E4092B]" />
+                  <span>👤 내 프로필 설정 (닉네임/사진)</span>
+                </button>
                 <button
                   onClick={() => { setMobileMenuOpen(false); onOpenMessenger(); }}
                   className="w-full py-2.5 rounded-xl bg-slate-900 text-white font-bold text-center text-xs flex items-center justify-center gap-2 shadow-xs cursor-pointer"
@@ -576,10 +630,10 @@ export function ToonNavbar({
                   <span>🥕 당근 충전소 (+보너스)</span>
                 </button>
                 <button
-                  onClick={() => { setMobileMenuOpen(false); onOpenMyPage(); }}
+                  onClick={() => { setMobileMenuOpen(false); onOpenMyPage('sponsorships'); }}
                   className="w-full py-2.5 rounded-xl bg-[#E4092B] text-white font-black text-center text-xs"
                 >
-                  내 팬덤 지갑 & 마이페이지
+                  <span>내 팬덤 지갑 & 마이페이지</span>
                 </button>
               </>
             )}

@@ -81,7 +81,7 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }) {
           confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
         } catch (e) {}
 
-        onLoginSuccess(res.user);
+        onLoginSuccess(res.user, { isNewUser: true });
         onClose();
       } else {
         const res = await loginUser({

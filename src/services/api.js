@@ -495,11 +495,20 @@ export async function updateUserProfile(userId, profileData) {
     });
     const data = await res.json();
     if (data.user) {
-      localStorage.setItem('mimibit_auth_user', JSON.stringify(data.user));
+      localStorage.setItem('mimibit_auth_user', JSON.stringify({ ...data.user, isLoggedIn: true }));
     }
     return data;
   } catch (err) {
-    console.warn('[API] Update profile failed:', err);
+    console.warn('[API] Update profile failed, saving to local store:', err);
+    const stored = localStorage.getItem('mimibit_auth_user');
+    if (stored) {
+      try {
+        const u = JSON.parse(stored);
+        const updated = { ...u, ...profileData, isLoggedIn: true };
+        localStorage.setItem('mimibit_auth_user', JSON.stringify(updated));
+        return { success: true, user: updated, message: '프로필이 로컬에 저장되었습니다.' };
+      } catch (e) {}
+    }
     return { success: false, message: err.message };
   }
 }

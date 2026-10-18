@@ -61,10 +61,16 @@ export function App() {
   const [isPhoneFrame, setIsPhoneFrame] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isMyPageOpen, setIsMyPageOpen] = useState(false);
+  const [myPageTab, setMyPageTab] = useState('sponsorships');
   const [isChargeOpen, setIsChargeOpen] = useState(false);
   const [isMessengerOpen, setIsMessengerOpen] = useState(false);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
+
+  const handleOpenMyPage = (tab = 'sponsorships') => {
+    setMyPageTab(tab);
+    setIsMyPageOpen(true);
+  };
 
   // Multi-creator chat rooms (KakaoTalk style)
   const [chatRooms, setChatRooms] = useState(() => {
@@ -421,7 +427,7 @@ export function App() {
   }, []);
 
   // Auth Handlers
-  const handleLoginSuccess = (user) => {
+  const handleLoginSuccess = (user, options = {}) => {
     const sessionUser = { ...user, isLoggedIn: true };
     setCurrentUser(sessionUser);
     localStorage.setItem('mimibit_auth_user', JSON.stringify(sessionUser));
@@ -434,6 +440,21 @@ export function App() {
         tierIcon: sessionUser.tier?.icon || prev.tierIcon
       }));
     }
+    if (options.isNewUser) {
+      setMyPageTab('profile');
+      setIsMyPageOpen(true);
+    }
+  };
+
+  const handleUpdateUser = (updatedData) => {
+    const merged = { ...currentUser, ...updatedData };
+    setCurrentUser(merged);
+    localStorage.setItem('mimibit_auth_user', JSON.stringify(merged));
+    setUserState(prev => ({
+      ...prev,
+      nickname: merged.name || prev.nickname
+    }));
+    triggerToast(`✨ ${merged.name}님의 프로필 정보가 업데이트되었습니다!`);
   };
 
   const handleLogout = () => {
@@ -565,7 +586,7 @@ export function App() {
         onNavigate={handleNavigate}
         currentUser={currentUser}
         onOpenAuth={() => setIsAuthOpen(true)}
-        onOpenMyPage={() => setIsMyPageOpen(true)}
+        onOpenMyPage={handleOpenMyPage}
         onOpenCharge={() => setIsChargeOpen(true)}
         onOpenMessenger={() => setIsMessengerOpen(true)}
         onOpenAdmin={() => setIsAdminOpen(true)}
@@ -668,29 +689,7 @@ export function App() {
       {/* Corporate Professional Footer */}
       <ToonFooter onNavigate={handleNavigate} />
 
-      {/* ============================================================== */}
-      {/* AUTHENTICATION & MYPAGE MODALS                                 */}
-      {/* ============================================================== */}
-      <AuthModal
-        isOpen={isAuthOpen}
-        onClose={() => setIsAuthOpen(false)}
-        onLoginSuccess={handleLoginSuccess}
-      />
 
-      <MyPageModal
-        isOpen={isMyPageOpen}
-        onClose={() => setIsMyPageOpen(false)}
-        user={currentUser}
-        onLogout={handleLogout}
-        onOpenDonate={() => {
-          setIsMyPageOpen(false);
-          handleOpenDonate();
-        }}
-        onSwitchToCreator={() => {
-          setIsMyPageOpen(false);
-          setActiveModal('studio');
-        }}
-      />
 
       {/* ============================================================== */}
       {/* FULLSCREEN / MODAL EXPERIENCE: CREATOR PROFILE & STUDIO DEMO */}
@@ -854,6 +853,8 @@ export function App() {
         isOpen={isMyPageOpen}
         onClose={() => setIsMyPageOpen(false)}
         user={currentUser}
+        initialTab={myPageTab}
+        onUpdateUser={handleUpdateUser}
         onLogout={handleLogout}
         onOpenDonate={() => {
           setIsMyPageOpen(false);

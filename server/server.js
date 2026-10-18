@@ -468,8 +468,11 @@ app.put('/api/auth/profile', (req, res) => {
   const existingUser = db.users[userIdx];
 
   if (name) existingUser.name = name;
-  if (bio) existingUser.bio = bio;
+  if (bio !== undefined) existingUser.bio = bio;
   if (avatar) existingUser.avatar = avatar;
+  if (category) existingUser.category = category;
+  if (sns) existingUser.sns = { ...existingUser.sns, ...sns };
+  if (bankInfo) existingUser.bankInfo = { ...existingUser.bankInfo, ...bankInfo };
 
   // If Creator, sync with db.creators
   if (existingUser.role === 'creator') {
@@ -481,7 +484,7 @@ app.put('/api/auth/profile', (req, res) => {
 
     if (creatorIdx !== -1) {
       if (name) db.creators[creatorIdx].name = name;
-      if (bio) db.creators[creatorIdx].bio = bio;
+      if (bio !== undefined) db.creators[creatorIdx].bio = bio;
       if (avatar) db.creators[creatorIdx].avatar = avatar;
       if (category) db.creators[creatorIdx].category = category;
       if (sns) db.creators[creatorIdx].sns = { ...db.creators[creatorIdx].sns, ...sns };
