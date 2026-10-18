@@ -75,43 +75,52 @@ export function GuestbookFeed({ guestbook, onAddComment, userState, onOpenDonate
 
       {/* Comments List */}
       <div className="space-y-3">
-        {guestbook.map((item) => (
-          <div
-            key={item.id}
-            className="p-3.5 rounded-2xl bg-[#FAFAFC] border border-[#F3E8EC] flex items-start justify-between gap-3 text-xs"
-          >
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span
-                  className={`font-black ${
-                    item.tierId === 'royal'
-                      ? 'text-[#B45309]'
-                      : item.tierId === 'silver'
-                      ? 'text-[#FF2E63]'
-                      : 'text-[#1D1E2C]'
-                  }`}
-                >
-                  {item.nickname}
-                </span>
-                <span className="text-[10px] bg-white border border-[#F3E8EC] text-[#72748A] px-1.5 py-0.2 rounded-md font-semibold">
-                  {item.carrots}🥕 서포터
-                </span>
-                <span className="text-[10px] text-[#9CA3AF]">{item.createdAt}</span>
-              </div>
-              <p className="text-[#33354A] font-medium leading-relaxed">
-                {item.content}
-              </p>
-            </div>
-
-            <button
-              type="button"
-              className="flex items-center gap-1 text-[11px] text-[#72748A] hover:text-[#FF2E63] shrink-0 bg-white px-2 py-1 rounded-lg border border-[#F3E8EC]"
-            >
-              <Heart className="w-3 h-3 text-[#FF2E63]" />
-              <span>{item.likes}</span>
-            </button>
+        {guestbook.length === 0 ? (
+          <div className="p-8 text-center rounded-2xl bg-[#FAFAFC] border border-[#F3E8EC] text-slate-500 space-y-1.5">
+            <p className="text-xs font-bold text-[#1D1E2C]">아직 등록된 응원 방명록이 없습니다 📝</p>
+            <p className="text-[11px] text-[#72748A]">
+              루나에게 전하고 싶은 따뜻한 첫 번째 응원 한마디를 남겨보세요! 🥕✨
+            </p>
           </div>
-        ))}
+        ) : (
+          guestbook.map((item) => (
+            <div
+              key={item.id}
+              className="p-3.5 rounded-2xl bg-[#FAFAFC] border border-[#F3E8EC] flex items-start justify-between gap-3 text-xs"
+            >
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span
+                    className={`font-black ${
+                      item.tierId === 'royal'
+                        ? 'text-[#B45309]'
+                        : item.tierId === 'silver'
+                        ? 'text-[#FF2E63]'
+                        : 'text-[#1D1E2C]'
+                    }`}
+                  >
+                    {item.nickname}
+                  </span>
+                  <span className="text-[10px] bg-white border border-[#F3E8EC] text-[#72748A] px-1.5 py-0.2 rounded-md font-semibold">
+                    {item.carrots}🥕 서포터
+                  </span>
+                  <span className="text-[10px] text-[#9CA3AF]">{item.createdAt}</span>
+                </div>
+                <p className="text-[#33354A] font-medium leading-relaxed">
+                  {item.content}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                className="flex items-center gap-1 text-[11px] text-[#72748A] hover:text-[#FF2E63] shrink-0 bg-white px-2 py-1 rounded-lg border border-[#F3E8EC]"
+              >
+                <Heart className="w-3 h-3 text-[#FF2E63]" />
+                <span>{item.likes}</span>
+              </button>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

@@ -3,13 +3,13 @@ import { X, Heart, Shield, Check, CreditCard, Sparkles, AlertCircle } from 'luci
 import confetti from 'canvas-confetti';
 import { DONATION_PACKAGES } from '../data/initialData';
 
-export function DonationModal({ isOpen, onClose, creator, onCompleteDonation, presetCarrots }) {
+export function DonationModal({ isOpen, onClose, creator, onCompleteDonation, presetCarrots, currentUser }) {
   if (!isOpen) return null;
 
   const [selectedCarrots, setSelectedCarrots] = useState(presetCarrots || 1000);
   const [customCarrots, setCustomCarrots] = useState('');
-  const [nickname, setNickname] = useState('Alex G.');
-  const [supportMessage, setSupportMessage] = useState('루나님 항상 응원해요! 이번 화보집도 대박나세요🥕✨');
+  const [nickname, setNickname] = useState(() => currentUser?.name || currentUser?.nickname || '');
+  const [supportMessage, setSupportMessage] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('toss');
   const [isProcessing, setIsProcessing] = useState(false);
 

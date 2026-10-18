@@ -92,14 +92,14 @@ export const INITIAL_CREATOR = {
   postCount: '128',
   fundingGoal: {
     title: '🎀 루나의 2026 봄 코스프레 화보집 & 굿즈 제작 펀딩',
-    currentCarrots: 8450,
+    currentCarrots: 0,
     targetCarrots: 10000,
-    endDate: '2026. 10. 31'
+    endDate: '2026. 12. 31'
   },
   voiceReward: {
     title: '루나의 10월 감사 보이스 노트 🎧',
     duration: '0:18',
-    previewAudio: 'https://cdn.freesound.org/previews/612/612081_5674468-lq.mp3', // cute chime sound demo
+    previewAudio: 'https://cdn.freesound.org/previews/612/612081_5674468-lq.mp3',
     message: '"항상 곁에서 묵묵히 응원해 주셔서 진심으로 고마워요! 이번 화보집도 온 마음을 다해 준비할게요🥕💕"'
   },
   secretPhotos: [
@@ -107,131 +107,25 @@ export const INITIAL_CREATOR = {
       id: 1,
       title: '가을 핑크 로리타 미공개 B컷 #01',
       url: 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=600&q=80',
-      date: '10월 12일'
+      date: '10월 18일'
     },
     {
       id: 2,
       title: '작업실 새벽 드로잉 비하인드 #02',
       url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80',
-      date: '10월 08일'
+      date: '10월 18일'
     }
   ]
 };
 
-export const INITIAL_RANKINGS = [
-  {
-    rank: 1,
-    id: 'supporter_1',
-    nickname: 'Chibi_Fan',
-    avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80',
-    carrots: 5400,
-    tierId: 'royal',
-    badge: '👑 당근 로열 래빗',
-    message: '루나님 이번 일러스트북 대박나세요! 언제나 묵묵히 뒤에서 응원해요 🥕✨',
-    highlightComment: '루나님 이번 일러스트북 대박나세요! 언제나 묵묵히 뒤에서 응원해요 🥕✨',
-    isTop1: true
-  },
-  {
-    rank: 2,
-    id: 'supporter_2',
-    nickname: 'BunnyLover',
-    avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=150&q=80',
-    carrots: 4150,
-    tierId: 'diamond',
-    badge: '💎 다이아 래빗',
-    message: '코스프레 사진 너무 예뻐요! 다음 주말 촬영도 화이팅!',
-    isTop1: false
-  },
-  {
-    rank: 3,
-    id: 'supporter_3',
-    nickname: 'CarrotQueen',
-    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=150&q=80',
-    carrots: 2800,
-    tierId: 'gold',
-    badge: '🥇 골드 래빗',
-    message: '루나님 그림 보면서 매일 힐링 중입니다 항상 건강 챙기세요!',
-    isTop1: false
-  },
-  {
-    rank: 4,
-    id: 'supporter_4',
-    nickname: 'CozyGamer',
-    avatar: 'https://images.unsplash.com/photo-1628157582853-a796fa650a6a?auto=format&fit=crop&w=150&q=80',
-    carrots: 1950,
-    tierId: 'gold',
-    badge: '🥇 골드 래빗',
-    message: '따뜻한 일상 공유해주셔서 감사합니다.',
-    isTop1: false
-  },
-  {
-    rank: 5,
-    id: 'supporter_5',
-    nickname: 'StarryEyes',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
-    carrots: 1200,
-    tierId: 'gold',
-    badge: '🥇 골드 래빗',
-    message: '행복한 하루 되세요!',
-    isTop1: false
-  }
-];
+// 런칭용 클린 랭킹 (초기 빈 배열 - 실제 유저 후원 시 실시간 등록)
+export const INITIAL_RANKINGS = [];
 
-export const INITIAL_GUESTBOOK = [
-  {
-    id: 101,
-    nickname: 'Chibi_Fan',
-    tierId: 'royal',
-    carrots: 500,
-    content: '루나님 이번 달 펀딩 거의 다 찼네요! 끝까지 함께 달려요 🥕🔥',
-    createdAt: '10분 전',
-    likes: 12
-  },
-  {
-    id: 102,
-    nickname: '하늘토끼',
-    tierId: 'silver',
-    carrots: 30,
-    content: '체리 레드 닉네임 얻고 싶어서 첫 후원했어요! 루나님 너무 사랑스러워요 💕',
-    createdAt: '1시간 전',
-    likes: 5
-  },
-  {
-    id: 103,
-    nickname: 'Berry_Pink',
-    tierId: 'white',
-    carrots: 10,
-    content: '인스타 릴스 보고 넘어왔어요. 그림체 너무 제 취향입니다 🤍',
-    createdAt: '3시간 전',
-    likes: 3
-  }
-];
+// 런칭용 클린 방명록 (초기 빈 배열 - 실제 유저 응원 시 등록)
+export const INITIAL_GUESTBOOK = [];
 
-export const INITIAL_SECRET_MESSAGES = [
-  {
-    id: 'msg_01',
-    sender: 'Alex G. (당신)',
-    senderTier: 'gold',
-    isCreator: false,
-    text: '루나님 안녕하세요! 지난번 올려주신 드로잉 팁 영상 보고 디지털 드로잉 시작했습니다. 항상 감사드려요 🎨',
-    timestamp: '어제 오후 08:30',
-    ticketCost: 1
-  },
-  {
-    id: 'msg_02',
-    sender: 'Luna Rabbit',
-    senderTier: 'creator',
-    isCreator: true,
-    text: 'Alex님! 제 영상이 작은 용기가 되었다니 그림 그리는 사람으로서 정말 벅차고 기뻐요 🥺 편하실 때 그림 언제든 자랑해 주세요! 항상 응원할게요 🥕',
-    voiceNote: {
-      duration: '0:14',
-      label: 'Luna의 감사 보이스 메모'
-    },
-    secretPhotoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
-    timestamp: '오늘 오전 11:05',
-    isSpecialGift: true
-  }
-];
+// 런칭용 클린 1:1 시크릿 메시지
+export const INITIAL_SECRET_MESSAGES = [];
 
 export const DONATION_PACKAGES = [
   { carrots: 10, price: 1000, label: '커피 한 입 ☕', tierBenefit: '화이트 래빗 🤍' },
@@ -241,7 +135,7 @@ export const DONATION_PACKAGES = [
   { carrots: 5000, price: 500000, label: '전광판 1위 정복 👑', tierBenefit: '당근 로열 래빗 👑', isRoyal: true }
 ];
 
-// 카카오톡 형식 멀티 크리에이터 1:1 대화방 데이터
+// 카카오톡 형식 멀티 크리에이터 1:1 대화방 (클린 웰컴 상태)
 export const INITIAL_CHAT_ROOMS = [
   {
     id: 'room_luna',
@@ -253,33 +147,20 @@ export const INITIAL_CHAT_ROOMS = [
     tierName: '골드 래빗',
     tierIcon: '🥇',
     tierLevel: 3,
-    isUnlocked: true,
-    tickets: 5,
-    unreadCount: 1,
-    lastUpdated: '오전 11:05',
+    isUnlocked: false,
+    tickets: 0,
+    unreadCount: 0,
+    lastUpdated: '방금 전',
+    requiredCarrots: 1000,
     messages: [
       {
-        id: 'msg_luna_1',
-        sender: 'Alex G. (당신)',
-        senderTier: 'gold',
-        isCreator: false,
-        text: '루나님 안녕하세요! 지난번 올려주신 드로잉 팁 영상 보고 디지털 드로잉 시작했습니다. 항상 감사드려요 🎨',
-        timestamp: '어제 오후 08:30',
-        ticketCost: 1
-      },
-      {
-        id: 'msg_luna_2',
+        id: 'msg_luna_welcome',
         sender: 'Luna Rabbit',
         senderTier: 'creator',
         isCreator: true,
-        text: 'Alex님! 제 영상이 작은 용기가 되었다니 그림 그리는 사람으로서 정말 벅차고 기뻐요 🥺 편하실 때 그림 언제든 자랑해 주세요! 항상 응원할게요 🥕',
-        voiceNote: {
-          duration: '0:14',
-          label: 'Luna의 감사 보이스 메모 🎧'
-        },
-        secretPhotoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
-        timestamp: '오늘 오전 11:05',
-        isSpecialGift: true
+        text: '루나의 1:1 시크릿 라운지에 오신 것을 환영해요! 편하게 비밀 질문이나 응원을 남겨주세요 🥕✨',
+        timestamp: '공지',
+        isSpecialGift: false
       }
     ]
   },
@@ -290,36 +171,23 @@ export const INITIAL_CHAT_ROOMS = [
     handle: '@Mochi_Cos',
     avatar: 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=300&q=80',
     category: '코스프레 & 화보 일상',
-    tierName: '다이아 래빗',
-    tierIcon: '💎',
-    tierLevel: 4,
-    isUnlocked: true,
-    tickets: 12,
+    tierName: '골드 래빗',
+    tierIcon: '🥇',
+    tierLevel: 3,
+    isUnlocked: false,
+    tickets: 0,
     unreadCount: 0,
-    lastUpdated: '어제',
+    lastUpdated: '방금 전',
+    requiredCarrots: 1000,
     messages: [
       {
-        id: 'msg_mochi_1',
-        sender: 'Alex G. (당신)',
-        senderTier: 'diamond',
-        isCreator: false,
-        text: '모치님 이번 코스프레 의상 제작기 너무 흥미롭게 봤어요! 다음 작품도 기대할게요 💖',
-        timestamp: '10월 12일 오후 02:15',
-        ticketCost: 1
-      },
-      {
-        id: 'msg_mochi_2',
+        id: 'msg_mochi_welcome',
         sender: '모치 (Mochi)',
         senderTier: 'creator',
         isCreator: true,
-        text: 'Alex 서포터님 항상 큰 힘이 됩니다! 다음 주말 촬영본에서 가장 마음에 드는 B컷 미공개 화보 먼저 선물해드려요 🥰',
-        voiceNote: {
-          duration: '0:12',
-          label: '모치의 1:1 보이스 인사 🎧'
-        },
-        secretPhotoUrl: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=600&q=80',
-        timestamp: '어제 오후 05:40',
-        isSpecialGift: true
+        text: '모치의 프라이빗 라운지입니다! 의상 제작기나 촬영 비하인드에 대해 언제든 물어보세요 🥰',
+        timestamp: '공지',
+        isSpecialGift: false
       }
     ]
   },
@@ -330,22 +198,22 @@ export const INITIAL_CHAT_ROOMS = [
     handle: '@Chibi_Artist',
     avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80',
     category: 'SD 캐릭터 & 인스타툰',
-    tierName: '실버 래빗',
-    tierIcon: '🥈',
-    tierLevel: 2,
+    tierName: '골드 래빗',
+    tierIcon: '🥇',
+    tierLevel: 3,
     isUnlocked: false,
     tickets: 0,
     unreadCount: 0,
-    lastUpdated: '3일 전',
-    requiredCarrots: 700,
+    lastUpdated: '방금 전',
+    requiredCarrots: 1000,
     messages: [
       {
-        id: 'msg_chibi_info',
-        sender: '시스템 알림',
-        senderTier: 'system',
+        id: 'msg_chibi_welcome',
+        sender: '치비 스케치',
+        senderTier: 'creator',
         isCreator: true,
-        text: '치비 스케치님과의 1:1 시크릿 메신저는 골드 래빗(누적 1,000 🥕) 달성 시 활성화됩니다. 현재 300 🥕 후원 완료 (700 🥕 추가 후원 필요)',
-        timestamp: '3일 전'
+        text: '치비 스케치와 1:1로 소통하는 비밀 창구입니다! 캐릭터 리퀘스트나 응원을 편하게 보내주세요 🎨',
+        timestamp: '공지'
       }
     ]
   },
@@ -356,22 +224,22 @@ export const INITIAL_CHAT_ROOMS = [
     handle: '@Neon_Vibe',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80',
     category: 'Lo-Fi 작곡 & 숏폼 일상',
-    tierName: '화이트 래빗',
-    tierIcon: '🤍',
-    tierLevel: 1,
+    tierName: '골드 래빗',
+    tierIcon: '🥇',
+    tierLevel: 3,
     isUnlocked: false,
     tickets: 0,
     unreadCount: 0,
-    lastUpdated: '1주일 전',
-    requiredCarrots: 990,
+    lastUpdated: '방금 전',
+    requiredCarrots: 1000,
     messages: [
       {
-        id: 'msg_neon_info',
-        sender: '시스템 알림',
-        senderTier: 'system',
+        id: 'msg_neon_welcome',
+        sender: '네온 바이브',
+        senderTier: 'creator',
         isCreator: true,
-        text: '네온 바이브님과의 1:1 시크릿 메신저는 골드 래빗(누적 1,000 🥕) 달성 시 활성화됩니다. 현재 10 🥕 후원 완료',
-        timestamp: '1주일 전'
+        text: '네온 바이브의 작업실 1:1 채널입니다. 음악이나 새벽 감성 이야기 언제든 환영해요 🎧',
+        timestamp: '공지'
       }
     ]
   }

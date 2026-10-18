@@ -108,33 +108,6 @@ export function CreatorStudio({
       });
     }
 
-    if (questions.length === 0) {
-      // Fallback initial questions
-      return [
-        {
-          id: 'q_01',
-          roomId: 'room_luna',
-          creatorName: creator?.name || '루나',
-          sender: 'Alex G.',
-          tier: '골드 래빗',
-          tierBadge: '🥇',
-          text: '루나님 안녕하세요! 지난번 올려주신 드로잉 팁 영상 보고 디지털 드로잉 시작했습니다. 항상 감사드려요 🎨',
-          date: '방금 전',
-          isAnswered: answeredQuestionIds.includes('q_01')
-        },
-        {
-          id: 'q_02',
-          roomId: 'room_luna',
-          creatorName: creator?.name || '루나',
-          sender: 'BunnyLover',
-          tier: '다이아 래빗',
-          tierBadge: '💎',
-          text: '다음 화보집 굿즈에 키링이나 스티커도 포함될 예정인가요? 기대하고 있어요!',
-          date: '어제',
-          isAnswered: true
-        }
-      ];
-    }
     return questions;
   }, [chatRooms, answeredQuestionIds, creator?.name]);
 
@@ -558,7 +531,17 @@ export function CreatorStudio({
             </div>
 
             <div className="space-y-4">
-              {dynamicQuestions.map(q => {
+              {dynamicQuestions.length === 0 ? (
+                <div className={`p-8 text-center rounded-2xl border space-y-2 ${
+                  isDark ? 'bg-white/5 border-white/10 text-slate-400' : 'bg-slate-50 border-slate-200 text-slate-500'
+                }`}>
+                  <p className="text-sm font-bold">아직 도착한 1:1 시크릿 질문이 없습니다 💌</p>
+                  <p className="text-xs text-slate-400">
+                    골드 또는 다이아 서포터가 티켓을 사용해 1:1 질문을 남기면 이곳에 실시간으로 표시됩니다.
+                  </p>
+                </div>
+              ) : (
+                dynamicQuestions.map(q => {
                 const currentReply = replyTextMap[q.id] || '';
                 const currentAttachVoice = attachVoiceMap[q.id] ?? true;
                 const currentAttachPhoto = attachPhotoMap[q.id] ?? true;
@@ -641,7 +624,7 @@ export function CreatorStudio({
                     )}
                   </div>
                 );
-              })}
+              }))}
             </div>
 
           </div>

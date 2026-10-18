@@ -42,111 +42,132 @@ export function HallOfFame({ rankings, onOpenDonate, onSelectSupporter }) {
         </div>
       </div>
 
-      {/* Podium Grid (Top 1, 2, 3 Visual Showcase) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5 items-end">
-        {/* 2nd Place Card (Silver) */}
-        {top2 && (
-          <div className="order-2 md:order-1 p-4 rounded-2xl bg-gradient-to-b from-[#F8FAFC] to-[#EDF2F7] border-2 border-[#CBD5E1] text-center shadow-xs hover:scale-[1.02] transition-all relative">
-            <div className="w-7 h-7 mx-auto -mt-7 mb-1 bg-[#94A3B8] text-white rounded-full font-black text-xs flex items-center justify-center shadow-md">
-              2
-            </div>
-            <img
-              src={top2.avatar}
-              alt={top2.nickname}
-              className="w-14 h-14 rounded-full mx-auto object-cover border-2 border-[#CBD5E1] shadow-xs"
-            />
-            <div className="mt-2">
-              <span className="text-[10px] font-bold text-[#64748B] bg-white px-2 py-0.5 rounded-full border border-[#CBD5E1]">
-                🥈 {top2.badge}
-              </span>
-              <h4 className="text-sm font-black text-[#1D1E2C] mt-1 truncate">
-                {top2.nickname}
-              </h4>
-              <p className="text-xs font-black text-[#FF7A00] font-outfit mt-0.5">
-                {top2.carrots.toLocaleString()} 🥕
-              </p>
-            </div>
+      {/* Podium Grid (Top 1, 2, 3 Visual Showcase or Launch Empty State) */}
+      {!top1 && !top2 && !top3 ? (
+        <div className="p-8 sm:p-10 mb-5 rounded-3xl bg-gradient-to-b from-[#FFFDF0] via-[#FFF8D6] to-[#FFEAB5] border-2 border-dashed border-[#FFB703] text-center relative overflow-hidden shadow-inner">
+          <div className="w-14 h-14 mx-auto mb-3 bg-gradient-to-r from-[#FFB703] to-[#FF8C00] text-white rounded-full flex items-center justify-center shadow-lg border-2 border-white animate-bounce">
+            <Crown className="w-7 h-7 fill-white" />
           </div>
-        )}
-
-        {/* 1st Place Hero Card (Gold Champion - Center & Taller) */}
-        {top1 && (
-          <div className="order-1 md:order-2 p-5 rounded-3xl bg-gradient-to-b from-[#FFFDF0] via-[#FFF8D6] to-[#FFEAB5] border-3 border-[#FFB703] shadow-lg shadow-[#FFB703]/25 text-center relative shine-box hover:scale-[1.02] transition-all">
-            {/* Crown Ribbon */}
-            <div className="w-10 h-10 mx-auto -mt-9 mb-1 bg-gradient-to-r from-[#FFB703] to-[#FF8C00] text-white rounded-full font-black text-sm flex items-center justify-center shadow-md border-2 border-white animate-bounce">
-              <Crown className="w-5 h-5 fill-white" />
-            </div>
-
-            <div className="relative inline-block mx-auto">
+          <h3 className="text-lg font-bubble font-black text-[#78350F] mb-1">
+            시즌 1위 명예의 전당 주인공을 기다리고 있습니다! 👑
+          </h3>
+          <p className="text-xs sm:text-sm text-[#92400E] max-w-md mx-auto mb-4 font-medium leading-relaxed">
+            가장 많은 당근을 후원한 서포터의 닉네임과 응원 한마디가 프로필 최상단 전광판에 독점 고정됩니다.
+          </p>
+          <button
+            onClick={() => onOpenDonate(10)}
+            className="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-[#FF2E63] to-[#FF7A00] text-white text-xs sm:text-sm font-black shadow-lg shadow-[#FF2E63]/30 hover:scale-105 active:scale-95 transition-all inline-flex items-center gap-2"
+          >
+            <Zap className="w-4 h-4 fill-white" />
+            <span>첫 번째 서포터로 1위 등록하기 🥕</span>
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5 items-end">
+          {/* 2nd Place Card (Silver) */}
+          {top2 && (
+            <div className="order-2 md:order-1 p-4 rounded-2xl bg-gradient-to-b from-[#F8FAFC] to-[#EDF2F7] border-2 border-[#CBD5E1] text-center shadow-xs hover:scale-[1.02] transition-all relative">
+              <div className="w-7 h-7 mx-auto -mt-7 mb-1 bg-[#94A3B8] text-white rounded-full font-black text-xs flex items-center justify-center shadow-md">
+                2
+              </div>
               <img
-                src={top1.avatar}
-                alt={top1.nickname}
-                className="w-18 h-18 rounded-full object-cover border-3 border-[#FFB703] shadow-md"
+                src={top2.avatar}
+                alt={top2.nickname}
+                className="w-14 h-14 rounded-full mx-auto object-cover border-2 border-[#CBD5E1] shadow-xs"
               />
-              <span className="absolute -bottom-1 -right-1 bg-[#FF2E63] text-white text-[9px] font-black px-1.5 py-0.2 rounded-full">
-                👑 1위
-              </span>
+              <div className="mt-2">
+                <span className="text-[10px] font-bold text-[#64748B] bg-white px-2 py-0.5 rounded-full border border-[#CBD5E1]">
+                  🥈 {top2.badge}
+                </span>
+                <h4 className="text-sm font-black text-[#1D1E2C] mt-1 truncate">
+                  {top2.nickname}
+                </h4>
+                <p className="text-xs font-black text-[#FF7A00] font-outfit mt-0.5">
+                  {top2.carrots.toLocaleString()} 🥕
+                </p>
+              </div>
             </div>
+          )}
 
-            <div className="mt-2">
-              <span className="text-[11px] font-black text-[#78350F] bg-[#FDE68A] px-2.5 py-0.5 rounded-full inline-block">
-                {top1.badge}
-              </span>
-              <h3 className="text-base font-bubble font-black text-[#78350F] mt-1">
-                {top1.nickname}
-              </h3>
-              <p className="text-sm font-black text-[#B45309] font-outfit">
-                총 {top1.carrots.toLocaleString()} 당근 후원 🥕
-              </p>
-            </div>
+          {/* 1st Place Hero Card (Gold Champion - Center & Taller) */}
+          {top1 && (
+            <div className="order-1 md:order-2 p-5 rounded-3xl bg-gradient-to-b from-[#FFFDF0] via-[#FFF8D6] to-[#FFEAB5] border-3 border-[#FFB703] shadow-lg shadow-[#FFB703]/25 text-center relative shine-box hover:scale-[1.02] transition-all">
+              {/* Crown Ribbon */}
+              <div className="w-10 h-10 mx-auto -mt-9 mb-1 bg-gradient-to-r from-[#FFB703] to-[#FF8C00] text-white rounded-full font-black text-sm flex items-center justify-center shadow-md border-2 border-white animate-bounce">
+                <Crown className="w-5 h-5 fill-white" />
+              </div>
 
-            {/* Pinned Billboard Speech Bubble */}
-            <div className="mt-3 bg-white/95 rounded-2xl p-2.5 border border-[#FDE68A] shadow-xs text-left">
-              <span className="text-[10px] font-black text-[#B45309] block flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-[#FFB703]" />
-                루나의 프로필 최상단 고정 한마디:
-              </span>
-              <p className="text-xs text-[#78350F] font-semibold italic mt-0.5 truncate">
-                "{top1.message || '루나님 항상 최고예요!'}"
-              </p>
-            </div>
+              <div className="relative inline-block mx-auto">
+                <img
+                  src={top1.avatar}
+                  alt={top1.nickname}
+                  className="w-18 h-18 rounded-full object-cover border-3 border-[#FFB703] shadow-md"
+                />
+                <span className="absolute -bottom-1 -right-1 bg-[#FF2E63] text-white text-[9px] font-black px-1.5 py-0.2 rounded-full">
+                  👑 1위
+                </span>
+              </div>
 
-            {/* Challenge 1st Place Button */}
-            <button
-              onClick={() => onOpenDonate(top1.carrots + 50)}
-              className="mt-3 w-full py-2 rounded-xl bg-gradient-to-r from-[#FF2E63] to-[#FF7A00] text-white text-xs font-black shadow-md hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-1.5"
-            >
-              <Zap className="w-3.5 h-3.5 fill-white" />
-              <span>1위 전광판 탈환하기 ({top1.carrots + 50}🥕)</span>
-            </button>
-          </div>
-        )}
+              <div className="mt-2">
+                <span className="text-[11px] font-black text-[#78350F] bg-[#FDE68A] px-2.5 py-0.5 rounded-full inline-block">
+                  {top1.badge}
+                </span>
+                <h3 className="text-base font-bubble font-black text-[#78350F] mt-1">
+                  {top1.nickname}
+                </h3>
+                <p className="text-sm font-black text-[#B45309] font-outfit">
+                  총 {top1.carrots.toLocaleString()} 당근 후원 🥕
+                </p>
+              </div>
 
-        {/* 3rd Place Card (Bronze) */}
-        {top3 && (
-          <div className="order-3 p-4 rounded-2xl bg-gradient-to-b from-[#FFF7ED] to-[#FFEDD5] border-2 border-[#FED7AA] text-center shadow-xs hover:scale-[1.02] transition-all relative">
-            <div className="w-7 h-7 mx-auto -mt-7 mb-1 bg-[#D97706] text-white rounded-full font-black text-xs flex items-center justify-center shadow-md">
-              3
+              {/* Pinned Billboard Speech Bubble */}
+              <div className="mt-3 bg-white/95 rounded-2xl p-2.5 border border-[#FDE68A] shadow-xs text-left">
+                <span className="text-[10px] font-black text-[#B45309] block flex items-center gap-1">
+                  <Sparkles className="w-3 h-3 text-[#FFB703]" />
+                  루나의 프로필 최상단 고정 한마디:
+                </span>
+                <p className="text-xs text-[#78350F] font-semibold italic mt-0.5 truncate">
+                  "{top1.message || '루나님 항상 최고예요!'}"
+                </p>
+              </div>
+
+              {/* Challenge 1st Place Button */}
+              <button
+                onClick={() => onOpenDonate(top1.carrots + 50)}
+                className="mt-3 w-full py-2 rounded-xl bg-gradient-to-r from-[#FF2E63] to-[#FF7A00] text-white text-xs font-black shadow-md hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-1.5"
+              >
+                <Zap className="w-3.5 h-3.5 fill-white" />
+                <span>1위 전광판 탈환하기 ({top1.carrots + 50}🥕)</span>
+              </button>
             </div>
-            <img
-              src={top3.avatar}
-              alt={top3.nickname}
-              className="w-14 h-14 rounded-full mx-auto object-cover border-2 border-[#FED7AA] shadow-xs"
-            />
-            <div className="mt-2">
-              <span className="text-[10px] font-bold text-[#9A3412] bg-white px-2 py-0.5 rounded-full border border-[#FED7AA]">
-                🥉 {top3.badge}
-              </span>
-              <h4 className="text-sm font-black text-[#1D1E2C] mt-1 truncate">
-                {top3.nickname}
-              </h4>
-              <p className="text-xs font-black text-[#FF7A00] font-outfit mt-0.5">
-                {top3.carrots.toLocaleString()} 🥕
-              </p>
+          )}
+
+          {/* 3rd Place Card (Bronze) */}
+          {top3 && (
+            <div className="order-3 p-4 rounded-2xl bg-gradient-to-b from-[#FFF7ED] to-[#FFEDD5] border-2 border-[#FED7AA] text-center shadow-xs hover:scale-[1.02] transition-all relative">
+              <div className="w-7 h-7 mx-auto -mt-7 mb-1 bg-[#D97706] text-white rounded-full font-black text-xs flex items-center justify-center shadow-md">
+                3
+              </div>
+              <img
+                src={top3.avatar}
+                alt={top3.nickname}
+                className="w-14 h-14 rounded-full mx-auto object-cover border-2 border-[#FED7AA] shadow-xs"
+              />
+              <div className="mt-2">
+                <span className="text-[10px] font-bold text-[#9A3412] bg-white px-2 py-0.5 rounded-full border border-[#FED7AA]">
+                  🥉 {top3.badge}
+                </span>
+                <h4 className="text-sm font-black text-[#1D1E2C] mt-1 truncate">
+                  {top3.nickname}
+                </h4>
+                <p className="text-xs font-black text-[#FF7A00] font-outfit mt-0.5">
+                  {top3.carrots.toLocaleString()} 🥕
+                </p>
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
 
       {/* Rankings 4th & 5th Supporters Row */}
       <div className="space-y-2 mb-4">

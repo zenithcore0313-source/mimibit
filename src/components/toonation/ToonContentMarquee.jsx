@@ -205,12 +205,12 @@ export function ToonContentMarquee({ onOpenCreatorDemo }) {
                   <span>답장 의무 면제 정책</span>
                 </div>
                 <div className="p-2.5 rounded-xl bg-slate-50 text-[11px] text-slate-800 leading-relaxed">
-                  <strong className="text-slate-900 block font-bold mb-0.5">Alex G.</strong>
+                  <strong className="text-slate-900 block font-bold mb-0.5">골드 서포터</strong>
                   "루나님 오늘 작업 보이스 너무 힐링됐어요! 항상 응원합니다."
                 </div>
                 <div className="p-2.5 rounded-xl bg-rose-50/60 text-[11px] text-slate-800 leading-relaxed border-l-2 border-[#E4092B]">
                   <strong className="text-[#E4092B] block font-bold mb-0.5">루나 (크리에이터)</strong>
-                  "고마워요 Alex님! 이번 주말 B컷 화보도 전용관에 업로드될 예정이에요."
+                  "고마워요 서포터님! 이번 주말 B컷 화보도 전용관에 업로드될 예정이에요."
                 </div>
               </div>
             </div>

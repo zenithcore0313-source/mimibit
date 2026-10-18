@@ -22,8 +22,8 @@ export const BIO_CREATORS = [
     coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=80',
     tags: ['#일러스트', '#코스어', '#서브컬처', '#굿즈제작'],
     followers: 24500,
-    supporters: 342,
-    totalCarrots: 8450,
+    supporters: 0,
+    totalCarrots: 0,
     sns: {
       instagram: 'https://instagram.com',
       twitter: 'https://twitter.com',
@@ -32,10 +32,10 @@ export const BIO_CREATORS = [
     },
     fundingGoal: {
       title: '2026 봄 코스프레 화보집 & 굿즈 제작 펀딩',
-      currentCarrots: 8450,
+      currentCarrots: 0,
       targetCarrots: 10000,
-      endDate: '2026. 10. 31',
-      dDay: 'D-16'
+      endDate: '2026. 12. 31',
+      dDay: 'D-74'
     },
     voiceReward: {
       title: '루나의 10월 감사 보이스 노트',
@@ -47,93 +47,114 @@ export const BIO_CREATORS = [
         id: 1,
         title: '가을 핑크 로리타 미공개 B컷 #01',
         url: 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=800&q=80',
-        date: '10월 12일',
+        date: '10월 18일',
         tierRequired: '다이아 래빗 이상'
       },
       {
         id: 2,
         title: '작업실 새벽 드로잉 비하인드 #02',
         url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80',
-        date: '10월 08일',
+        date: '10월 18일',
         tierRequired: '다이아 래빗 이상'
       }
     ]
   },
   {
-    id: 'chibi_fan',
-    handle: '@Chibi_Fan',
-    name: '꼬마치비 (Chibi)',
-    category: '인스타툰 & 일상 만화 작가',
-    bio: '평범한 직장인의 엉뚱한 일상을 4컷 인스타툰으로 그려요. 커피 한 잔 당근으로 작가의 생명을 연장해 주세요 ☕🥕',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=400&q=80',
-    coverImage: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1600&q=80',
-    tags: ['#인스타툰', '#직장인공감', '#일상툰', '#굿즈스티커'],
-    followers: 18200,
-    supporters: 218,
-    totalCarrots: 5400,
+    id: 'mochi_cos',
+    handle: '@Mochi_Cos',
+    name: '모치 (Mochi)',
+    category: '코스프레 & 화보 일상',
+    bio: '서브컬처 코스프레 의상 제작과 화보 촬영 일상을 전합니다. 항상 곁에서 응원해주시는 팬분들 사랑해요 💖',
+    avatar: 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=400&q=80',
+    coverImage: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=1600&q=80',
+    tags: ['#코스프레', '#의상제작', '#미공개화보'],
+    followers: 31200,
+    supporters: 0,
+    totalCarrots: 0,
     sns: {
       instagram: 'https://instagram.com',
       twitter: 'https://twitter.com'
     },
     fundingGoal: {
-      title: '치비 직장인 일상 단행본 출간 펀딩',
-      currentCarrots: 5400,
+      title: '겨울 시즌 한정 코스프레 사진집 제작',
+      currentCarrots: 0,
       targetCarrots: 8000,
-      endDate: '2026. 11. 15',
-      dDay: 'D-31'
+      endDate: '2026. 12. 15',
+      dDay: 'D-58'
     },
     voiceReward: {
-      title: '치비의 귀여운 응원 보이스',
-      duration: '0:15',
-      message: '오늘 하루도 정말 고생 많으셨어요! 치비 만화 보시고 힐링되는 하루 보내세요 💖'
+      title: '모치의 1:1 감사 음성 메시지',
+      duration: '0:12',
+      message: '소중한 후원 진심으로 감사드려요! 더 멋진 의상과 퀄리티로 보답할게요 🥰'
     },
     secretPhotos: [
       {
         id: 1,
-        title: '단행본 미공개 러프 스케치 #01',
-        url: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=800&q=80',
-        date: '10월 14일',
+        title: '촬영장 대기실 셀카 미공개 B컷',
+        url: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=800&q=80',
+        date: '10월 18일',
         tierRequired: '골드 래빗 이상'
       }
     ]
   },
   {
-    id: 'lofi_night',
-    handle: '@LoFi_Night',
-    name: '로파이 나이트 (LoFi Night)',
-    category: '새벽 감성 Lo-Fi & 서브컬처 비트메이커',
-    bio: '공부할 때, 코딩할 때, 새벽에 잠 안 올 때 듣는 비트를 만듭니다. 음악을 사랑하는 모든 분들을 환영해요 🎧🌃',
+    id: 'chibi_artist',
+    handle: '@Chibi_Artist',
+    name: '치비 스케치',
+    category: 'SD 캐릭터 & 인스타툰',
+    bio: '귀여운 SD 캐릭터 드로잉과 일상툰을 그립니다! 매주 월/목 새로운 만화가 연재돼요 🎨',
+    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80',
+    coverImage: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1600&q=80',
+    tags: ['#SD캐릭터', '#인스타툰', '#스티커굿즈'],
+    followers: 18400,
+    supporters: 0,
+    totalCarrots: 0,
+    sns: {
+      instagram: 'https://instagram.com'
+    },
+    fundingGoal: {
+      title: '치비 스티커팩 & 아크릴 키링 굿즈 펀딩',
+      currentCarrots: 0,
+      targetCarrots: 6000,
+      endDate: '2026. 11. 30',
+      dDay: 'D-43'
+    },
+    voiceReward: {
+      title: '치비의 귀여운 응원 보이스',
+      duration: '0:10',
+      message: '오늘 하루도 너무 수고 많으셨어요! 치비 그림 보고 행복한 밤 되세요 ✨'
+    },
+    secretPhotos: []
+  },
+  {
+    id: 'neon_vibe',
+    handle: '@Neon_Vibe',
+    name: '네온 바이브',
+    category: 'Lo-Fi 작곡 & 숏폼 일상',
+    bio: '새벽에 편안하게 들을 수 있는 감성 Lo-Fi 비트를 만듭니다. 음악을 사랑하는 모든 분들을 환영해요 🎧',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
     coverImage: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1600&q=80',
-    tags: ['#LoFi', '#비트메이커', '#수면음악', '#코딩음악'],
-    followers: 42100,
-    supporters: 615,
-    totalCarrots: 9800,
+    tags: ['#LoFi', '#비트메이커', '#새벽감성'],
+    followers: 12900,
+    supporters: 0,
+    totalCarrots: 0,
     sns: {
       youtube: 'https://youtube.com',
       spotify: 'https://spotify.com'
     },
     fundingGoal: {
-      title: '새벽 감성 2집 바이닐(LP) 프레스 펀딩',
-      currentCarrots: 9800,
-      targetCarrots: 15000,
-      endDate: '2026. 12. 01',
-      dDay: 'D-47'
+      title: '새벽 감성 2집 디지털 EP 앨범 펀딩',
+      currentCarrots: 0,
+      targetCarrots: 5000,
+      endDate: '2026. 11. 30',
+      dDay: 'D-43'
     },
     voiceReward: {
-      title: 'LP 제작 감사 음성 리워드',
+      title: '네온 바이브의 작업실 코멘터리',
       duration: '0:20',
-      message: '당신의 새벽에 제 음악이 닿을 수 있어 영광입니다. 진심으로 감사드립니다.'
+      message: '새로운 비트 작업을 시작했습니다. 후원자 여러분들께 가장 먼저 데모 트랙을 공유할게요!'
     },
-    secretPhotos: [
-      {
-        id: 1,
-        title: '2집 바이닐 앨범 아트워크 원본',
-        url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80',
-        date: '10월 10일',
-        tierRequired: '다이아 래빗 이상'
-      }
-    ]
+    secretPhotos: []
   }
 ];
 
@@ -157,6 +178,14 @@ export function CreatorBioPage({
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const [audioTimer, setAudioTimer] = useState(15);
   const [ttsPreview, setTtsPreview] = useState(true);
+  const [guestbookList, setGuestbookList] = useState(() => {
+    try {
+      const saved = localStorage.getItem('mimibit_guestbook');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      return [];
+    }
+  });
 
   // Sync with stored creators and backend API whenever initialCreatorId changes
   useEffect(() => {
@@ -193,14 +222,14 @@ export function CreatorBioPage({
     coverImage: creatorRaw.coverImage || 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=80',
     tags: Array.isArray(creatorRaw.tags) && creatorRaw.tags.length > 0 ? creatorRaw.tags : ['#창작자', '#후원', '#서브컬처'],
     followers: creatorRaw.followers || 0,
-    supporters: creatorRaw.supporters || 0,
-    totalCarrots: creatorRaw.totalCarrots || creatorRaw.fundingGoal?.currentCarrots || 8450,
+    supporters: creatorRaw.supporters ?? 0,
+    totalCarrots: creatorRaw.totalCarrots !== undefined ? creatorRaw.totalCarrots : (creatorRaw.fundingGoal?.currentCarrots ?? 0),
     sns: creatorRaw.sns || { instagram: 'https://instagram.com' },
     fundingGoal: {
       title: creatorRaw.fundingGoal?.title || '2026 봄 창작 프로젝트 펀딩',
-      currentCarrots: creatorRaw.fundingGoal?.currentCarrots || 0,
+      currentCarrots: creatorRaw.fundingGoal?.currentCarrots ?? 0,
       targetCarrots: creatorRaw.fundingGoal?.targetCarrots || 10000,
-      endDate: creatorRaw.fundingGoal?.endDate || '2026. 10. 31',
+      endDate: creatorRaw.fundingGoal?.endDate || '2026. 12. 31',
       dDay: creatorRaw.fundingGoal?.dDay || '진행중'
     },
     voiceReward: {
@@ -504,10 +533,10 @@ export function CreatorBioPage({
                 <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
                   <span className="block text-[11px] text-slate-400">누적 당근 후원</span>
                   <span className="text-xl font-heading font-black text-white font-num mt-1 block">
-                    {(creator.totalCarrots || 8450).toLocaleString()} 🥕
+                    {(creator.totalCarrots ?? 0).toLocaleString()} 🥕
                   </span>
                   <span className="text-[10px] text-slate-500 font-num">
-                    약 {((creator.totalCarrots || 8450) * 100).toLocaleString()}원
+                    약 {((creator.totalCarrots ?? 0) * 100).toLocaleString()}원
                   </span>
                 </div>
 
@@ -900,26 +929,29 @@ export function CreatorBioPage({
               </div>
 
               <div className="space-y-3">
-                {[
-                  { name: 'Alex G.', carrots: 1000, date: '10분 전', msg: '루나님 항상 건강 챙기시고 이번 봄 화보집 너무 기대돼요! 언제나 응원합니다.' },
-                  { name: 'MoonRabbit', carrots: 500, date: '45분 전', msg: '언제나 곁에서 조용히 묵묵히 응원하는 찐팬입니다. 작업 화이팅!' },
-                  { name: 'CherryPie', carrots: 300, date: '2시간 전', msg: '오늘 일러스트 드로잉 감성 진짜 최고였어요 🥕' }
-                ].map((g, idx) => (
-                  <div key={idx} className="p-4 sm:p-5 rounded-2xl bg-white/5 border border-white/5 space-y-2 hover:border-white/15 transition-colors">
-                    <div className="flex items-center justify-between text-xs sm:text-sm">
-                      <div className="flex items-center gap-2.5">
-                        <span className="font-bold text-white">{g.name}</span>
-                        <span className="text-[#FF4D6D] font-num font-bold text-xs bg-[#E4092B]/15 px-2.5 py-0.5 rounded-full border border-[#E4092B]/30">
-                          +{g.carrots} 🥕
-                        </span>
+                {guestbookList && guestbookList.length > 0 ? (
+                  guestbookList.map((g, idx) => (
+                    <div key={g.id || idx} className="p-4 sm:p-5 rounded-2xl bg-white/5 border border-white/5 space-y-2 hover:border-white/15 transition-colors">
+                      <div className="flex items-center justify-between text-xs sm:text-sm">
+                        <div className="flex items-center gap-2.5">
+                          <span className="font-bold text-white">{g.nickname || g.name || '익명의 서포터'}</span>
+                          <span className="text-[#FF4D6D] font-num font-bold text-xs bg-[#E4092B]/15 px-2.5 py-0.5 rounded-full border border-[#E4092B]/30">
+                            +{g.carrots} 🥕
+                          </span>
+                        </div>
+                        <span className="text-[11px] text-slate-500">{g.createdAt || g.date || '방금 전'}</span>
                       </div>
-                      <span className="text-[11px] text-slate-500">{g.date}</span>
+                      <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
+                        {g.content || g.msg}
+                      </p>
                     </div>
-                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
-                      {g.msg}
-                    </p>
+                  ))
+                ) : (
+                  <div className="p-6 text-center rounded-2xl bg-white/5 border border-white/5 text-slate-400 space-y-1.5">
+                    <p className="text-xs sm:text-sm font-bold text-white/90">아직 등록된 실시간 응원 메시지가 없습니다 ✨</p>
+                    <p className="text-xs text-slate-400">첫 번째로 당근을 보내고 {creator.name}님에게 따뜻한 응원을 전해보세요!</p>
                   </div>
-                ))}
+                )}
               </div>
             </div>
 

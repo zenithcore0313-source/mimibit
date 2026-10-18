@@ -161,13 +161,21 @@ export function App() {
   // User state
   const [userState, setUserState] = useState(() => {
     const saved = localStorage.getItem('mimibit_user');
-    return saved ? JSON.parse(saved) : {
-      nickname: 'Alex G.',
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.nickname && parsed.nickname !== 'Alex G.') {
+          return parsed;
+        }
+      } catch (e) {}
+    }
+    return {
+      nickname: '익명의 서포터',
       tierId: 'white',
-      tierLevel: 1,
-      tierName: '화이트 래빗',
-      tierIcon: '🤍',
-      totalDonatedCarrots: 10,
+      tierLevel: 0,
+      tierName: '새싹 서포터',
+      tierIcon: '🌱',
+      totalDonatedCarrots: 0,
       tickets: 0
     };
   });
@@ -783,6 +791,7 @@ export function App() {
         onClose={() => setIsDonateOpen(false)}
         creator={activeCreatorProfile}
         presetCarrots={presetCarrots}
+        currentUser={currentUser}
         onCompleteDonation={handleCompleteDonation}
       />
 

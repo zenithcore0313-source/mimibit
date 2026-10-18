@@ -121,7 +121,7 @@ export function KakaoSecretMessengerModal({
 
     const newMsg = {
       id: newMsgId,
-      sender: `${currentUser?.name || 'Alex G.'}`,
+      sender: `${currentUser?.name || currentUser?.nickname || '서포터'}`,
       senderTier: 'gold',
       isCreator: false,
       text: userText,
