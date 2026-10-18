@@ -262,26 +262,31 @@ export function ToonNavbar({
                       </div>
                     )}
 
-                    {/* Creator Specific Options */}
-                    {currentUser.role === 'creator' ? (
+                    {/* Admin & Creator: Studio Direct Access */}
+                    {(currentUser.role === 'creator' || currentUser.role === 'admin') && (
                       <div className="py-1">
                         <button
                           onClick={() => { setUserDropdownOpen(false); onOpenStudio(); }}
                           className="w-full px-4 py-2 text-left hover:bg-rose-50 font-black text-[#E4092B] flex items-center justify-between cursor-pointer"
                         >
-                          <span>내 크리에이터 스튜디오 열기</span>
+                          <span>{currentUser.role === 'admin' ? '🎨 크리에이터 스튜디오 (root 마스터)' : '내 크리에이터 스튜디오 열기'}</span>
                           <ArrowRight className="w-3.5 h-3.5" />
                         </button>
 
-                        <button
-                          onClick={handleCopyCreatorLink}
-                          className="w-full px-4 py-2 text-left hover:bg-slate-50 font-bold text-[#140E10] flex items-center justify-between cursor-pointer"
-                        >
-                          <span>내 링크 복사 ({currentUser.handle})</span>
-                          {copiedLink ? <Check className="w-3.5 h-3.5 text-[#E4092B]" /> : <Copy className="w-3.5 h-3.5 text-[#7A696E]" />}
-                        </button>
+                        {currentUser.handle && (
+                          <button
+                            onClick={handleCopyCreatorLink}
+                            className="w-full px-4 py-2 text-left hover:bg-slate-50 font-bold text-[#140E10] flex items-center justify-between cursor-pointer"
+                          >
+                            <span>내 링크 복사 ({currentUser.handle})</span>
+                            {copiedLink ? <Check className="w-3.5 h-3.5 text-[#E4092B]" /> : <Copy className="w-3.5 h-3.5 text-[#7A696E]" />}
+                          </button>
+                        )}
                       </div>
-                    ) : (
+                    )}
+
+                    {/* Supporter & Admin Common Options */}
+                    {currentUser.role !== 'creator' && (
                       /* Supporter Specific Options */
                       <div className="py-1">
                         <button
@@ -523,10 +528,29 @@ export function ToonNavbar({
                   <span>👑 통합 관리자 콘솔 열기</span>
                 </button>
                 <button
+                  onClick={() => { setMobileMenuOpen(false); onOpenStudio(); }}
+                  className="w-full py-2.5 rounded-xl bg-slate-900 text-white font-black text-center text-xs flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+                >
+                  <span>🎨 크리에이터 스튜디오 (root 마스터)</span>
+                </button>
+                <button
+                  onClick={() => { setMobileMenuOpen(false); onOpenMessenger(); }}
+                  className="w-full py-2.5 rounded-xl bg-rose-50 text-[#E4092B] border border-slate-200/80 font-black text-center text-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <MessageCircle className="w-4 h-4 text-rose-500" />
+                  <span>💬 1:1 시크릿톡 VIP 라운지</span>
+                </button>
+                <button
                   onClick={() => { setMobileMenuOpen(false); onOpenCharge(); }}
-                  className="w-full py-2.5 rounded-xl bg-rose-50 text-[#E4092B] border border-slate-200/80 font-black text-center text-xs flex items-center justify-center gap-1.5"
+                  className="w-full py-2.5 rounded-xl bg-rose-50 text-[#E4092B] border border-slate-200/80 font-black text-center text-xs flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <span>🥕 당근 충전소 (+보너스)</span>
+                </button>
+                <button
+                  onClick={() => { setMobileMenuOpen(false); onOpenMyPage(); }}
+                  className="w-full py-2.5 rounded-xl bg-[#E4092B] text-white font-black text-center text-xs cursor-pointer"
+                >
+                  <span>내 팬덤 지갑 & 마이페이지</span>
                 </button>
               </>
             ) : currentUser.role === 'creator' ? (

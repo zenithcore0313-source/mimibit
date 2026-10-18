@@ -599,22 +599,48 @@ export function CreatorBioPage({
               </div>
 
               <div className="space-y-3">
-                {creator.secretPhotos.map(photo => (
-                  <div key={photo.id} className="relative rounded-2xl overflow-hidden border border-white/10 group">
-                    <img 
-                      src={photo.url} 
-                      alt={photo.title}
-                      className="w-full h-32 object-cover filter blur-md group-hover:scale-105 transition-all duration-700"
-                    />
-                    <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center p-3 text-center space-y-1.5">
-                      <Lock className="w-5 h-5 text-white/80" />
-                      <h5 className="font-heading font-bold text-xs text-white">{photo.title}</h5>
-                      <span className="text-[10px] bg-white/10 text-amber-300 px-2 py-0.5 rounded-full font-bold border border-white/10">
-                        {photo.tierRequired}
-                      </span>
+                {creator.secretPhotos.map(photo => {
+                  const isUnlockedByRoot = currentUser?.role === 'admin';
+                  return (
+                    <div 
+                      key={photo.id} 
+                      onClick={() => isUnlockedByRoot && window.open(photo.url, '_blank')}
+                      className={`relative rounded-2xl overflow-hidden border border-white/10 group ${
+                        isUnlockedByRoot ? 'cursor-pointer hover:border-amber-400/50' : ''
+                      }`}
+                    >
+                      <img 
+                        src={photo.url} 
+                        alt={photo.title}
+                        className={`w-full h-32 object-cover group-hover:scale-105 transition-all duration-700 ${
+                          isUnlockedByRoot ? 'filter-none' : 'filter blur-md'
+                        }`}
+                      />
+                      {isUnlockedByRoot ? (
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 flex flex-col justify-between p-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[10px] bg-amber-500 text-slate-950 font-black px-2 py-0.5 rounded-full shadow-md flex items-center gap-1">
+                              <span>👑 root 마스터 열람</span>
+                            </span>
+                            <span className="text-[10px] text-white/80 bg-black/50 backdrop-blur-md px-2 py-0.5 rounded-full">클릭 시 원본 보기</span>
+                          </div>
+                          <div>
+                            <h5 className="font-heading font-black text-xs text-white">{photo.title}</h5>
+                            <span className="text-[10px] text-amber-300 font-bold">{photo.tierRequired}</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center p-3 text-center space-y-1.5">
+                          <Lock className="w-5 h-5 text-white/80" />
+                          <h5 className="font-heading font-bold text-xs text-white">{photo.title}</h5>
+                          <span className="text-[10px] bg-white/10 text-amber-300 px-2 py-0.5 rounded-full font-bold border border-white/10">
+                            {photo.tierRequired}
+                          </span>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 

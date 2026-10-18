@@ -37,13 +37,17 @@ export function MyPageModal({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-[#FEF3C7] text-[#B45309]">
-                  {user.tier ? `${user.tier.icon} ${user.tier.name}` : '서포터'}
+                <span className={`text-xs font-black px-2.5 py-0.5 rounded-full ${
+                  user.role === 'admin'
+                    ? 'bg-amber-400 text-slate-950 font-black shadow-xs'
+                    : 'bg-[#FEF3C7] text-[#B45309]'
+                }`}>
+                  {user.role === 'admin' ? '👑 SYSTEM ROOT ADMIN' : user.tier ? `${user.tier.icon} ${user.tier.name}` : '서포터'}
                 </span>
                 <span className="text-[10px] text-white/50">{user.email}</span>
               </div>
               <h2 className="text-xl sm:text-2xl font-heading font-black text-white mt-1">
-                {user.name} 님의 팬덤 지갑
+                {user.name} 님의 {user.role === 'admin' ? '루트 마스터 지갑' : '팬덤 지갑'}
               </h2>
             </div>
           </div>
@@ -78,20 +82,26 @@ export function MyPageModal({
           <div className="p-3.5 rounded-2xl bg-white border border-[#FCD5DC] shadow-2xs">
             <span className="text-[11px] font-medium text-[#7A696E] block">1:1 시크릿 티켓</span>
             <div className="text-lg sm:text-xl font-heading font-black text-[#140E10] font-num mt-0.5">
-              {user.tickets || 0}장 🎫
+              {user.role === 'admin' ? '무제한 🎫' : `${user.tickets || 0}장 🎫`}
             </div>
-            <span className="text-[10px] text-[#E4092B] font-bold">비동기 소통 해금</span>
+            <span className="text-[10px] text-[#E4092B] font-bold">
+              {user.role === 'admin' ? '👑 전 채널 마스터 해금' : '비동기 소통 해금'}
+            </span>
           </div>
 
           <div className="p-3.5 rounded-2xl bg-white border border-[#FCD5DC] shadow-2xs col-span-2 sm:col-span-1">
-            <span className="text-[11px] font-medium text-[#7A696E] block">다음 티어 승급</span>
+            <span className="text-[11px] font-medium text-[#7A696E] block">
+              {user.role === 'admin' ? '권한 상태' : '다음 티어 승급'}
+            </span>
             <div className="text-xs font-black text-[#0284C7] mt-1">
-              💎 다이아 래빗
+              {user.role === 'admin' ? '👑 ROOT MASTER (전체 해금)' : '💎 다이아 래빗'}
             </div>
             <div className="w-full bg-slate-100 h-1.5 rounded-full mt-1.5 overflow-hidden">
-              <div className="bg-[#E4092B] h-full w-[65%] rounded-full"></div>
+              <div className={`h-full rounded-full ${user.role === 'admin' ? 'w-full bg-amber-500' : 'w-[65%] bg-[#E4092B]'}`}></div>
             </div>
-            <span className="text-[9px] text-[#7A696E] font-num mt-1 block">1,500 🥕 추가 후원 시 승급</span>
+            <span className="text-[9px] text-[#7A696E] font-num mt-1 block">
+              {user.role === 'admin' ? '모든 크리에이터 & 기능 접근 가능' : '1,500 🥕 추가 후원 시 승급'}
+            </span>
           </div>
         </div>
 

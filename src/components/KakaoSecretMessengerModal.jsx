@@ -29,6 +29,8 @@ export function KakaoSecretMessengerModal({
   const isDark = themeProp ? themeProp === 'dark' : (typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') === 'dark');
 
   const activeRoom = chatRooms.find(r => r.id === selectedRoomId) || chatRooms[0];
+  const isRoot = currentUser?.role === 'admin';
+  const isRoomUnlocked = isRoot || Boolean(activeRoom?.isUnlocked);
 
   // Auto-scroll chat to bottom
   useEffect(() => {
@@ -92,14 +94,16 @@ export function KakaoSecretMessengerModal({
     e?.preventDefault();
     if (!inputText.trim()) return;
 
-    if (!activeRoom.isUnlocked) {
-      alert(`${activeRoom.creatorName}님과의 1:1 대화는 골드 래빗(1,000 🥕) 이상 후원 시 해금됩니다.`);
-      return;
-    }
+    if (!isRoot) {
+      if (!activeRoom.isUnlocked) {
+        alert(`${activeRoom.creatorName}님과의 1:1 대화는 골드 래빗(1,000 🥕) 이상 후원 시 해금됩니다.`);
+        return;
+      }
 
-    if (activeRoom.tickets <= 0) {
-      alert('보유한 1:1 소통 티켓이 부족합니다! 당근 충전 또는 추가 후원을 통해 티켓을 획득해주세요.');
-      return;
+      if (activeRoom.tickets <= 0) {
+        alert('보유한 1:1 소통 티켓이 부족합니다! 당근 충전 또는 추가 후원을 통해 티켓을 획득해주세요.');
+        return;
+      }
     }
 
     // AI Safety Filter Simulation
@@ -320,8 +324,8 @@ export function KakaoSecretMessengerModal({
                     </p>
 
                     <div className="flex items-center justify-between mt-1 text-[10px]">
-                      <span className={room.isUnlocked ? (isDark ? 'text-slate-400 font-medium' : 'text-slate-500 font-medium') : 'text-slate-400'}>
-                        {room.isUnlocked ? `티켓 ${room.tickets}장 보유` : `${room.requiredCarrots} 당근 후원 시 해금`}
+                      <span className={room.isUnlocked || isRoot ? (isDark ? 'text-amber-400 font-bold' : 'text-amber-600 font-bold') : 'text-slate-400'}>
+                        {isRoot ? '👑 root 마스터 무제한 소통' : room.isUnlocked ? `티켓 ${room.tickets}장 보유` : `${room.requiredCarrots} 당근 후원 시 해금`}
                       </span>
                       {room.unreadCount > 0 && (
                         <span className="w-4 h-4 rounded-full bg-[#E4092B] text-white text-[9px] font-bold flex items-center justify-center">
@@ -401,10 +405,10 @@ export function KakaoSecretMessengerModal({
                   </span>
                 </div>
                 <div className="text-[10px] text-slate-400 flex items-center gap-1.5 mt-0.5">
-                  <span>{activeRoom.tierName} 등급 서포터</span>
+                  <span>{isRoot ? '👑 최고 관리자 (ROOT)' : `${activeRoom.tierName} 등급 서포터`}</span>
                   <span>·</span>
                   <span className={`font-semibold ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
-                    잔여 티켓 {activeRoom.tickets}장
+                    잔여 티켓: {isRoot ? '무제한 🎫' : `${activeRoom.tickets}장`}
                   </span>
                 </div>
               </div>
@@ -595,7 +599,7 @@ export function KakaoSecretMessengerModal({
           )}
 
           {/* Quick Preset Prompts */}
-          {activeRoom.isUnlocked && (
+          {isRoomUnlocked && (
             <div className={`px-4 py-2.5 border-t flex items-center gap-2 overflow-x-auto custom-scrollbar text-xs ${
               isDark ? 'bg-[#090D14] border-white/10' : 'bg-slate-50/80 border-slate-100'
             }`}>
@@ -645,10 +649,12 @@ export function KakaoSecretMessengerModal({
                 <input
                   type="text"
                   value={inputText}
-                  disabled={!activeRoom.isUnlocked}
+                  disabled={!isRoomUnlocked}
                   onChange={(e) => setInputText(e.target.value)}
                   placeholder={
-                    activeRoom.isUnlocked
+                    isRoot
+                      ? `${activeRoom.creatorName}님에게 root 관리자 메시지 전송 (무제한)`
+                      : activeRoom.isUnlocked
                       ? `${activeRoom.creatorName}님에게 비밀 메시지 보내기 (티켓 1장 차감)`
                       : '골드 래빗 등급 달성 후 이용 가능합니다.'
                   }
@@ -662,7 +668,7 @@ export function KakaoSecretMessengerModal({
 
               <button
                 type="submit"
-                disabled={!activeRoom.isUnlocked || !inputText.trim()}
+                disabled={!isRoomUnlocked || !inputText.trim()}
                 className="w-11 h-11 rounded-2xl bg-[#E4092B] hover:bg-[#CC0022] text-white flex items-center justify-center transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-sm shadow-[#E4092B]/20 cursor-pointer active:scale-95 shrink-0"
               >
                 <Send className="w-4 h-4 text-white" />
@@ -670,9 +676,9 @@ export function KakaoSecretMessengerModal({
             </form>
 
             <div className="flex items-center justify-between text-[10px] text-slate-400 mt-2 px-1">
-              <span>질문 발송 시 소통 티켓 1장이 차감됩니다.</span>
+              <span>{isRoot ? '👑 root 슈퍼 관리자 모드: 티켓 차감 없이 즉시 발송됩니다.' : '질문 발송 시 소통 티켓 1장이 차감됩니다.'}</span>
               <span className={`font-semibold ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
-                잔여 티켓: {activeRoom.tickets}장
+                잔여 티켓: {isRoot ? '무제한 🎫' : `${activeRoom.tickets}장`}
               </span>
             </div>
           </div>
