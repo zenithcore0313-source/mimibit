@@ -232,11 +232,13 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }) {
             )}
 
             <div>
-              <label className="font-bold text-[#140E10] block mb-1">이메일 주소 *</label>
+              <label className="font-bold text-[#140E10] block mb-1">
+                {tab === 'login' ? '이메일 또는 아이디 *' : '이메일 주소 *'}
+              </label>
               <input
-                type="email"
+                type={tab === 'login' ? 'text' : 'email'}
                 required
-                placeholder="user@example.com"
+                placeholder={tab === 'login' ? '이메일 또는 아이디 (예: Qwer1821)' : 'user@example.com'}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-3.5 py-2.5 rounded-xl bg-[#FFF9FA] border border-[#FCD5DC] font-medium text-[#140E10] focus:outline-none focus:border-[#E4092B]"

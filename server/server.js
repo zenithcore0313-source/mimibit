@@ -321,14 +321,19 @@ app.post('/api/auth/login', (req, res) => {
     });
   }
 
-  const cleanEmail = email.trim().toLowerCase();
+  const cleanInput = email.trim().toLowerCase();
   const db = readDb();
-  const user = (db.users || []).find(u => u.email === cleanEmail);
+  const user = (db.users || []).find(u => 
+    (u.email || '').toLowerCase() === cleanInput ||
+    (u.username || '').toLowerCase() === cleanInput ||
+    (u.handle || '').replace('@', '').toLowerCase() === cleanInput ||
+    (u.id || '').toLowerCase() === cleanInput
+  );
 
   if (!user) {
     return res.status(401).json({ 
       success: false, 
-      message: '등록되지 않은 이메일이거나 비밀번호가 일치하지 않습니다.' 
+      message: '등록되지 않은 계정이거나 비밀번호가 일치하지 않습니다.' 
     });
   }
 

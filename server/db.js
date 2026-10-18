@@ -191,8 +191,24 @@ const INITIAL_DB = {
       salt: "53100712c9388c2aaeb09d74426ed1ec",
       avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80",
       carrotsBalance: 999999,
-      tickets: 999,
+      tickets: 9999,
+      isLoggedIn: true,
       createdAt: "2026-10-17T16:28:59.697Z"
+    },
+    {
+      id: "usr_admin_musengche",
+      email: "Qwer1821@mimibit.me",
+      username: "Qwer1821",
+      name: "뮤생체",
+      handle: "Qwer1821",
+      role: "admin",
+      passwordHash: "de32fe32f4ff24e3d6488effae7e8b87afca0aefc5fa9480f02205b9c33e4876",
+      salt: "e9a1263742b8b3c64c6089b339ab570d",
+      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80",
+      carrotsBalance: 999999,
+      tickets: 9999,
+      isLoggedIn: true,
+      createdAt: "2026-10-19T00:00:00.000Z"
     }
   ]
 };
