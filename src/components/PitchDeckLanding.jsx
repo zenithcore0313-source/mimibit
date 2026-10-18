@@ -41,7 +41,7 @@ export function PitchDeckLanding({ onGoToProfile }) {
             onClick={onGoToProfile}
             className="btn-pop-primary px-7 py-3.5 text-sm flex items-center gap-2"
           >
-            <span>데모 크리에이터 프로필 체험하기</span>
+            <span>크리에이터 프로필 둘러보기</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
@@ -219,9 +219,9 @@ export function PitchDeckLanding({ onGoToProfile }) {
 
         <button
           onClick={onGoToProfile}
-          className="mt-6 px-7 py-3 rounded-2xl bg-white text-[#E4092B] font-black text-xs hover:bg-[#FFF0F2] transition-all shadow-md"
+          className="mt-6 px-7 py-3 rounded-2xl bg-white text-[#E4092B] font-black text-xs hover:bg-[#FFF0F2] transition-all shadow-md cursor-pointer"
         >
-          루나의 프로필에서 직접 후원 체험하기
+          크리에이터 바이오링크 바로가기
         </button>
       </div>
     </div>

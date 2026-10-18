@@ -709,7 +709,7 @@ export function App() {
                 <span>닫기</span>
               </button>
               <span className="text-xs font-bold text-white/70 hidden sm:inline">
-                | 인스타그램/틱톡 프로필 링크 실물 화면
+                | 크리에이터 바이오링크 공식 프로필
               </span>
             </div>
 

@@ -621,49 +621,47 @@ export function MyPageModal({
           {/* ======================================================== */}
           {activeTab === 'sponsorships' && (
             <div className="space-y-3">
-              <div className="p-4 rounded-2xl bg-white border border-[#FCD5DC] flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <img
-                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
-                    alt="Luna Rabbit"
-                    className="w-12 h-12 rounded-xl object-cover"
-                  />
-                  <div>
-                    <h4 className="font-heading font-black text-sm text-[#140E10]">
-                      Luna Rabbit (루나)
-                    </h4>
-                    <span className="text-[11px] text-[#7A696E]">누적 3,400개 후원 · 1위 전광판 등록 중</span>
+              {user.sponsorships && user.sponsorships.length > 0 ? (
+                user.sponsorships.map((s, idx) => (
+                  <div key={idx} className="p-4 rounded-2xl bg-white border border-[#FCD5DC] flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={s.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"}
+                        alt={s.creatorName}
+                        className="w-12 h-12 rounded-xl object-cover"
+                      />
+                      <div>
+                        <h4 className="font-heading font-black text-sm text-[#140E10]">
+                          {s.creatorName}
+                        </h4>
+                        <span className="text-[11px] text-[#7A696E]">누적 {s.carrots?.toLocaleString() || 0}개 후원</span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => { onClose(); onOpenDonate && onOpenDonate(); }}
+                      className="px-3 py-1.5 rounded-xl bg-[#E4092B] text-white text-xs font-black shadow-xs cursor-pointer"
+                    >
+                      응원 보내기
+                    </button>
                   </div>
-                </div>
-                <button
-                  onClick={() => { onClose(); onOpenDonate && onOpenDonate(); }}
-                  className="px-3 py-1.5 rounded-xl bg-[#E4092B] text-white text-xs font-black shadow-xs cursor-pointer"
-                >
-                  응원 보내기
-                </button>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-white border border-[#FCD5DC] flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <img
-                    src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80"
-                    alt="치비 스케치"
-                    className="w-12 h-12 rounded-xl object-cover"
-                  />
-                  <div>
-                    <h4 className="font-heading font-black text-sm text-[#140E10]">
-                      치비 스케치
-                    </h4>
-                    <span className="text-[11px] text-[#7A696E]">누적 100개 후원 · 실버 서포터</span>
+                ))
+              ) : (
+                <div className="py-12 px-6 rounded-2xl bg-white border border-[#FCD5DC]/60 text-center space-y-3">
+                  <div className="w-12 h-12 mx-auto rounded-full bg-rose-50 flex items-center justify-center text-[#E4092B]">
+                    <Heart className="w-6 h-6 text-[#E4092B]" />
                   </div>
+                  <div>
+                    <h4 className="font-heading font-bold text-sm text-slate-800">아직 후원한 창작자가 없습니다</h4>
+                    <p className="text-xs text-slate-500 mt-1">좋아하는 크리에이터에게 따뜻한 당근을 선물해보세요!</p>
+                  </div>
+                  <button
+                    onClick={() => { onClose(); }}
+                    className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bold transition-all cursor-pointer inline-flex items-center gap-1.5"
+                  >
+                    <span>인기 크리에이터 둘러보기</span>
+                  </button>
                 </div>
-                <button
-                  onClick={() => { onClose(); onOpenDonate && onOpenDonate(); }}
-                  className="px-3 py-1.5 rounded-xl bg-[#FFF0F2] text-[#E4092B] border border-[#FCD5DC] text-xs font-black cursor-pointer"
-                >
-                  응원 보내기
-                </button>
-              </div>
+              )}
             </div>
           )}
 
@@ -672,7 +670,7 @@ export function MyPageModal({
           {/* ======================================================== */}
           {activeTab === 'tickets' && (
             <div className="space-y-3">
-              {transactions && transactions.length > 0 && (
+              {transactions && transactions.length > 0 ? (
                 <div className="space-y-2 mb-4">
                   <span className="text-[11px] font-bold text-[#E4092B] block">최근 전자 결제 영수증</span>
                   {transactions.map((tx) => (
@@ -697,24 +695,40 @@ export function MyPageModal({
                     </div>
                   ))}
                 </div>
-              )}
+              ) : null}
 
-              <span className="text-[11px] font-bold text-[#140E10] block">창작자 후원 소장 티켓</span>
-              <div className="bg-[#FFFDFD] rounded-2xl border-2 border-dashed border-[#F89CAE] p-4 relative overflow-hidden">
-                <div className="flex justify-between items-center text-[#7A696E] border-b border-[#FCD5DC] pb-2 mb-2 font-mono text-[10px]">
-                  <span className="font-black text-[#E4092B]">★ MIMIBIT OFFICIAL RECEIPT #1024 ★</span>
-                  <span className="font-num">2026.10.14</span>
+              {user.receiptTickets && user.receiptTickets.length > 0 ? (
+                <div className="space-y-3">
+                  <span className="text-[11px] font-bold text-[#140E10] block">창작자 후원 소장 티켓</span>
+                  {user.receiptTickets.map((t, idx) => (
+                    <div key={idx} className="bg-[#FFFDFD] rounded-2xl border-2 border-dashed border-[#F89CAE] p-4 relative overflow-hidden">
+                      <div className="flex justify-between items-center text-[#7A696E] border-b border-[#FCD5DC] pb-2 mb-2 font-mono text-[10px]">
+                        <span className="font-black text-[#E4092B]">★ MIMIBIT OFFICIAL RECEIPT #{t.id} ★</span>
+                        <span className="font-num">{t.date}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <div className="font-heading font-black text-sm text-[#140E10]">{t.creatorName} 후원 티켓</div>
+                          <div className="text-[#E4092B] font-black mt-0.5">{t.tierName} ({t.carrots?.toLocaleString()} 당근)</div>
+                        </div>
+                        <div className="border border-[#E4092B] text-[#E4092B] text-[9px] font-black px-2 py-0.5 rounded-md -rotate-6">
+                          VERIFIED 🥕
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <div className="flex justify-between items-center">
+              ) : (!transactions || transactions.length === 0) ? (
+                <div className="py-12 px-6 rounded-2xl bg-white border border-[#FCD5DC]/60 text-center space-y-3">
+                  <div className="w-12 h-12 mx-auto rounded-full bg-rose-50 flex items-center justify-center text-[#E4092B]">
+                    <Ticket className="w-6 h-6 text-[#E4092B]" />
+                  </div>
                   <div>
-                    <div className="font-heading font-black text-sm text-[#140E10]">Luna Rabbit (루나) 후원 티켓</div>
-                    <div className="text-[#E4092B] font-black mt-0.5">골드 래빗 (🥇 1,000 당근 / 100,000원)</div>
-                  </div>
-                  <div className="border border-[#E4092B] text-[#E4092B] text-[9px] font-black px-2 py-0.5 rounded-md -rotate-6">
-                    VERIFIED 🥕
+                    <h4 className="font-heading font-bold text-sm text-slate-800">소장한 영수증 티켓이 없습니다</h4>
+                    <p className="text-xs text-slate-500 mt-1">창작자에게 특별 후원을 진행하면 공식 전자 영수증 티켓이 영구 보관됩니다.</p>
                   </div>
                 </div>
-              </div>
+              ) : null}
             </div>
           )}
 
@@ -738,31 +752,27 @@ export function MyPageModal({
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] bg-rose-500/20 text-rose-300 border border-rose-500/30 px-2.5 py-1 rounded-full font-bold">
-                    보유 티켓 {user.tickets || 5}장
+                    보유 티켓 {user.tickets || 0}장
                   </span>
                   <ChevronRight className="w-4 h-4 text-slate-400" />
                 </div>
               </button>
 
-              <div className="p-4 rounded-2xl bg-[#FFF5F6] border border-[#FCD5DC] space-y-2">
-                <div className="flex justify-between items-center text-[11px]">
-                  <strong className="text-[#E4092B]">To. Luna Rabbit</strong>
-                  <span className="text-[#7A696E]">2일 전</span>
+              {user.recentMessages && user.recentMessages.length > 0 ? (
+                user.recentMessages.map((msg, idx) => (
+                  <div key={idx} className="p-4 rounded-2xl bg-[#FFF5F6] border border-[#FCD5DC] space-y-2">
+                    <div className="flex justify-between items-center text-[11px]">
+                      <strong className="text-[#E4092B]">To. {msg.to}</strong>
+                      <span className="text-[#7A696E]">{msg.date}</span>
+                    </div>
+                    <p className="text-[#140E10]">"{msg.content}"</p>
+                  </div>
+                ))
+              ) : (
+                <div className="py-10 px-6 rounded-2xl bg-white border border-[#FCD5DC]/60 text-center space-y-2">
+                  <p className="text-xs text-slate-500">진행 중인 1:1 시크릿 대화가 없습니다.</p>
                 </div>
-                <p className="text-[#140E10]">"루나님 이번 일러스트북 인쇄 잘되길 바랄게요! 화이팅 🎨"</p>
-                <div className="pt-2 border-t border-[#FCD5DC] flex items-center justify-between">
-                  <span className="text-[10px] text-emerald-700 font-bold flex items-center gap-1">
-                    ✓ 창작자 확인 완료
-                  </span>
-                  <button
-                    onClick={() => setIsPlayingVoice(!isPlayingVoice)}
-                    className="px-3 py-1 rounded-xl bg-[#E4092B] text-white text-[10px] font-black flex items-center gap-1 cursor-pointer"
-                  >
-                    {isPlayingVoice ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
-                    <span>루나의 감사 보이스 메모 (0:15)</span>
-                  </button>
-                </div>
-              </div>
+              )}
             </div>
           )}
 

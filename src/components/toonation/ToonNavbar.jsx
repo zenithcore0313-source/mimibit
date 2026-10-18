@@ -341,15 +341,6 @@ export function ToonNavbar({
                         <Wallet className="w-3.5 h-3.5 text-[#7A696E]" />
                       </button>
 
-                      {currentUser.role !== 'creator' && (
-                        <button
-                          onClick={() => { setUserDropdownOpen(false); onOpenCreatorDemo(); }}
-                          className="w-full px-4 py-2 text-left hover:bg-slate-50 font-bold text-[#140E10] flex items-center justify-between cursor-pointer"
-                        >
-                          <span>대표 루나 프로필 후원하기</span>
-                          <ArrowRight className="w-3.5 h-3.5 text-[#7A696E]" />
-                        </button>
-                      )}
                     </div>
 
                     {/* Logout */}
@@ -410,17 +401,6 @@ export function ToonNavbar({
               <Moon className="w-4 h-4 text-slate-700" />
             )}
           </button>
-
-          {/* Donator Demo Quick Button (Hidden on home to keep Socar-like focus) */}
-          {!isHome && (
-            <button
-              onClick={() => onOpenCreatorDemo()}
-              className="px-3.5 py-2.5 rounded-full bg-slate-900 hover:bg-black text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 active:scale-95 cursor-pointer"
-            >
-              <User className="w-3.5 h-3.5 text-slate-300" />
-              <span>데모 체험</span>
-            </button>
-          )}
         </div>
 
         {/* Mobile Header Buttons (Right) */}
@@ -508,7 +488,7 @@ export function ToonNavbar({
             onClick={() => handleNavClick('bio')}
             className={`block w-full text-left py-2 hover:text-[#E4092B] font-bold text-[#E4092B] ${currentPage === 'bio' ? 'text-[#E4092B]' : ''}`}
           >
-            크리에이터 바이오링크 실물 홈 (LIVE)
+            크리에이터 바이오링크 (LIVE)
           </button>
           <button 
             onClick={() => handleNavClick('features')}
