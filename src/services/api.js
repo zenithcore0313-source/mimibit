@@ -373,6 +373,7 @@ export async function signupUser(payload) {
       localStorage.setItem('mimibit_auth_token', data.token);
     }
     if (data.user) {
+      data.user = { ...data.user, isLoggedIn: true };
       localStorage.setItem('mimibit_auth_user', JSON.stringify(data.user));
     }
     return data;
@@ -385,6 +386,7 @@ export async function signupUser(payload) {
       name: payload.name,
       handle: `@${(payload.handle || 'user').replace(/[@/]/g, '')}`,
       role: payload.role || 'supporter',
+      isLoggedIn: true,
       avatar: payload.avatar || (payload.role === 'creator'
         ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80'
         : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80'),
@@ -414,6 +416,7 @@ export async function loginUser(payload) {
       localStorage.setItem('mimibit_auth_token', data.token);
     }
     if (data.user) {
+      data.user = { ...data.user, isLoggedIn: true };
       localStorage.setItem('mimibit_auth_user', JSON.stringify(data.user));
     }
     return data;
@@ -433,6 +436,7 @@ export async function loginWithSocial(socialPayload) {
     });
     const data = await res.json();
     if (res.ok && data.success && data.user) {
+      data.user = { ...data.user, isLoggedIn: true };
       if (data.token) {
         localStorage.setItem('mimibit_auth_token', data.token);
       }

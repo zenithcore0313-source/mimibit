@@ -104,7 +104,7 @@ function getUserIdFromToken(token) {
 function sanitizeUser(user) {
   if (!user) return null;
   const { passwordHash, salt, ...safeUser } = user;
-  return safeUser;
+  return { ...safeUser, isLoggedIn: true };
 }
 
 // =====================================================================

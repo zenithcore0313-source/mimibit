@@ -64,6 +64,7 @@ export function ToonNavbar({
 
   const isHome = currentPage === 'home';
   const isTransparent = isHome && !isScrolled;
+  const isLoggedIn = Boolean(currentUser && (currentUser.isLoggedIn !== false) && (currentUser.id || currentUser.email || currentUser.name));
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-[#06080D]/85 backdrop-blur-xl border-b border-white/10 text-white shadow-2xl">
@@ -162,7 +163,7 @@ export function ToonNavbar({
         <div className="hidden sm:flex items-center gap-3">
 
           {/* CASE 1: LOGGED IN USER */}
-          {currentUser?.isLoggedIn ? (
+          {isLoggedIn ? (
             <div className="flex items-center gap-2">
               {/* Supporter Carrot Charge Pill Button */}
               {/* Carrot Charge & Secret Messenger Pill Buttons */}
@@ -413,7 +414,7 @@ export function ToonNavbar({
             )}
           </button>
 
-          {currentUser?.isLoggedIn ? (
+          {isLoggedIn ? (
             <button
               onClick={currentUser.role === 'creator' ? onOpenStudio : onOpenMyPage}
               className="px-3 py-1.5 rounded-full bg-rose-50 text-[#E4092B] text-xs font-black border border-slate-200/80"
@@ -441,7 +442,7 @@ export function ToonNavbar({
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="lg:hidden bg-white border-b border-slate-200/80 px-6 py-4 space-y-3 font-extrabold text-sm text-[#140E10] shadow-lg animate-fade-in">
-          {currentUser?.isLoggedIn && (
+          {isLoggedIn && (
             <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between mb-2">
               <div className="flex items-center gap-2.5">
                 <img src={currentUser.avatar} alt={currentUser.name} className="w-9 h-9 rounded-full object-cover" />
@@ -505,7 +506,7 @@ export function ToonNavbar({
           </button>
 
           <div className="pt-2 border-t border-slate-200/80 flex flex-col gap-2">
-            {!currentUser?.isLoggedIn ? (
+            {!isLoggedIn ? (
               <button
                 onClick={() => { setMobileMenuOpen(false); onOpenAuth(); }}
                 className="w-full py-2.5 rounded-xl bg-[#E4092B] text-white font-black text-center text-xs"

@@ -72,10 +72,19 @@ export function App() {
     return saved ? JSON.parse(saved) : INITIAL_CHAT_ROOMS;
   });
 
-  // Authenticated User State
+  // Authenticated User State (Restored reliably from localStorage)
   const [currentUser, setCurrentUser] = useState(() => {
-    const saved = localStorage.getItem('mimibit_auth_user');
-    return saved ? JSON.parse(saved) : null;
+    try {
+      const saved = localStorage.getItem('mimibit_auth_user');
+      if (!saved) return null;
+      const parsed = JSON.parse(saved);
+      if (parsed && (parsed.id || parsed.email || parsed.name)) {
+        return { ...parsed, isLoggedIn: true };
+      }
+    } catch (e) {
+      console.warn('Failed to parse auth user from localStorage:', e);
+    }
+    return null;
   });
 
   // Transaction History (Carrots recharging & payments)
@@ -321,10 +330,8 @@ export function App() {
   }, [userState]);
 
   useEffect(() => {
-    if (currentUser) {
-      localStorage.setItem('mimibit_auth_user', JSON.stringify(currentUser));
-    } else {
-      localStorage.removeItem('mimibit_auth_user');
+    if (currentUser && (currentUser.id || currentUser.email)) {
+      localStorage.setItem('mimibit_auth_user', JSON.stringify({ ...currentUser, isLoggedIn: true }));
     }
   }, [currentUser]);
 
@@ -366,20 +373,24 @@ export function App() {
 
   // Auth Handlers
   const handleLoginSuccess = (user) => {
-    setCurrentUser(user);
-    triggerToast(`${user.name}님, 미미빗에 오신 것을 환영합니다! ✨`);
-    if (user.role === 'supporter') {
+    const sessionUser = { ...user, isLoggedIn: true };
+    setCurrentUser(sessionUser);
+    localStorage.setItem('mimibit_auth_user', JSON.stringify(sessionUser));
+    triggerToast(`${sessionUser.name || '회원'}님, 미미빗에 오신 것을 환영합니다! ✨`);
+    if (sessionUser.role === 'supporter') {
       setUserState(prev => ({
         ...prev,
-        nickname: user.name,
-        tierName: user.tier?.name || prev.tierName,
-        tierIcon: user.tier?.icon || prev.tierIcon
+        nickname: sessionUser.name,
+        tierName: sessionUser.tier?.name || prev.tierName,
+        tierIcon: sessionUser.tier?.icon || prev.tierIcon
       }));
     }
   };
 
   const handleLogout = () => {
     setCurrentUser(null);
+    localStorage.removeItem('mimibit_auth_user');
+    localStorage.removeItem('mimibit_auth_token');
     triggerToast('정상적으로 로그아웃되었습니다.');
   };
 
