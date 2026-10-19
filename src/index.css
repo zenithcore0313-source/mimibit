@@ -314,6 +314,17 @@ html.light header.bg-\[\#06080D\]\/85 {
   box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.05) !important;
 }
 
+[data-theme="light"] header nav button,
+html.light header nav button {
+  color: #334155 !important;
+}
+
+[data-theme="light"] header nav button:hover,
+html.light header nav button:hover {
+  color: #E4092B !important;
+  text-shadow: none !important;
+}
+
 /* Billboard Ticker in Light mode */
 [data-theme="light"] .bg-\[\#181116\],
 html.light .bg-\[\#181116\] {

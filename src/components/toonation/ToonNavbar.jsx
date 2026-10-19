@@ -65,6 +65,7 @@ export function ToonNavbar({
   const isHome = currentPage === 'home';
   const isTransparent = isHome && !isScrolled;
   const isLoggedIn = Boolean(currentUser && (currentUser.isLoggedIn !== false) && (currentUser.id || currentUser.email || currentUser.name));
+  const isDark = theme === 'dark';
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-[#06080D]/85 backdrop-blur-xl border-b border-white/10 text-white shadow-2xl">
@@ -84,11 +85,19 @@ export function ToonNavbar({
           </button>
 
           {/* Desktop Nav Links */}
-          <nav className="hidden lg:flex items-center gap-7 text-sm font-bold text-slate-300">
+          <nav className={`hidden lg:flex items-center gap-7 text-sm font-bold transition-colors ${
+            isDark ? 'text-slate-300' : 'text-slate-600'
+          }`}>
             <button 
               onClick={() => handleNavClick('creators')} 
-              className={`hover:text-white transition-colors py-2 relative cursor-pointer ${
-                currentPage === 'creators' ? 'text-white' : ''
+              className={`transition-colors py-2 relative cursor-pointer ${
+                isDark 
+                  ? 'hover:text-white' 
+                  : 'hover:text-[#E4092B]'
+              } ${
+                currentPage === 'creators' 
+                  ? (isDark ? 'text-white' : 'text-[#E4092B] font-black') 
+                  : ''
               }`}
             >
               인기 크리에이터
@@ -98,8 +107,14 @@ export function ToonNavbar({
             </button>
             <button 
               onClick={() => handleNavClick('bio')} 
-              className={`hover:text-white transition-colors py-2 relative cursor-pointer flex items-center gap-1.5 ${
-                currentPage === 'bio' ? 'text-white' : ''
+              className={`transition-colors py-2 relative cursor-pointer flex items-center gap-1.5 ${
+                isDark 
+                  ? 'hover:text-white' 
+                  : 'hover:text-[#E4092B]'
+              } ${
+                currentPage === 'bio' 
+                  ? (isDark ? 'text-white' : 'text-[#E4092B] font-black') 
+                  : ''
               }`}
             >
               <span>바이오링크 홈</span>
@@ -112,8 +127,14 @@ export function ToonNavbar({
             </button>
             <button 
               onClick={() => handleNavClick('features')} 
-              className={`hover:text-white transition-colors py-2 relative cursor-pointer ${
-                currentPage === 'features' ? 'text-white' : ''
+              className={`transition-colors py-2 relative cursor-pointer ${
+                isDark 
+                  ? 'hover:text-white' 
+                  : 'hover:text-[#E4092B]'
+              } ${
+                currentPage === 'features' 
+                  ? (isDark ? 'text-white' : 'text-[#E4092B] font-black') 
+                  : ''
               }`}
             >
               후원 콘텐츠
@@ -123,8 +144,14 @@ export function ToonNavbar({
             </button>
             <button 
               onClick={() => handleNavClick('fees')} 
-              className={`hover:text-white transition-colors py-2 relative cursor-pointer ${
-                currentPage === 'fees' ? 'text-white' : ''
+              className={`transition-colors py-2 relative cursor-pointer ${
+                isDark 
+                  ? 'hover:text-white' 
+                  : 'hover:text-[#E4092B]'
+              } ${
+                currentPage === 'fees' 
+                  ? (isDark ? 'text-white' : 'text-[#E4092B] font-black') 
+                  : ''
               }`}
             >
               수수료 & 정산
@@ -134,8 +161,14 @@ export function ToonNavbar({
             </button>
             <button 
               onClick={() => handleNavClick('about')} 
-              className={`hover:text-white transition-colors py-2 relative cursor-pointer ${
-                currentPage === 'about' ? 'text-white' : ''
+              className={`transition-colors py-2 relative cursor-pointer ${
+                isDark 
+                  ? 'hover:text-white' 
+                  : 'hover:text-[#E4092B]'
+              } ${
+                currentPage === 'about' 
+                  ? (isDark ? 'text-white' : 'text-[#E4092B] font-black') 
+                  : ''
               }`}
             >
               미미빗 소개
@@ -145,8 +178,14 @@ export function ToonNavbar({
             </button>
             <button 
               onClick={() => handleNavClick('faq')} 
-              className={`hover:text-white transition-colors py-2 relative cursor-pointer ${
-                currentPage === 'faq' ? 'text-white' : ''
+              className={`transition-colors py-2 relative cursor-pointer ${
+                isDark 
+                  ? 'hover:text-white' 
+                  : 'hover:text-[#E4092B]'
+              } ${
+                currentPage === 'faq' 
+                  ? (isDark ? 'text-white' : 'text-[#E4092B] font-black') 
+                  : ''
               }`}
             >
               이용 가이드
