@@ -66,15 +66,15 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }) {
 
     try {
       if (tab === 'signup') {
-        const userName = name.trim() || '새싹 서포터';
-        const userHandle = handle.trim() || `fan_${Date.now().toString().slice(-4)}`;
+        const userName = name.trim() || (selectedRole === 'creator' ? '신규 크리에이터' : '새싹 서포터');
+        const userHandle = handle.trim() || (selectedRole === 'creator' ? `creator_${Date.now().toString().slice(-4)}` : `fan_${Date.now().toString().slice(-4)}`);
 
         const res = await signupUser({
           email: email.trim(),
           password: password.trim(),
           name: userName,
           handle: userHandle,
-          role: 'supporter'
+          role: selectedRole
         });
 
         try {
@@ -125,10 +125,10 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }) {
             작은 창작자와 팬을 잇는 마이크로 팬덤 게이미피케이션 플랫폼
           </p>
 
-          {/* Default Role Notice: Supporter -> Creator on Profile Creation */}
-          <div className="mt-4 px-3 py-2 bg-[#FFF5F6] rounded-2xl border border-[#FCD5DC] flex items-center justify-center gap-1.5 text-xs font-bold text-[#5E5054]">
-            <span className="text-sm">🐰</span>
-            <span>기본 회원가입: <strong className="text-[#E4092B]">후원자(서포터)</strong> 등급 시작</span>
+          {/* Role Info: Default Supporter -> Creator upon profile creation */}
+          <div className="mt-4 px-3 py-2 bg-[#FFF5F6] rounded-2xl border border-[#FCD5DC] flex items-center justify-center gap-2 text-xs font-bold text-[#E4092B]">
+            <Sparkles className="w-4 h-4 shrink-0 text-[#E4092B]" />
+            <span>가입 시 기본 후원자 등급 → 프로필 생성 시 크리에이터 자동 승급</span>
           </div>
         </div>
 
