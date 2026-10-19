@@ -18,7 +18,7 @@ export function KakaoSecretMessengerModal({
   onOpenCharge,
   theme: themeProp
 }) {
-  const [selectedRoomId, setSelectedRoomId] = useState(() => chatRooms[0]?.id || 'room_luna');
+  const [selectedRoomId, setSelectedRoomId] = useState(() => chatRooms[0]?.id || null);
   const [mobileView, setMobileView] = useState('list'); // 'list' or 'chat'
   const [searchQuery, setSearchQuery] = useState('');
   const [inputText, setInputText] = useState('');

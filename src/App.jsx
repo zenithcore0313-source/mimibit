@@ -72,33 +72,27 @@ export function App() {
     setIsMyPageOpen(true);
   };
 
-  // Multi-creator chat rooms (KakaoTalk style)
+  // Multi-creator chat rooms (KakaoTalk style: clean launch state)
   const [chatRooms, setChatRooms] = useState(() => {
     if (typeof window !== 'undefined') {
       try {
         localStorage.removeItem('mimibit_chat_rooms');
         localStorage.removeItem('mimibit_chat_rooms_v2');
         localStorage.removeItem('mimibit_chat_rooms_v3');
+        localStorage.removeItem('mimibit_chat_rooms_v4');
       } catch (e) {}
     }
     try {
-      const saved = localStorage.getItem('mimibit_chat_rooms_v4');
+      const saved = localStorage.getItem('mimibit_chat_rooms_v5');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // Remove any leftover demo/dummy messages from past test runs
-          return parsed.map(r => ({
-            ...r,
-            messages: (r.messages || []).filter(m => 
-              !m.sender?.includes('Alex') && 
-              !m.text?.includes('작은 용기') &&
-              !m.text?.includes('디지털 드로잉 시작했습니다')
-            )
-          }));
+          const DUMMY_ROOMS = ['room_luna', 'room_mochi', 'room_chibi', 'room_neon'];
+          return parsed.filter(r => !DUMMY_ROOMS.includes(r.id?.toLowerCase()));
         }
       }
     } catch (e) {}
-    return INITIAL_CHAT_ROOMS;
+    return INITIAL_CHAT_ROOMS; // []
   });
 
   // Authenticated User State (Restored reliably from localStorage)
@@ -404,7 +398,7 @@ export function App() {
   }, [transactions]);
 
   useEffect(() => {
-    localStorage.setItem('mimibit_chat_rooms_v4', JSON.stringify(chatRooms));
+    localStorage.setItem('mimibit_chat_rooms_v5', JSON.stringify(chatRooms));
   }, [chatRooms]);
 
   // Handle successful carrot recharge via PG simulator
