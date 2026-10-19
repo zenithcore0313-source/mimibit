@@ -204,26 +204,33 @@ export async function deleteUserProfile(userId) {
   }
 }
 
-// Process a live donation to a creator
-export function processCreatorDonation(creatorId, donationData) {
+// Process a live donation to a creator (Saves locally and syncs to backend db.donations)
+export async function processCreatorDonation(creatorId, donationData) {
+  const cleanId = (creatorId || '').replace(/[@#/]/g, '').trim().toLowerCase();
   const creators = getStoredCreators();
-  const creator = creators.find(c => c.id === creatorId);
-  if (!creator) return null;
+  const creator = creators.find(c => 
+    c.id.toLowerCase() === cleanId || 
+    (c.handle || '').replace(/[@/]/g, '').toLowerCase() === cleanId
+  );
 
   const addedCarrots = parseInt(donationData.carrots, 10) || 10;
   
   // Update creator funding goal and supporters
-  const updatedCreator = {
-    ...creator,
-    supporters: (creator.supporters || 0) + 1,
-    fundingGoal: {
-      ...creator.fundingGoal,
-      currentCarrots: (creator.fundingGoal?.currentCarrots || 0) + addedCarrots
-    }
-  };
+  let updatedCreator = creator;
+  if (creator) {
+    updatedCreator = {
+      ...creator,
+      supporters: (creator.supporters || 0) + 1,
+      totalCarrots: (creator.totalCarrots || 0) + addedCarrots,
+      fundingGoal: {
+        ...creator.fundingGoal,
+        currentCarrots: (creator.fundingGoal?.currentCarrots || 0) + addedCarrots
+      }
+    };
 
-  const updatedCreators = creators.map(c => c.id === creatorId ? updatedCreator : c);
-  localStorage.setItem('mimibit_creators', JSON.stringify(updatedCreators));
+    const updatedCreators = creators.map(c => c.id === creator.id ? updatedCreator : c);
+    localStorage.setItem('mimibit_creators', JSON.stringify(updatedCreators));
+  }
 
   // Record transaction in ledger
   try {
@@ -232,8 +239,8 @@ export function processCreatorDonation(creatorId, donationData) {
     const newTx = {
       id: `TX_${Date.now()}`,
       date: new Date().toLocaleDateString('ko-KR'),
-      creatorId,
-      creatorName: creator.name,
+      creatorId: creator?.id || creatorId,
+      creatorName: creator?.name || '크리에이터',
       senderNickname: donationData.nickname || '익명의 팬',
       carrots: addedCarrots,
       amountKRW: addedCarrots * 100,
@@ -244,6 +251,29 @@ export function processCreatorDonation(creatorId, donationData) {
     };
     localStorage.setItem('mimibit_transactions', JSON.stringify([newTx, ...txList]));
   } catch (e) {}
+
+  // Sync to Backend Server (server/data/db.json)
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/donations`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        creatorId: creator?.id || cleanId,
+        carrots: addedCarrots,
+        nickname: donationData.nickname || '익명의 팬',
+        message: donationData.message || '',
+        userId: donationData.userId
+      })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.success && data.data?.creator) {
+        return data.data.creator;
+      }
+    }
+  } catch (err) {
+    console.warn('[API] Backend donation sync offline fallback:', err);
+  }
 
   return updatedCreator;
 }

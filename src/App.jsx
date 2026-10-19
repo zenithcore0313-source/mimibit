@@ -187,6 +187,54 @@ export function App() {
     });
   }, []);
 
+  // Live sync rankings & guestbook from backend donations
+  useEffect(() => {
+    fetch('/api/donations')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+          // 1. Calculate live rankings
+          const map = {};
+          data.data.forEach(d => {
+            const nick = d.nickname || '익명의 팬';
+            if (!map[nick]) {
+              map[nick] = {
+                id: d.id,
+                nickname: nick,
+                carrots: 0,
+                message: d.message || '',
+                avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80'
+              };
+            }
+            map[nick].carrots += (d.carrots || 0);
+            if (d.message) map[nick].message = d.message;
+          });
+          const sorted = Object.values(map).sort((a, b) => b.carrots - a.carrots).slice(0, 5).map((item, idx) => ({
+            ...item,
+            rank: idx + 1,
+            isTop1: idx === 0,
+            badge: idx === 0 ? '👑 루비 래빗' : idx === 1 ? '🥇 다이아 래빗' : idx === 2 ? '🥈 플래티넘 래빗' : '🥉 골드 래빗'
+          }));
+          if (sorted.length > 0) {
+            setRankings(sorted);
+          }
+
+          // 2. Format live guestbook
+          const gb = data.data.map(d => ({
+            id: d.id,
+            nickname: d.nickname || '익명의 서포터',
+            carrots: d.carrots,
+            content: d.message || `${d.carrots.toLocaleString()} 🥕 당근을 선물하고 응원을 보냈습니다! ✨`,
+            createdAt: d.createdAt ? new Date(d.createdAt).toLocaleDateString('ko-KR') : '최근'
+          }));
+          if (gb.length > 0) {
+            setGuestbook(gb);
+          }
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   // Transaction History (Carrots recharging & payments)
   const [transactions, setTransactions] = useState(() => {
     const saved = localStorage.getItem('mimibit_transactions');

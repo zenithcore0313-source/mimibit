@@ -114,6 +114,28 @@ export function CreatorBioPage({
     }
   }, [activeCreator?.id]);
 
+  // Fetch real live donations & cheers from backend for this creator
+  useEffect(() => {
+    const creatorId = activeCreator?.id || activeCreator?.handle;
+    if (!creatorId) return;
+
+    fetch(`/api/donations/${creatorId.replace(/[@#/]/g, '')}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+          const formatted = data.data.map(d => ({
+            id: d.id,
+            nickname: d.nickname || '익명의 서포터',
+            carrots: d.carrots,
+            content: d.message || `${d.carrots.toLocaleString()} 🥕 당근을 선물하고 응원을 보냈습니다! ✨`,
+            createdAt: d.createdAt ? new Date(d.createdAt).toLocaleDateString('ko-KR') : '최근'
+          }));
+          setGuestbookList(formatted);
+        }
+      })
+      .catch(() => {});
+  }, [activeCreator?.id]);
+
   // Follow Toggle
   const handleToggleFollow = () => {
     if (isFollowing) {
@@ -147,6 +169,16 @@ export function CreatorBioPage({
 
     if (onGiftCarrots) {
       onGiftCarrots(activeCreator, carrotAmount, cheerMessage);
+      setGuestbookList(prev => [
+        {
+          id: `gb_${Date.now()}`,
+          nickname: currentUser?.name || '익명의 서포터',
+          carrots: carrotAmount,
+          content: cheerMessage || `${carrotAmount.toLocaleString()} 🥕 당근을 선물하고 응원을 보냈습니다! ✨`,
+          createdAt: '방금 전'
+        },
+        ...prev
+      ]);
       setCustomCarrots('');
       setCheerMessage('');
       try {

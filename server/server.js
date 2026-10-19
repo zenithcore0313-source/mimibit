@@ -662,6 +662,23 @@ app.delete('/api/auth/profile', (req, res) => {
 // DONATION & FINANCIAL OPERATIONS (투네이션 표준 10% 수수료 모델)
 // =====================================================================
 
+// 4-0. GET ALL DONATIONS
+app.get('/api/donations', (req, res) => {
+  const db = readDb();
+  res.json({ success: true, data: db.donations || [] });
+});
+
+// 4-0-1. GET CREATOR DONATIONS (실시간 방명록 & 후원 랭킹용)
+app.get('/api/donations/:creatorId', (req, res) => {
+  const clean = req.params.creatorId.replace(/[@#/]/g, '').toLowerCase();
+  const db = readDb();
+  const list = (db.donations || []).filter(d => 
+    (d.creatorId || '').replace(/[@#/]/g, '').toLowerCase() === clean || 
+    (d.creatorName || '').toLowerCase() === clean
+  );
+  res.json({ success: true, data: list });
+});
+
 // 4. PROCESS DONATION
 app.post('/api/donations', (req, res) => {
   const { creatorId, carrots, nickname, message } = req.body;
@@ -670,8 +687,12 @@ app.post('/api/donations', (req, res) => {
     return res.status(400).json({ success: false, message: '올바른 후원 데이터를 전송해주세요.' });
   }
 
+  const cleanCreatorId = creatorId.replace(/[@#/]/g, '').toLowerCase();
   const db = readDb();
-  const creator = (db.creators || []).find(c => c.id === creatorId);
+  const creator = (db.creators || []).find(c => 
+    c.id.toLowerCase() === cleanCreatorId || 
+    (c.handle || '').replace(/[@/]/g, '').toLowerCase() === cleanCreatorId
+  );
   if (!creator) {
     return res.status(404).json({ success: false, message: '크리에이터를 찾을 수 없습니다.' });
   }
