@@ -135,7 +135,7 @@ export const DONATION_PACKAGES = [
   { carrots: 5000, price: 500000, label: '전광판 1위 정복', tierBenefit: '당근 로열 래빗', isRoyal: true }
 ];
 
-// 카카오톡 형식 멀티 크리에이터 1:1 대화방 (클린 웰컴 상태)
+// 카카오톡 형식 멀티 크리에이터 1:1 대화방 (클린 런칭 상태)
 export const INITIAL_CHAT_ROOMS = [
   {
     id: 'room_luna',
@@ -152,17 +152,7 @@ export const INITIAL_CHAT_ROOMS = [
     unreadCount: 0,
     lastUpdated: '방금 전',
     requiredCarrots: 1000,
-    messages: [
-      {
-        id: 'msg_luna_welcome',
-        sender: 'Luna Rabbit',
-        senderTier: 'creator',
-        isCreator: true,
-        text: '루나의 1:1 시크릿 라운지에 오신 것을 환영해요! 편하게 비밀 질문이나 응원을 남겨주세요 🥕✨',
-        timestamp: '공지',
-        isSpecialGift: false
-      }
-    ]
+    messages: []
   },
   {
     id: 'room_mochi',
@@ -179,17 +169,7 @@ export const INITIAL_CHAT_ROOMS = [
     unreadCount: 0,
     lastUpdated: '방금 전',
     requiredCarrots: 1000,
-    messages: [
-      {
-        id: 'msg_mochi_welcome',
-        sender: '모치 (Mochi)',
-        senderTier: 'creator',
-        isCreator: true,
-        text: '모치의 프라이빗 라운지입니다! 의상 제작기나 촬영 비하인드에 대해 언제든 물어보세요 🥰',
-        timestamp: '공지',
-        isSpecialGift: false
-      }
-    ]
+    messages: []
   },
   {
     id: 'room_chibi',
@@ -206,16 +186,7 @@ export const INITIAL_CHAT_ROOMS = [
     unreadCount: 0,
     lastUpdated: '방금 전',
     requiredCarrots: 1000,
-    messages: [
-      {
-        id: 'msg_chibi_welcome',
-        sender: '치비 스케치',
-        senderTier: 'creator',
-        isCreator: true,
-        text: '치비 스케치와 1:1로 소통하는 비밀 창구입니다! 캐릭터 리퀘스트나 응원을 편하게 보내주세요 🎨',
-        timestamp: '공지'
-      }
-    ]
+    messages: []
   },
   {
     id: 'room_neon',
@@ -232,16 +203,7 @@ export const INITIAL_CHAT_ROOMS = [
     unreadCount: 0,
     lastUpdated: '방금 전',
     requiredCarrots: 1000,
-    messages: [
-      {
-        id: 'msg_neon_welcome',
-        sender: '네온 바이브',
-        senderTier: 'creator',
-        isCreator: true,
-        text: '네온 바이브의 작업실 1:1 채널입니다. 음악이나 새벽 감성 이야기 언제든 환영해요 🎧',
-        timestamp: '공지'
-      }
-    ]
+    messages: []
   }
 ];
 

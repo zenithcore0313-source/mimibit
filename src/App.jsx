@@ -74,8 +74,31 @@ export function App() {
 
   // Multi-creator chat rooms (KakaoTalk style)
   const [chatRooms, setChatRooms] = useState(() => {
-    const saved = localStorage.getItem('mimibit_chat_rooms');
-    return saved ? JSON.parse(saved) : INITIAL_CHAT_ROOMS;
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.removeItem('mimibit_chat_rooms');
+        localStorage.removeItem('mimibit_chat_rooms_v2');
+        localStorage.removeItem('mimibit_chat_rooms_v3');
+      } catch (e) {}
+    }
+    try {
+      const saved = localStorage.getItem('mimibit_chat_rooms_v4');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Remove any leftover demo/dummy messages from past test runs
+          return parsed.map(r => ({
+            ...r,
+            messages: (r.messages || []).filter(m => 
+              !m.sender?.includes('Alex') && 
+              !m.text?.includes('작은 용기') &&
+              !m.text?.includes('디지털 드로잉 시작했습니다')
+            )
+          }));
+        }
+      }
+    } catch (e) {}
+    return INITIAL_CHAT_ROOMS;
   });
 
   // Authenticated User State (Restored reliably from localStorage)
@@ -85,7 +108,21 @@ export function App() {
       if (!saved) return null;
       const parsed = JSON.parse(saved);
       if (parsed && (parsed.id || parsed.email || parsed.name)) {
-        return { ...parsed, isLoggedIn: true };
+        // Clean legacy hardcoded dummy sponsorships / receipts / messages if present
+        const cleanedUser = {
+          ...parsed,
+          sponsorships: Array.isArray(parsed.sponsorships)
+            ? parsed.sponsorships.filter(s => s && s.creatorName && !s.creatorName.includes('Luna') && s.carrots > 0)
+            : [],
+          receiptTickets: Array.isArray(parsed.receiptTickets)
+            ? parsed.receiptTickets.filter(t => t && t.id !== 1024 && !t.creatorName?.includes('Luna'))
+            : [],
+          recentMessages: Array.isArray(parsed.recentMessages)
+            ? parsed.recentMessages.filter(m => m && !m.content?.includes('인쇄 잘되길'))
+            : [],
+          isLoggedIn: true
+        };
+        return cleanedUser;
       }
     } catch (e) {
       console.warn('Failed to parse auth user from localStorage:', e);
@@ -354,7 +391,7 @@ export function App() {
   }, [transactions]);
 
   useEffect(() => {
-    localStorage.setItem('mimibit_chat_rooms', JSON.stringify(chatRooms));
+    localStorage.setItem('mimibit_chat_rooms_v4', JSON.stringify(chatRooms));
   }, [chatRooms]);
 
   // Handle successful carrot recharge via PG simulator
