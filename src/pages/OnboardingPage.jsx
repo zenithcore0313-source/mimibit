@@ -29,19 +29,19 @@ export function OnboardingPage({ onCompleteOnboarding, onBackToHome, onNavigate 
   const [isAccountVerified, setIsAccountVerified] = useState(false);
   const [isQrOpen, setIsQrOpen] = useState(false);
 
-  // Form States
+  // Form States (Clean for new creators)
   const [formData, setFormData] = useState({
-    name: '루나 (Luna)',
-    handle: 'Luna_Rabbit',
+    name: '',
+    handle: '',
     category: '일러스트 & 드로잉',
-    snsUrl: 'https://instagram.com/luna_rabbit',
-    goalTitle: '2026 봄 코스프레 화보집 & 굿즈 제작 펀딩',
-    goalCarrots: 10000,
-    bio: '주말마다 감성 포토와 드로잉 일상을 공유해요! 따뜻한 커피 한 잔과 당근 후원은 큰 힘이 됩니다 🥕✨',
+    snsUrl: '',
+    goalTitle: '',
+    goalCarrots: 5000,
+    bio: '',
     bankName: '토스뱅크',
-    accountNumber: '1000-1234-5678',
-    accountHolder: '홍길동',
-    welcomeVoiceMsg: '항상 응원해주셔서 감사드려요! 이번 화보집도 온 마음을 다해 준비할게요 🥕',
+    accountNumber: '',
+    accountHolder: '',
+    welcomeVoiceMsg: '',
     agreeTerms: true
   });
 

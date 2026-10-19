@@ -83,80 +83,78 @@ export function ToonNavbar({
             />
           </button>
 
-          {/* Desktop Nav Links (Hidden on home page for clean Socar-like cinematic flow) */}
-          {currentPage !== 'home' && (
-            <nav className="hidden lg:flex items-center gap-7 text-sm font-bold text-slate-300">
-              <button 
-                onClick={() => handleNavClick('creators')} 
-                className={`hover:text-white transition-colors py-2 relative cursor-pointer ${
-                  currentPage === 'creators' ? 'text-white' : ''
-                }`}
-              >
-                인기 크리에이터
-                {currentPage === 'creators' && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#E4092B] rounded-full shadow-[0_0_8px_#E4092B]"></span>
-                )}
-              </button>
-              <button 
-                onClick={() => handleNavClick('bio')} 
-                className={`hover:text-white transition-colors py-2 relative cursor-pointer flex items-center gap-1.5 ${
-                  currentPage === 'bio' ? 'text-white' : ''
-                }`}
-              >
-                <span>바이오링크 홈</span>
-                <span className="text-[9px] bg-rose-500/20 text-[#FF4D6D] border border-rose-500/30 px-1.5 py-0.2 rounded-full font-bold">
-                  LIVE
-                </span>
-                {currentPage === 'bio' && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#E4092B] rounded-full shadow-[0_0_8px_#E4092B]"></span>
-                )}
-              </button>
-              <button 
-                onClick={() => handleNavClick('features')} 
-                className={`hover:text-white transition-colors py-2 relative cursor-pointer ${
-                  currentPage === 'features' ? 'text-white' : ''
-                }`}
-              >
-                후원 콘텐츠
-                {currentPage === 'features' && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#E4092B] rounded-full shadow-[0_0_8px_#E4092B]"></span>
-                )}
-              </button>
-              <button 
-                onClick={() => handleNavClick('fees')} 
-                className={`hover:text-white transition-colors py-2 relative cursor-pointer ${
-                  currentPage === 'fees' ? 'text-white' : ''
-                }`}
-              >
-                수수료 & 정산
-                {currentPage === 'fees' && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#E4092B] rounded-full shadow-[0_0_8px_#E4092B]"></span>
-                )}
-              </button>
-              <button 
-                onClick={() => handleNavClick('about')} 
-                className={`hover:text-white transition-colors py-2 relative cursor-pointer ${
-                  currentPage === 'about' ? 'text-white' : ''
-                }`}
-              >
-                미미빗 소개
-                {currentPage === 'about' && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#E4092B] rounded-full shadow-[0_0_8px_#E4092B]"></span>
-                )}
-              </button>
-              <button 
-                onClick={() => handleNavClick('faq')} 
-                className={`hover:text-white transition-colors py-2 relative cursor-pointer ${
-                  currentPage === 'faq' ? 'text-white' : ''
-                }`}
-              >
-                이용 가이드
-                {currentPage === 'faq' && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#E4092B] rounded-full shadow-[0_0_8px_#E4092B]"></span>
-                )}
-              </button>
-            </nav>
-          )}
+          {/* Desktop Nav Links */}
+          <nav className="hidden lg:flex items-center gap-7 text-sm font-bold text-slate-300">
+            <button 
+              onClick={() => handleNavClick('creators')} 
+              className={`hover:text-white transition-colors py-2 relative cursor-pointer ${
+                currentPage === 'creators' ? 'text-white' : ''
+              }`}
+            >
+              인기 크리에이터
+              {currentPage === 'creators' && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#E4092B] rounded-full shadow-[0_0_8px_#E4092B]"></span>
+              )}
+            </button>
+            <button 
+              onClick={() => handleNavClick('bio')} 
+              className={`hover:text-white transition-colors py-2 relative cursor-pointer flex items-center gap-1.5 ${
+                currentPage === 'bio' ? 'text-white' : ''
+              }`}
+            >
+              <span>바이오링크 홈</span>
+              <span className="text-[9px] bg-rose-500/20 text-[#FF4D6D] border border-rose-500/30 px-1.5 py-0.2 rounded-full font-bold">
+                LIVE
+              </span>
+              {currentPage === 'bio' && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#E4092B] rounded-full shadow-[0_0_8px_#E4092B]"></span>
+              )}
+            </button>
+            <button 
+              onClick={() => handleNavClick('features')} 
+              className={`hover:text-white transition-colors py-2 relative cursor-pointer ${
+                currentPage === 'features' ? 'text-white' : ''
+              }`}
+            >
+              후원 콘텐츠
+              {currentPage === 'features' && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#E4092B] rounded-full shadow-[0_0_8px_#E4092B]"></span>
+              )}
+            </button>
+            <button 
+              onClick={() => handleNavClick('fees')} 
+              className={`hover:text-white transition-colors py-2 relative cursor-pointer ${
+                currentPage === 'fees' ? 'text-white' : ''
+              }`}
+            >
+              수수료 & 정산
+              {currentPage === 'fees' && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#E4092B] rounded-full shadow-[0_0_8px_#E4092B]"></span>
+              )}
+            </button>
+            <button 
+              onClick={() => handleNavClick('about')} 
+              className={`hover:text-white transition-colors py-2 relative cursor-pointer ${
+                currentPage === 'about' ? 'text-white' : ''
+              }`}
+            >
+              미미빗 소개
+              {currentPage === 'about' && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#E4092B] rounded-full shadow-[0_0_8px_#E4092B]"></span>
+              )}
+            </button>
+            <button 
+              onClick={() => handleNavClick('faq')} 
+              className={`hover:text-white transition-colors py-2 relative cursor-pointer ${
+                currentPage === 'faq' ? 'text-white' : ''
+              }`}
+            >
+              이용 가이드
+              {currentPage === 'faq' && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#E4092B] rounded-full shadow-[0_0_8px_#E4092B]"></span>
+              )}
+            </button>
+          </nav>
         </div>
 
         {/* Right CTA / Auth Status */}

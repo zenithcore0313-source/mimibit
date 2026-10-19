@@ -38,16 +38,13 @@ export function CreatorStudio({
 
   // Settlement & Payout states
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
-  const [withdrawAmount, setWithdrawAmount] = useState('732615');
+  const [withdrawAmount, setWithdrawAmount] = useState('0');
   const [isWithdrawSuccess, setIsWithdrawSuccess] = useState(false);
   const [isSubmittingPayout, setIsSubmittingPayout] = useState(false);
-  const [payoutHistory, setPayoutHistory] = useState([
-    { id: 'PAY_101', date: '2026. 10. 10', bank: '토스뱅크', amount: 485000, status: '입금 완료' },
-    { id: 'PAY_100', date: '2026. 09. 10', bank: '토스뱅크', amount: 320000, status: '입금 완료' }
-  ]);
+  const [payoutHistory, setPayoutHistory] = useState([]);
 
   // Financial Calculations (투네이션 표준 10% 수수료 모델)
-  const totalCarrots = creator?.totalCarrots || creator?.fundingGoal?.currentCarrots || 8450;
+  const totalCarrots = creator?.totalCarrots || creator?.fundingGoal?.currentCarrots || 0;
   const grossRevenue = totalCarrots * 100; // 1당근 = 100원
   const platformFee = Math.round(grossRevenue * 0.10); // 투네이션 표준 10.0%
   const taxWithholding = Math.round(grossRevenue * 0.033); // 국세청 3.3% 사업소득 원천징수
@@ -781,24 +778,30 @@ export function CreatorStudio({
               <div className={`rounded-2xl border overflow-hidden divide-y text-xs ${
                 isDark ? 'border-white/10 divide-white/5' : 'border-slate-200 divide-slate-100'
               }`}>
-                {payoutHistory.map((item) => (
-                  <div key={item.id} className={`p-3.5 flex items-center justify-between ${
-                    isDark ? 'bg-white/5' : 'bg-white'
-                  }`}>
-                    <div>
-                      <span className={`font-bold block ${isDark ? 'text-white' : 'text-slate-800'}`}>
-                        {item.bank} ({item.id})
-                      </span>
-                      <span className="text-[10px] text-slate-400">{item.date || item.requestedAt?.slice(0, 10)}</span>
-                    </div>
-                    <div className="text-right">
-                      <span className={`font-bold font-num block ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                        {Number(item.amount).toLocaleString()}원
-                      </span>
-                      <span className="text-[10px] text-emerald-400 font-bold">{item.status}</span>
-                    </div>
+                {payoutHistory.length === 0 ? (
+                  <div className={`p-8 text-center text-xs ${isDark ? 'text-slate-400 bg-white/5' : 'text-slate-500 bg-slate-50'}`}>
+                    아직 신청된 정산 및 출금 내역이 없습니다.
                   </div>
-                ))}
+                ) : (
+                  payoutHistory.map((item) => (
+                    <div key={item.id} className={`p-3.5 flex items-center justify-between ${
+                      isDark ? 'bg-white/5' : 'bg-white'
+                    }`}>
+                      <div>
+                        <span className={`font-bold block ${isDark ? 'text-white' : 'text-slate-800'}`}>
+                          {item.bank} ({item.id})
+                        </span>
+                        <span className="text-[10px] text-slate-400">{item.date || item.requestedAt?.slice(0, 10)}</span>
+                      </div>
+                      <div className="text-right">
+                        <span className={`font-bold font-num block ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                          {Number(item.amount).toLocaleString()}원
+                        </span>
+                        <span className="text-[10px] text-emerald-400 font-bold">{item.status}</span>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
 
