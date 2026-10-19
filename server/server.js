@@ -1298,6 +1298,14 @@ app.post('/api/admin/users/:userId/carrots', (req, res) => {
 
   writeDb(db);
 
+  res.json({
+    success: true,
+    message: `${user.name}님의 당근 잔액이 ${numAmount > 0 ? '+' : ''}${numAmount.toLocaleString()}개 조정되었습니다.`,
+    carrotsBalance: user.carrotsBalance,
+    user: sanitizeUser(user)
+  });
+});
+
 // 9. 1:1 SECRET CHAT MESSAGES & REAL-TIME SYNC
 app.get('/api/messages', (req, res) => {
   const { roomId, creatorId } = req.query;
