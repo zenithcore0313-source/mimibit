@@ -9,7 +9,7 @@ import {
   Building2, TrendingUp, Check, AlertCircle, RefreshCw, 
   Search, ArrowUpRight, ArrowDownLeft, Clock, Sparkles, 
   CheckCircle2, FileText, ChevronRight, User, Filter, 
-  ExternalLink, Send, Coins
+  ExternalLink, Send, Coins, Trash2
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { 
@@ -110,6 +110,32 @@ export function AdminDashboard({
       alert('당근 조정 중 오류가 발생했습니다.');
     } finally {
       setIsAdjusting(false);
+    }
+  };
+
+  // 4. Delete User or Creator (Admin Action)
+  const handleDeleteUserOrCreator = async (targetUser) => {
+    if (!window.confirm(`⚠️ [${targetUser.name} (${targetUser.email})] 회원의 계정 및 크리에이터 프로필을 영구 삭제하시겠습니까?\n\n이 작업은 즉시 서버 데이터베이스에서 삭제됩니다.`)) {
+      return;
+    }
+    try {
+      if (targetUser.handle) {
+        await fetch(`/api/creators/${targetUser.handle.replace(/[@/]/g, '')}`, { method: 'DELETE' });
+      }
+      const res = await fetch('/api/auth/profile', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: targetUser.id })
+      });
+      const resData = await res.json();
+      if (resData.success) {
+        showToast(`🗑️ ${targetUser.name} 회원 및 프로필이 삭제되었습니다.`);
+        loadData();
+      } else {
+        alert(resData.message || '삭제 처리에 실패했습니다.');
+      }
+    } catch (e) {
+      alert('삭제 처리 중 오류가 발생했습니다.');
     }
   };
 
@@ -714,13 +740,23 @@ export function AdminDashboard({
                           {u.createdAt ? new Date(u.createdAt).toLocaleDateString('ko-KR') : '-'}
                         </td>
                         <td className="py-2.5 px-3 text-right">
-                          <button
-                            type="button"
-                            onClick={() => setAdjustTargetUser(u)}
-                            className="py-1.5 px-3 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold text-[11px] transition-colors cursor-pointer border border-white/10"
-                          >
-                            당근 수동 조정
-                          </button>
+                          <div className="flex items-center justify-end gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => setAdjustTargetUser(u)}
+                              className="py-1.5 px-2.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold text-[11px] transition-colors cursor-pointer border border-white/10"
+                            >
+                              당근 조정
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteUserOrCreator(u)}
+                              title="계정 및 크리에이터 프로필 삭제"
+                              className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 transition-colors cursor-pointer border border-rose-500/20"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}

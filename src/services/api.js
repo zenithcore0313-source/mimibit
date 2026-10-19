@@ -79,9 +79,9 @@ export async function fetchCreator(idOrHandle) {
   return findCreatorByIdOrHandle(idOrHandle);
 }
 
-// Register a New Creator
-export function registerNewCreator(formData) {
-  const cleanId = formData.handle.replace(/[^a-zA-Z0-9_]/g, '').toLowerCase() || `creator_${Date.now()}`;
+// Register a New Creator (Saves locally and syncs to backend db.json)
+export async function registerNewCreator(formData) {
+  const cleanId = (formData.id || formData.handle || '').replace(/[^a-zA-Z0-9_]/g, '').toLowerCase() || `creator_${Date.now()}`;
   const creators = getStoredCreators();
 
   // If already exists, update
@@ -96,8 +96,8 @@ export function registerNewCreator(formData) {
     avatar: formData.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
     coverImage: formData.coverImage || 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80',
     tags: formData.tags || ['#창작자', '#후원', `#${formData.category || '서브컬처'}`],
-    followers: 1,
-    supporters: 0,
+    followers: existingIdx >= 0 ? (creators[existingIdx].followers || 1) : 1,
+    supporters: existingIdx >= 0 ? (creators[existingIdx].supporters || 0) : 0,
     sns: {
       instagram: formData.snsUrl || formData.instagram || 'https://instagram.com',
       twitter: formData.twitter || '',
@@ -105,7 +105,7 @@ export function registerNewCreator(formData) {
     },
     fundingGoal: {
       title: formData.goalTitle || '첫 후원 프로젝트 펀딩',
-      currentCarrots: 0,
+      currentCarrots: existingIdx >= 0 ? (creators[existingIdx].fundingGoal?.currentCarrots || 0) : 0,
       targetCarrots: parseInt(formData.goalCarrots || formData.targetCarrots, 10) || 5000,
       endDate: '2026. 11. 30'
     },
@@ -119,7 +119,7 @@ export function registerNewCreator(formData) {
       duration: '0:15',
       message: formData.welcomeVoiceMsg || '응원해 주셔서 진심으로 감사합니다! 더 좋은 창작물로 보답할게요.'
     },
-    secretPhotos: []
+    secretPhotos: existingIdx >= 0 ? (creators[existingIdx].secretPhotos || []) : []
   };
 
   let updatedList;
@@ -132,16 +132,76 @@ export function registerNewCreator(formData) {
 
   localStorage.setItem('mimibit_creators', JSON.stringify(updatedList));
 
-  // Sync to Backend
-  if (API_BASE_URL) {
-    fetch(`${API_BASE_URL}/api/creators`, {
+  // Sync to Backend (Works behind Nginx relative /api or absolute API_BASE_URL)
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/creators`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newCreator)
-    }).catch(err => console.warn('[API] Backend sync failed, local saved:', err));
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.success && data.data) {
+        return data.data;
+      }
+    }
+  } catch (err) {
+    console.warn('[API] Backend creator sync failed, saved locally:', err);
   }
 
   return newCreator;
+}
+
+// Delete Creator Profile & Biolink
+export async function deleteCreatorProfile(creatorId) {
+  const cleanId = (creatorId || '').replace(/[@#/]/g, '').trim().toLowerCase();
+
+  // 1. Remove from localStorage
+  const creators = getStoredCreators();
+  const filtered = creators.filter(c => 
+    c.id.toLowerCase() !== cleanId && 
+    (c.handle || '').replace(/[@/]/g, '').toLowerCase() !== cleanId
+  );
+  localStorage.setItem('mimibit_creators', JSON.stringify(filtered));
+
+  const stored = localStorage.getItem('mimibit_creator');
+  if (stored) {
+    try {
+      const c = JSON.parse(stored);
+      if (c.id?.toLowerCase() === cleanId || (c.handle || '').replace(/[@/]/g, '').toLowerCase() === cleanId) {
+        localStorage.removeItem('mimibit_creator');
+      }
+    } catch (e) {}
+  }
+
+  // 2. Call Backend API
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/creators/${cleanId}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.warn('[API] Backend creator delete offline fallback:', err);
+    return { success: true, message: '로컬에서 크리에이터 프로필이 삭제되었습니다.' };
+  }
+}
+
+// Delete User Profile / Account (회원 탈퇴)
+export async function deleteUserProfile(userId) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/auth/profile`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId })
+    });
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.warn('[API] Backend user account delete offline fallback:', err);
+    return { success: true, message: '회원 정보가 삭제되었습니다.' };
+  }
 }
 
 // Process a live donation to a creator
@@ -352,10 +412,13 @@ export async function updateUserProfile(userId, profileData) {
 export async function fetchLiveCreators() {
   try {
     const res = await fetch(`${API_BASE_URL}/api/creators`);
-    const data = await res.json();
-    if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-      localStorage.setItem('mimibit_creators', JSON.stringify(data.data));
-      return data.data;
+    if (res.ok) {
+      const data = await res.json();
+      const list = data.data || data.creators;
+      if (data.success && Array.isArray(list)) {
+        localStorage.setItem('mimibit_creators', JSON.stringify(list));
+        return list;
+      }
     }
   } catch (e) {
     console.warn('[API] Fetch creators failed, using local store');

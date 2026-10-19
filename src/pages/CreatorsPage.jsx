@@ -27,8 +27,9 @@ export function CreatorsPage({ onSelectCreator, onBackToHome, onNavigate }) {
           const res = await fetch('/api/creators');
           if (res.ok) {
             const data = await res.json();
-            if (data.success && Array.isArray(data.creators)) {
-              setCreators(data.creators);
+            const list = data.data || data.creators;
+            if (data.success && Array.isArray(list)) {
+              setCreators(list);
             }
           }
         } catch (e) {

@@ -3,7 +3,7 @@ import {
   DollarSign, Percent, TrendingUp, Users, ShieldAlert, 
   MessageSquare, Mic, Image, Check, AlertCircle, Ban, 
   Settings, Sparkles, Copy, ExternalLink, Play, Pause, 
-  Square, RefreshCw, Volume2, Download, CheckCircle2, Lock, ArrowRight, X, Clock, Building2, Send 
+  Square, RefreshCw, Volume2, Download, CheckCircle2, Lock, ArrowRight, X, Clock, Building2, Send, Trash2 
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { requestPayout, fetchPayouts, getStoredCreators, fetchChatMessages } from '../services/api';
@@ -18,6 +18,7 @@ export function CreatorStudio({
   onSendCreatorReply, 
   rankings = [],
   onBanUser,
+  onDeleteCreatorProfile,
   theme = 'dark',
   onClose
 }) {
@@ -923,22 +924,56 @@ export function CreatorStudio({
                 />
               </div>
 
-              <button
-                type="button"
-                onClick={() => {
-                  setIsSavedGoal(true);
-                  setTimeout(() => setIsSavedGoal(false), 2000);
-                }}
-                className="py-3 px-5 rounded-xl bg-[#E4092B] hover:bg-[#CC0022] text-white font-bold text-xs transition-all cursor-pointer shadow-md"
-              >
-                설정 사항 저장하기
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSavedGoal(true);
+                    setTimeout(() => setIsSavedGoal(false), 2000);
+                  }}
+                  className="py-3 px-5 rounded-xl bg-[#E4092B] hover:bg-[#CC0022] text-white font-bold text-xs transition-all cursor-pointer shadow-md"
+                >
+                  설정 사항 저장하기
+                </button>
 
-              {isSavedGoal && (
-                <span className="text-xs text-emerald-400 font-bold ml-3">
-                  ✓ 변경 사항이 저장되었습니다.
-                </span>
-              )}
+                {isSavedGoal && (
+                  <span className="text-xs text-emerald-400 font-bold">
+                    ✓ 변경 사항이 저장되었습니다.
+                  </span>
+                )}
+              </div>
+
+              {/* Danger Zone: Delete Creator Profile & Biolink */}
+              <div className="pt-6 border-t border-rose-500/20">
+                <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Trash2 className="w-4 h-4 text-rose-500 shrink-0" />
+                    <div>
+                      <h4 className="font-heading font-black text-rose-500 text-xs sm:text-sm">
+                        위험 구역: 크리에이터 프로필 & 바이오링크 삭제
+                      </h4>
+                      <p className="text-[11px] text-slate-400 mt-0.5">
+                        현재 개설된 크리에이터 바이오링크(@{(creator?.handle || '').replace('@', '')}) 및 프로필 데이터를 영구 삭제합니다.
+                        계정은 일반 서포터 모드로 자동 전환되며, 언제든 다시 온보딩을 통해 새 바이오링크를 개설할 수 있습니다.
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const handleText = creator?.handle || creator?.name || '크리에이터';
+                      if (window.confirm(`⚠️ 정말로 [${handleText}] 크리에이터 프로필 및 바이오링크를 영구 삭제하시겠습니까?\n\n이 작업은 되돌릴 수 없으며, 등록된 바이오링크와 펀딩 정보가 즉시 삭제됩니다.`)) {
+                        onDeleteCreatorProfile?.(creator?.id || creator?.handle);
+                      }
+                    }}
+                    className="w-full py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs active:scale-98"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>크리에이터 프로필 & 바이오링크 영구 삭제하기</span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         )}

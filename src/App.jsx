@@ -43,8 +43,17 @@ import {
   INITIAL_CHAT_ROOMS,
   RABBIT_TIERS 
 } from './data/initialData';
-import { X, Smartphone, Monitor, ArrowLeft, Sparkles, CheckCircle2 } from 'lucide-react';
-import { getStoredCreators, findCreatorByIdOrHandle, registerNewCreator, processCreatorDonation, confirmTossPayment, fetchChatRooms } from './services/api';
+import { 
+  getStoredCreators, 
+  findCreatorByIdOrHandle, 
+  registerNewCreator, 
+  deleteCreatorProfile, 
+  deleteUserProfile, 
+  fetchLiveCreators, 
+  processCreatorDonation, 
+  confirmTossPayment, 
+  fetchChatRooms 
+} from './services/api';
 
 export function App() {
   // Page Routing State ('home', 'creators', 'features', 'fees', 'about', 'onboarding', 'faq', 'bio')
@@ -151,6 +160,32 @@ export function App() {
       }
     });
   }, [currentUser?.id]);
+
+  // Auto-sync creators between local and server (ensures creators created on any account are visible to all)
+  useEffect(() => {
+    fetchLiveCreators().then(serverCreators => {
+      const localCreators = getStoredCreators();
+      if (localCreators && localCreators.length > 0) {
+        localCreators.forEach(c => {
+          if (!c || !c.name || !c.handle) return;
+          const cleanH = (c.handle || '').replace(/[@/]/g, '').toLowerCase();
+          const existsOnServer = (serverCreators || []).some(sc => 
+            sc.id?.toLowerCase() === c.id?.toLowerCase() || 
+            (sc.handle || '').replace(/[@/]/g, '').toLowerCase() === cleanH
+          );
+          if (!existsOnServer) {
+            fetch('/api/creators', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(c)
+            }).then(() => {
+              console.log('[AutoSync] Synced local creator to server:', c.name);
+            }).catch(() => {});
+          }
+        });
+      }
+    });
+  }, []);
 
   // Transaction History (Carrots recharging & payments)
   const [transactions, setTransactions] = useState(() => {
@@ -354,6 +389,52 @@ export function App() {
     } catch (err) {
       console.error('Onboarding completion error:', err);
       triggerToast('바이오링크 개설 처리 중 오류가 발생했습니다.');
+    }
+  };
+
+  // Delete Creator Profile & Biolink Handler
+  const handleDeleteCreatorProfile = async (creatorId) => {
+    try {
+      const targetId = creatorId || currentUser?.handle || currentUser?.id;
+      await deleteCreatorProfile(targetId);
+
+      // Revert current user role to supporter if this creator was current user
+      if (currentUser) {
+        const updatedUser = {
+          ...currentUser,
+          role: currentUser.role === 'admin' ? 'admin' : 'supporter',
+          handle: currentUser.role === 'admin' ? currentUser.handle : undefined
+        };
+        setCurrentUser(updatedUser);
+        localStorage.setItem('mimibit_auth_user', JSON.stringify(updatedUser));
+      }
+
+      setCreator(null);
+      setActiveCreatorProfile(null);
+      setSelectedBioCreatorId(null);
+      setActiveModal(null);
+      setIsMyPageOpen(false);
+      handleNavigate('home');
+      triggerToast('🗑️ 크리에이터 프로필 및 바이오링크가 삭제되었습니다.');
+    } catch (err) {
+      console.error('Delete creator error:', err);
+      triggerToast('크리에이터 프로필 삭제 중 오류가 발생했습니다.');
+    }
+  };
+
+  // Delete User Account / Profile Handler (회원 탈퇴)
+  const handleDeleteAccount = async (userId) => {
+    try {
+      const targetId = userId || currentUser?.id;
+      if (currentUser?.handle) {
+        await deleteCreatorProfile(currentUser.handle);
+      }
+      await deleteUserProfile(targetId);
+      handleLogout();
+      triggerToast('🚪 회원 탈퇴 및 계정 프로필 데이터가 완전히 삭제되었습니다.');
+    } catch (err) {
+      console.error('Delete account error:', err);
+      triggerToast('회원 탈퇴 처리 중 오류가 발생했습니다.');
     }
   };
 
@@ -918,6 +999,7 @@ export function App() {
               setChatRooms={setChatRooms}
               theme={theme}
               onSendCreatorReply={handleCreatorStudioReply}
+              onDeleteCreatorProfile={handleDeleteCreatorProfile}
               onClose={() => setActiveModal(null)}
               rankings={rankings}
               onBanUser={(nickname) => setRankings((prev) => prev.filter((r) => r.nickname !== nickname))}
@@ -964,6 +1046,8 @@ export function App() {
         initialTab={myPageTab}
         onUpdateUser={handleUpdateUser}
         onLogout={handleLogout}
+        onDeleteCreatorProfile={handleDeleteCreatorProfile}
+        onDeleteAccount={handleDeleteAccount}
         onOpenDonate={() => {
           setIsMyPageOpen(false);
           setActiveModal('creator');

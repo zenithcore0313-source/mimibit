@@ -508,7 +508,7 @@ app.put('/api/auth/profile', (req, res) => {
 // 1. GET ALL CREATORS
 app.get('/api/creators', (req, res) => {
   const db = readDb();
-  res.json({ success: true, data: db.creators });
+  res.json({ success: true, data: db.creators || [], creators: db.creators || [] });
 });
 
 // 2. GET SINGLE CREATOR BY HANDLE OR ID
@@ -527,17 +527,24 @@ app.get('/api/creators/:handle', (req, res) => {
   res.json({ success: true, data: creator });
 });
 
-// 3. REGISTER NEW CREATOR (Onboarding)
+// 3. REGISTER OR UPDATE CREATOR (Onboarding & Studio)
 app.post('/api/creators', (req, res) => {
   const formData = req.body;
   if (!formData || !formData.name || !formData.handle) {
     return res.status(400).json({ success: false, message: '필수 입력 항목이 누락되었습니다.' });
   }
 
-  const cleanId = formData.handle.replace(/[^a-zA-Z0-9_]/g, '').toLowerCase() || `creator_${Date.now()}`;
+  const cleanId = (formData.id || formData.handle).replace(/[^a-zA-Z0-9_]/g, '').toLowerCase() || `creator_${Date.now()}`;
   const db = readDb();
+  if (!Array.isArray(db.creators)) db.creators = [];
+
+  const existingIdx = db.creators.findIndex(c => 
+    c.id.toLowerCase() === cleanId || 
+    (c.handle || '').replace(/[@/]/g, '').toLowerCase() === (formData.handle || '').replace(/[@/]/g, '').toLowerCase()
+  );
 
   const newCreator = {
+    ...(existingIdx >= 0 ? db.creators[existingIdx] : {}),
     id: cleanId,
     handle: `@${formData.handle.replace(/[@/]/g, '')}`,
     name: formData.name,
@@ -546,44 +553,109 @@ app.post('/api/creators', (req, res) => {
     avatar: formData.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
     coverImage: formData.coverImage || 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=80',
     tags: formData.tags || ['#창작자', '#후원', `#${formData.category || '서브컬처'}`],
-    followers: 1,
-    supporters: 0,
-    totalCarrots: 0,
+    followers: existingIdx >= 0 ? (db.creators[existingIdx].followers || 1) : 1,
+    supporters: existingIdx >= 0 ? (db.creators[existingIdx].supporters || 0) : 0,
+    totalCarrots: existingIdx >= 0 ? (db.creators[existingIdx].totalCarrots || 0) : 0,
     sns: {
-      instagram: formData.snsUrl || formData.instagram || 'https://instagram.com',
-      twitter: formData.twitter || '',
-      youtube: formData.youtube || ''
+      instagram: formData.snsUrl || formData.instagram || formData.sns?.instagram || 'https://instagram.com',
+      twitter: formData.twitter || formData.sns?.twitter || '',
+      youtube: formData.youtube || formData.sns?.youtube || ''
     },
     fundingGoal: {
-      title: formData.goalTitle || '첫 후원 프로젝트 펀딩',
-      currentCarrots: 0,
-      targetCarrots: parseInt(formData.goalCarrots || formData.targetCarrots, 10) || 5000,
-      endDate: '2026. 11. 30',
-      dDay: 'D-45'
+      title: formData.goalTitle || formData.fundingGoal?.title || '첫 후원 프로젝트 펀딩',
+      currentCarrots: existingIdx >= 0 ? (db.creators[existingIdx].fundingGoal?.currentCarrots || 0) : 0,
+      targetCarrots: parseInt(formData.goalCarrots || formData.targetCarrots || formData.fundingGoal?.targetCarrots, 10) || 5000,
+      endDate: formData.fundingGoal?.endDate || '2026. 11. 30',
+      dDay: formData.fundingGoal?.dDay || 'D-45'
     },
     bankInfo: {
-      bank: formData.bankName || '토스뱅크',
-      account: formData.accountNumber || '1000-0000-0000',
-      holder: formData.accountHolder || formData.name
+      bank: formData.bankName || formData.bankInfo?.bank || '토스뱅크',
+      account: formData.accountNumber || formData.bankInfo?.account || '1000-0000-0000',
+      holder: formData.accountHolder || formData.bankInfo?.holder || formData.name
     },
     voiceReward: {
       title: `${formData.name}의 감사 음성 메모`,
       duration: '0:15',
-      message: formData.welcomeVoiceMsg || '응원해 주셔서 진심으로 감사합니다! 더 좋은 창작물로 보답할게요.'
+      message: formData.welcomeVoiceMsg || formData.voiceReward?.message || '응원해 주셔서 진심으로 감사합니다! 더 좋은 창작물로 보답할게요.'
     },
-    secretPhotos: [],
-    createdAt: new Date().toISOString()
+    secretPhotos: existingIdx >= 0 ? (db.creators[existingIdx].secretPhotos || []) : [],
+    createdAt: existingIdx >= 0 ? db.creators[existingIdx].createdAt : new Date().toISOString()
   };
 
-  const existingIdx = (db.creators || []).findIndex(c => c.id === cleanId);
   if (existingIdx >= 0) {
-    db.creators[existingIdx] = { ...db.creators[existingIdx], ...newCreator };
+    db.creators[existingIdx] = newCreator;
   } else {
     db.creators.unshift(newCreator);
   }
 
   writeDb(db);
-  res.json({ success: true, data: newCreator });
+  console.log(`[API] Creator registered/synced to db.json: ${newCreator.name} (${newCreator.handle})`);
+  res.json({ success: true, data: newCreator, creators: db.creators });
+});
+
+// 3-1. DELETE CREATOR BY ID OR HANDLE (크리에이터 프로필 & 바이오링크 삭제)
+app.delete('/api/creators/:id', (req, res) => {
+  const targetId = req.params.id.replace(/[@#/]/g, '').toLowerCase();
+  const db = readDb();
+  if (!Array.isArray(db.creators)) db.creators = [];
+
+  const initialLen = db.creators.length;
+  db.creators = db.creators.filter(c => 
+    c.id.toLowerCase() !== targetId && 
+    (c.handle || '').replace(/[@/]/g, '').toLowerCase() !== targetId
+  );
+
+  // If a user has this creator handle, revert role to supporter
+  if (Array.isArray(db.users)) {
+    db.users.forEach(u => {
+      if ((u.handle || '').replace(/[@/]/g, '').toLowerCase() === targetId) {
+        if (u.role === 'creator') u.role = 'supporter';
+      }
+    });
+  }
+
+  writeDb(db);
+  console.log(`[API] Creator deleted: ${targetId} (Remaining: ${db.creators.length})`);
+  res.json({ 
+    success: true, 
+    message: '크리에이터 프로필이 삭제되었습니다.',
+    deleted: initialLen !== db.creators.length,
+    creators: db.creators 
+  });
+});
+
+// 3-2. DELETE USER PROFILE / ACCOUNT (회원 탈퇴 및 프로필 데이터 삭제)
+app.delete('/api/auth/profile', (req, res) => {
+  const authHeader = req.headers.authorization;
+  const userId = getUserIdFromToken(authHeader) || req.body.userId || req.body.id;
+
+  if (!userId) {
+    return res.status(400).json({ success: false, message: '삭제할 회원 ID가 누락되었습니다.' });
+  }
+
+  const db = readDb();
+  if (!Array.isArray(db.users)) db.users = [];
+
+  const targetUser = db.users.find(u => u.id === userId || u.email === userId);
+  if (!targetUser) {
+    return res.status(404).json({ success: false, message: '사용자를 찾을 수 없습니다.' });
+  }
+
+  // Remove from users
+  db.users = db.users.filter(u => u.id !== targetUser.id);
+
+  // If was creator, also remove from creators
+  if (targetUser.handle && Array.isArray(db.creators)) {
+    const handleClean = targetUser.handle.replace(/[@/]/g, '').toLowerCase();
+    db.creators = db.creators.filter(c => 
+      c.id.toLowerCase() !== handleClean && 
+      (c.handle || '').replace(/[@/]/g, '').toLowerCase() !== handleClean
+    );
+  }
+
+  writeDb(db);
+  console.log(`[API] User account deleted: ${targetUser.name} (${targetUser.email})`);
+  res.json({ success: true, message: '회원 계정 및 프로필 데이터가 완전히 삭제되었습니다.' });
 });
 
 // =====================================================================

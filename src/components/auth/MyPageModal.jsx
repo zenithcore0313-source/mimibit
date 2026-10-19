@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   X, User, Ticket, Award, Heart, Sparkles, ExternalLink, 
   ArrowRight, ShieldCheck, Play, Pause, Download, LogOut, ChevronRight, MessageCircle,
-  Camera, Upload, Check, AlertCircle, Link2, Building2, Globe, CheckCircle2, RefreshCw, Edit3, Settings
+  Camera, Upload, Check, AlertCircle, Link2, Building2, Globe, CheckCircle2, RefreshCw, Edit3, Settings, Trash2 
 } from 'lucide-react';
 import { updateUserProfile } from '../../services/api';
 
@@ -36,6 +36,8 @@ export function MyPageModal({
   onOpenCharge, 
   onOpenMessenger,
   onUpdateUser,
+  onDeleteCreatorProfile,
+  onDeleteAccount,
   initialTab = 'profile',
   transactions = [] 
 }) {
@@ -611,6 +613,58 @@ export function MyPageModal({
                     </>
                   )}
                 </button>
+              </div>
+
+              {/* Danger Zone: Account & Creator Profile Deletion */}
+              <div className="pt-5 border-t border-rose-200 space-y-3">
+                <div className="flex items-center gap-1.5 text-rose-600 font-heading font-black text-xs">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>계정 및 프로필 삭제 관리 (Danger Zone)</span>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-rose-50/60 border border-rose-200/80 space-y-2.5">
+                  {/* Option 1: If creator, option to delete only creator biolink */}
+                  {isCreatorOrAdmin && (
+                    <div className="flex items-center justify-between gap-3 pb-2 border-b border-rose-100">
+                      <div>
+                        <span className="font-bold text-xs text-slate-800 block">크리에이터 바이오링크만 삭제</span>
+                        <span className="text-[10px] text-slate-500">계정은 유지되며, 일반 서포터 모드로 전환됩니다.</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const handleText = user.handle || user.name;
+                          if (window.confirm(`⚠️ [${handleText}] 크리에이터 바이오링크 및 프로필을 삭제하시겠습니까?\n계정은 일반 서포터로 유지됩니다.`)) {
+                            onDeleteCreatorProfile?.(user.id || user.handle);
+                          }
+                        }}
+                        className="py-1.5 px-3 rounded-xl bg-white border border-rose-300 text-rose-600 hover:bg-rose-50 font-bold text-[11px] transition-colors cursor-pointer shrink-0"
+                      >
+                        바이오링크 삭제
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Option 2: Full Account & Profile Deletion */}
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <span className="font-bold text-xs text-rose-700 block">회원 탈퇴 (전체 데이터 영구 삭제)</span>
+                      <span className="text-[10px] text-rose-500/80">닉네임, 프로필, 보유 내역 및 기기 저장 정보가 모두 영구 삭제됩니다.</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (window.confirm('⚠️ 정말로 미미빗 회원 탈퇴를 진행하시겠습니까?\n\n모든 계정 정보와 프로필 데이터가 완전히 삭제되며 다시 복구할 수 없습니다.')) {
+                          onDeleteAccount?.(user.id || user.email);
+                        }
+                      }}
+                      className="py-1.5 px-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-[11px] transition-colors cursor-pointer shrink-0 shadow-xs flex items-center gap-1"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                      <span>회원 탈퇴</span>
+                    </button>
+                  </div>
+                </div>
               </div>
 
             </form>
