@@ -66,15 +66,15 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }) {
 
     try {
       if (tab === 'signup') {
-        const userName = name.trim() || (selectedRole === 'creator' ? '신규 크리에이터' : '새싹 서포터');
-        const userHandle = handle.trim() || (selectedRole === 'creator' ? `creator_${Date.now().toString().slice(-4)}` : `fan_${Date.now().toString().slice(-4)}`);
+        const userName = name.trim() || '새싹 서포터';
+        const userHandle = handle.trim() || `fan_${Date.now().toString().slice(-4)}`;
 
         const res = await signupUser({
           email: email.trim(),
           password: password.trim(),
           name: userName,
           handle: userHandle,
-          role: selectedRole
+          role: 'supporter'
         });
 
         try {
@@ -125,30 +125,10 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }) {
             작은 창작자와 팬을 잇는 마이크로 팬덤 게이미피케이션 플랫폼
           </p>
 
-          {/* Role Selector: Creator vs Supporter */}
-          <div className="mt-5 p-1 bg-[#FFF5F6] rounded-2xl border border-[#FCD5DC] grid grid-cols-2 gap-1 text-xs font-black">
-            <button
-              type="button"
-              onClick={() => setSelectedRole('supporter')}
-              className={`py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                selectedRole === 'supporter'
-                  ? 'bg-[#E4092B] text-white shadow-xs'
-                  : 'text-[#5E5054] hover:text-[#140E10]'
-              }`}
-            >
-              <span>서포터 (팬)</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setSelectedRole('creator')}
-              className={`py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                selectedRole === 'creator'
-                  ? 'bg-[#140E10] text-white shadow-xs'
-                  : 'text-[#5E5054] hover:text-[#140E10]'
-              }`}
-            >
-              <span>크리에이터 (창작자)</span>
-            </button>
+          {/* Default Role Notice: Supporter -> Creator on Profile Creation */}
+          <div className="mt-4 px-3 py-2 bg-[#FFF5F6] rounded-2xl border border-[#FCD5DC] flex items-center justify-center gap-1.5 text-xs font-bold text-[#5E5054]">
+            <span className="text-sm">🐰</span>
+            <span>기본 회원가입: <strong className="text-[#E4092B]">후원자(서포터)</strong> 등급 시작</span>
           </div>
         </div>
 

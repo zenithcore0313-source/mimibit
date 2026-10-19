@@ -23,7 +23,8 @@ export function AdminDashboard({
   isOpen, 
   onClose, 
   currentUser, 
-  theme = 'dark' 
+  theme = 'dark',
+  isFullPage = false
 }) {
   const isDark = theme === 'dark';
 
@@ -166,13 +167,9 @@ export function AdminDashboard({
   });
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 font-sans overflow-y-auto">
+    <div className={isFullPage ? "min-h-screen w-full flex flex-col font-sans transition-colors duration-200" : "fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 font-sans overflow-y-auto"}>
       <div 
-        className={`rounded-[28px] w-full max-w-6xl border shadow-[0_25px_70px_rgba(0,0,0,0.5)] overflow-hidden relative my-auto flex flex-col max-h-[92vh] animate-scale-up transition-colors duration-200 ${
-          isDark 
-            ? 'bg-[#121214] border-white/10 text-white' 
-            : 'bg-white border-slate-200 text-slate-900'
-        }`}
+        className={isFullPage ? `w-full flex-1 flex flex-col transition-colors duration-200 ${isDark ? 'bg-[#0E0E10] text-white' : 'bg-slate-50 text-slate-900'}` : `rounded-[28px] w-full max-w-6xl border shadow-[0_25px_70px_rgba(0,0,0,0.5)] overflow-hidden relative my-auto flex flex-col max-h-[92vh] animate-scale-up transition-colors duration-200 ${isDark ? 'bg-[#121214] border-white/10 text-white' : 'bg-white border-slate-200 text-slate-900'}`}
         onClick={(e) => e.stopPropagation()}
       >
 
@@ -198,6 +195,11 @@ export function AdminDashboard({
                 <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
                   ROOT MASTER
                 </span>
+                {isFullPage && (
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">
+                    전용 서브도메인
+                  </span>
+                )}
               </div>
               <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-slate-500'}`}>
                 최고 관리자: <strong className="text-white">{currentUser?.name || 'root'}</strong> ({currentUser?.email || 'zeze1.sec@gmail.com'})
@@ -220,15 +222,45 @@ export function AdminDashboard({
               <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
             </button>
 
-            <button
-              type="button"
-              onClick={onClose}
-              className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors cursor-pointer ${
-                isDark ? 'bg-white/10 hover:bg-white/20 text-zinc-300' : 'bg-slate-200 hover:bg-slate-300 text-slate-700'
-              }`}
-            >
-              <X className="w-4 h-4" />
-            </button>
+            {isFullPage ? (
+              <a
+                href="/"
+                className={`px-3 py-1.5 rounded-xl border text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  isDark 
+                    ? 'border-white/10 hover:bg-white/10 text-zinc-300' 
+                    : 'border-slate-200 hover:bg-slate-200 text-slate-700'
+                }`}
+              >
+                <span>서비스 홈</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            ) : (
+              <div className="flex items-center gap-1.5">
+                <a
+                  href="/admin"
+                  target="_blank"
+                  rel="noreferrer"
+                  className={`px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                    isDark 
+                      ? 'border-white/10 hover:bg-white/10 text-zinc-300' 
+                      : 'border-slate-200 hover:bg-slate-200 text-slate-700'
+                  }`}
+                  title="서브도메인 / 전용창으로 열기"
+                >
+                  <ExternalLink className="w-3.5 h-3.5 text-amber-400" />
+                  <span className="hidden sm:inline">전용창</span>
+                </a>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors cursor-pointer ${
+                    isDark ? 'bg-white/10 hover:bg-white/20 text-zinc-300' : 'bg-slate-200 hover:bg-slate-300 text-slate-700'
+                  }`}
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
 

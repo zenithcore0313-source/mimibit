@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { ShieldCheck, Crown, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { ToonNavbar } from './components/toonation/ToonNavbar';
 import { ToonHero } from './components/toonation/ToonHero';
 import { ToonCreatorShowcase } from './components/toonation/ToonCreatorShowcase';
@@ -89,9 +90,21 @@ export function App() {
       if (!saved) return null;
       const parsed = JSON.parse(saved);
       if (parsed && (parsed.id || parsed.email || parsed.name)) {
+        // Master Admin role protection: Admins can NEVER be downgraded to creator or supporter
+        const isMasterAdmin = 
+          parsed.id === 'usr_admin_root' || 
+          parsed.id === 'usr_admin_musengche' || 
+          parsed.email === 'zeze1.sec@gmail.com' || 
+          parsed.username === 'Qwer1821' ||
+          parsed.email === 'Qwer1821@mimibit.me' ||
+          parsed.role === 'admin';
+
         // Clean legacy hardcoded dummy sponsorships / receipts / messages if present
         const cleanedUser = {
           ...parsed,
+          role: isMasterAdmin ? 'admin' : (parsed.role || 'supporter'),
+          carrotsBalance: isMasterAdmin ? 999999 : (parsed.carrotsBalance || 0),
+          tickets: isMasterAdmin ? 9999 : (parsed.tickets || 1),
           sponsorships: Array.isArray(parsed.sponsorships)
             ? parsed.sponsorships.filter(s => s && s.creatorName && !s.creatorName.includes('Luna') && s.carrots > 0)
             : [],
@@ -414,17 +427,25 @@ export function App() {
       const created = await registerNewCreator(formData);
       const cleanHandle = (formData.handle || '').replace(/[@/]/g, '').trim();
 
+      const isUserAdmin = 
+        currentUser?.role === 'admin' || 
+        currentUser?.id === 'usr_admin_root' || 
+        currentUser?.id === 'usr_admin_musengche' || 
+        currentUser?.email === 'zeze1.sec@gmail.com' ||
+        currentUser?.username === 'Qwer1821';
+
       const updatedUser = {
         ...(currentUser || {}),
         id: currentUser?.id || `usr_${created.id || cleanHandle}`,
         name: formData.name,
         handle: `@${cleanHandle}`,
         email: currentUser?.email || `${cleanHandle.toLowerCase()}@mimibit.me`,
-        role: 'creator',
+        role: isUserAdmin ? 'admin' : 'creator', // Admins NEVER get downgraded!
         isLoggedIn: true,
         avatar: created.avatar || formData.avatar,
         bio: formData.bio,
-        carrotsBalance: currentUser?.carrotsBalance || 0,
+        carrotsBalance: isUserAdmin ? 999999 : (currentUser?.carrotsBalance || 0),
+        tickets: isUserAdmin ? 9999 : (currentUser?.tickets || 1),
         settlementPending: 0
       };
 
@@ -926,6 +947,169 @@ export function App() {
     }
     setIsMessengerOpen(true);
   };
+
+  // Master Admin Verification Check
+  const isMasterAdmin = 
+    currentUser?.role === 'admin' || 
+    currentUser?.id === 'usr_admin_root' || 
+    currentUser?.id === 'usr_admin_musengche' || 
+    currentUser?.email === 'zeze1.sec@gmail.com' || 
+    currentUser?.username === 'Qwer1821' ||
+    currentUser?.email === 'Qwer1821@mimibit.me';
+
+  // Subdomain / Standalone Admin Dashboard Route Detection
+  const [isAdminSubdomain, setIsAdminSubdomain] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    const host = window.location.hostname.toLowerCase();
+    const path = window.location.pathname.toLowerCase();
+    const hash = window.location.hash.toLowerCase();
+    return (
+      host.startsWith('admin.') || 
+      path === '/admin' || 
+      path.startsWith('/admin/') || 
+      hash === '#admin' || 
+      hash === '#/admin' || 
+      window.location.search.includes('admin=true')
+    );
+  });
+
+  useEffect(() => {
+    const handleCheckAdminRoute = () => {
+      const host = window.location.hostname.toLowerCase();
+      const path = window.location.pathname.toLowerCase();
+      const hash = window.location.hash.toLowerCase();
+      setIsAdminSubdomain(
+        host.startsWith('admin.') || 
+        path === '/admin' || 
+        path.startsWith('/admin/') || 
+        hash === '#admin' || 
+        hash === '#/admin' || 
+        window.location.search.includes('admin=true')
+      );
+    };
+    window.addEventListener('hashchange', handleCheckAdminRoute);
+    window.addEventListener('popstate', handleCheckAdminRoute);
+    return () => {
+      window.removeEventListener('hashchange', handleCheckAdminRoute);
+      window.removeEventListener('popstate', handleCheckAdminRoute);
+    };
+  }, []);
+
+  const handleQuickAdminLogin = () => {
+    const rootAdmin = {
+      id: 'usr_admin_root',
+      email: 'zeze1.sec@gmail.com',
+      name: 'root',
+      handle: '@root',
+      role: 'admin',
+      isLoggedIn: true,
+      carrotsBalance: 999999,
+      tickets: 9999,
+      bio: '미미빗 최고 관리자'
+    };
+    setCurrentUser(rootAdmin);
+    localStorage.setItem('mimibit_auth_user', JSON.stringify(rootAdmin));
+    triggerToast('👑 최고 관리자(root) 계정으로 인증되었습니다.');
+  };
+
+  // Dedicated Admin Subdomain (admin.mimibit.kr / /admin / #admin) Page View
+  if (isAdminSubdomain) {
+    if (isMasterAdmin) {
+      return (
+        <div className={`min-h-screen ${theme === 'dark' ? 'bg-[#0E0E10] text-white' : 'bg-slate-50 text-slate-900'}`}>
+          <AdminDashboard
+            isOpen={true}
+            isFullPage={true}
+            currentUser={currentUser}
+            theme={theme}
+            onClose={() => {
+              if (window.location.hostname.startsWith('admin.')) {
+                const parts = window.location.hostname.split('.');
+                const rootDomain = parts.slice(1).join('.');
+                window.location.href = `${window.location.protocol}//${rootDomain}`;
+              } else {
+                window.location.href = '/';
+              }
+            }}
+          />
+        </div>
+      );
+    }
+
+    return (
+      <div className={`min-h-screen flex items-center justify-center p-4 font-sans ${theme === 'dark' ? 'bg-[#0A0A0C] text-white' : 'bg-slate-100 text-slate-900'}`}>
+        <div className={`w-full max-w-md rounded-3xl p-8 border shadow-2xl relative text-center backdrop-blur-xl ${
+          theme === 'dark' ? 'bg-[#141417]/95 border-white/10' : 'bg-white border-slate-200'
+        }`}>
+          <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-amber-500 to-rose-600 flex items-center justify-center text-white mx-auto mb-5 shadow-lg shadow-rose-500/20">
+            <ShieldCheck className="w-9 h-9" />
+          </div>
+
+          <span className="text-[11px] font-black px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 uppercase tracking-widest inline-block mb-3">
+            MIMIBIT ADMIN SECURITY PORTAL
+          </span>
+
+          <h1 className="text-2xl font-black mb-2">관리자 콘솔 인증</h1>
+          <p className={`text-xs mb-6 ${theme === 'dark' ? 'text-zinc-400' : 'text-slate-500'}`}>
+            admin 서브도메인은 최고 관리자만 접근할 수 있는 보안 영역입니다.
+          </p>
+
+          {currentUser ? (
+            <div className="mb-6 p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-left">
+              <div className="flex items-center gap-2 text-rose-400 text-xs font-bold mb-1">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>접근 권한이 부족합니다</span>
+              </div>
+              <p className="text-xs text-zinc-400 leading-relaxed">
+                현재 계정: <strong className="text-white">{currentUser.name}</strong> ({currentUser.email || currentUser.handle})<br/>
+                현재 등급: <span className="text-amber-400 font-bold">{currentUser.role === 'creator' ? '크리에이터' : '후원자'}</span>
+              </p>
+            </div>
+          ) : null}
+
+          <div className="space-y-3">
+            <button
+              type="button"
+              onClick={handleQuickAdminLogin}
+              className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-400 hover:to-rose-400 text-white font-black text-xs shadow-lg transition-transform active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <Crown className="w-4 h-4" />
+              <span>최고 관리자(root)로 즉시 로그인</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setIsAuthOpen(true)}
+              className={`w-full py-3 px-4 rounded-2xl border font-bold text-xs transition-colors cursor-pointer ${
+                theme === 'dark' ? 'border-white/10 hover:bg-white/5 text-zinc-300' : 'border-slate-300 hover:bg-slate-50 text-slate-700'
+              }`}
+            >
+              이메일 / 비밀번호 로그인
+            </button>
+
+            <a
+              href="/"
+              className={`block w-full py-2.5 text-xs font-bold transition-colors cursor-pointer ${
+                theme === 'dark' ? 'text-zinc-500 hover:text-zinc-300' : 'text-slate-500 hover:text-slate-800'
+              }`}
+            >
+              ← 일반 서비스 홈(mimibit.kr)으로 돌아가기
+            </a>
+          </div>
+        </div>
+
+        {/* Auth Modal for regular admin credential login */}
+        <AuthModal
+          isOpen={isAuthOpen}
+          onClose={() => setIsAuthOpen(false)}
+          onLoginSuccess={(user) => {
+            setCurrentUser(user);
+            setIsAuthOpen(false);
+          }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className={`min-h-screen flex flex-col font-sans transition-colors duration-300 relative ${
