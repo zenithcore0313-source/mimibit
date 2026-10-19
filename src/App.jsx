@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { CheckCircle2, ArrowLeft, X } from 'lucide-react';
 import { ToonNavbar } from './components/toonation/ToonNavbar';
 import { ToonHero } from './components/toonation/ToonHero';
 import { ToonCreatorShowcase } from './components/toonation/ToonCreatorShowcase';
