@@ -73,6 +73,35 @@ export function App() {
     setIsMyPageOpen(true);
   };
 
+  // Authenticated User State (Restored reliably from localStorage)
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('mimibit_auth_user');
+      if (!saved) return null;
+      const parsed = JSON.parse(saved);
+      if (parsed && (parsed.id || parsed.email || parsed.name)) {
+        // Clean legacy hardcoded dummy sponsorships / receipts / messages if present
+        const cleanedUser = {
+          ...parsed,
+          sponsorships: Array.isArray(parsed.sponsorships)
+            ? parsed.sponsorships.filter(s => s && s.creatorName && !s.creatorName.includes('Luna') && s.carrots > 0)
+            : [],
+          receiptTickets: Array.isArray(parsed.receiptTickets)
+            ? parsed.receiptTickets.filter(t => t && t.id !== 1024 && !t.creatorName?.includes('Luna'))
+            : [],
+          recentMessages: Array.isArray(parsed.recentMessages)
+            ? parsed.recentMessages.filter(m => m && !m.content?.includes('인쇄 잘되길'))
+            : [],
+          isLoggedIn: true
+        };
+        return cleanedUser;
+      }
+    } catch (e) {
+      console.warn('Failed to parse auth user from localStorage:', e);
+    }
+    return null;
+  });
+
   // Multi-creator chat rooms (KakaoTalk style: clean launch state)
   const [chatRooms, setChatRooms] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -122,35 +151,6 @@ export function App() {
       }
     });
   }, [currentUser?.id]);
-
-  // Authenticated User State (Restored reliably from localStorage)
-  const [currentUser, setCurrentUser] = useState(() => {
-    try {
-      const saved = localStorage.getItem('mimibit_auth_user');
-      if (!saved) return null;
-      const parsed = JSON.parse(saved);
-      if (parsed && (parsed.id || parsed.email || parsed.name)) {
-        // Clean legacy hardcoded dummy sponsorships / receipts / messages if present
-        const cleanedUser = {
-          ...parsed,
-          sponsorships: Array.isArray(parsed.sponsorships)
-            ? parsed.sponsorships.filter(s => s && s.creatorName && !s.creatorName.includes('Luna') && s.carrots > 0)
-            : [],
-          receiptTickets: Array.isArray(parsed.receiptTickets)
-            ? parsed.receiptTickets.filter(t => t && t.id !== 1024 && !t.creatorName?.includes('Luna'))
-            : [],
-          recentMessages: Array.isArray(parsed.recentMessages)
-            ? parsed.recentMessages.filter(m => m && !m.content?.includes('인쇄 잘되길'))
-            : [],
-          isLoggedIn: true
-        };
-        return cleanedUser;
-      }
-    } catch (e) {
-      console.warn('Failed to parse auth user from localStorage:', e);
-    }
-    return null;
-  });
 
   // Transaction History (Carrots recharging & payments)
   const [transactions, setTransactions] = useState(() => {

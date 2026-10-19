@@ -219,8 +219,8 @@ export function ToonNavbar({
                       {currentUser.role === 'admin'
                         ? '슈퍼 관리자'
                         : currentUser.role === 'creator'
-                        ? `정산 ${Math.round(currentUser.settlementPending / 10000)}만`
-                        : `${currentUser.carrotsBalance.toLocaleString()} 당근`}
+                        ? `정산 ${Math.round((currentUser.settlementPending || 0) / 10000)}만`
+                        : `${(currentUser.carrotsBalance || 0).toLocaleString()} 당근`}
                     </div>
                   </div>
                   <ChevronDown className="w-3.5 h-3.5 text-[#7A696E]" />
@@ -457,7 +457,7 @@ export function ToonNavbar({
                 <div>
                   <div className="font-heading font-black text-xs text-[#140E10]">{currentUser.name}</div>
                   <div className="text-[10px] text-[#E4092B]">
-                    {currentUser.role === 'creator' ? '🎨 크리에이터' : `🥕 ${currentUser.carrotsBalance.toLocaleString()} 당근`}
+                    {currentUser.role === 'creator' ? '🎨 크리에이터' : `🥕 ${(currentUser.carrotsBalance || 0).toLocaleString()} 당근`}
                   </div>
                 </div>
               </div>
