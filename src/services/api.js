@@ -11,195 +11,30 @@ import { INITIAL_CREATOR, INITIAL_RANKINGS, INITIAL_GUESTBOOK, INITIAL_SECRET_ME
 // If VITE_API_BASE_URL is explicitly set, it will override.
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
-// Initial 4 Default Creators
-export const DEFAULT_CREATORS = [
-  {
-    id: 'luna_rabbit',
-    handle: '@Luna_Rabbit',
-    name: 'Luna Rabbit (루나)',
-    category: '일러스트레이터 & 서브컬처 코스어',
-    bio: '주말마다 감성 포토와 드로잉 일상을 공유해요! 따뜻한 커피 한 잔과 당근 후원은 창작 활동에 가장 큰 힘이 됩니다 🥕✨',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-    coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80',
-    tags: ['#일러스트', '#코스어', '#서브컬처', '#굿즈제작'],
-    followers: 24500,
-    supporters: 342,
-    sns: {
-      instagram: 'https://instagram.com',
-      twitter: 'https://twitter.com',
-      youtube: 'https://youtube.com',
-      chzzk: 'https://chzzk.naver.com'
-    },
-    fundingGoal: {
-      title: '2026 봄 코스프레 화보집 & 굿즈 제작 펀딩',
-      currentCarrots: 8450,
-      targetCarrots: 10000,
-      endDate: '2026. 10. 31'
-    },
-    bankInfo: {
-      bank: '토스뱅크',
-      account: '1000-1234-5678',
-      holder: '루나'
-    },
-    voiceReward: {
-      title: '루나의 10월 감사 보이스 노트',
-      duration: '0:18',
-      message: '항상 곁에서 묵묵히 응원해 주셔서 진심으로 고마워요! 이번 화보집도 온 마음을 다해 준비할게요.'
-    },
-    secretPhotos: [
-      {
-        id: 1,
-        title: '가을 핑크 로리타 미공개 B컷 #01',
-        url: 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=800&q=80',
-        date: '10월 12일',
-        tierRequired: '다이아 래빗 이상'
-      },
-      {
-        id: 2,
-        title: '작업실 새벽 드로잉 비하인드 #02',
-        url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80',
-        date: '10월 08일',
-        tierRequired: '다이아 래빗 이상'
-      }
-    ]
-  },
-  {
-    id: 'mochi_cos',
-    handle: '@Mochi_Cos',
-    name: '모치 (Mochi)',
-    category: '프로 코스튬 플레이어',
-    bio: '좋아하는 게임 & 애니메이션 캐릭터를 코스프레합니다. 후원해 주시는 분들께 매달 디지털 미공개 화보 팩을 선물해 드려요 📸',
-    avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
-    coverImage: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1200&q=80',
-    tags: ['#코스프레', '#게임코스어', '#서브컬처', '#화보촬영'],
-    followers: 18200,
-    supporters: 215,
-    sns: {
-      instagram: 'https://instagram.com',
-      twitter: 'https://twitter.com'
-    },
-    fundingGoal: {
-      title: '지스타(G-STAR) 메인 코스프레 의상 제작비 펀딩',
-      currentCarrots: 4200,
-      targetCarrots: 8000,
-      endDate: '2026. 11. 10'
-    },
-    bankInfo: {
-      bank: '카카오뱅크',
-      account: '3333-01-9988776',
-      holder: '모치'
-    },
-    voiceReward: {
-      title: '모치의 지스타 응원 감사 음성 메모',
-      duration: '0:15',
-      message: '지스타 현장에서 만나면 꼭 인사 나눠요! 항상 큰 힘이 되어주셔서 감사합니다.'
-    },
-    secretPhotos: [
-      {
-        id: 11,
-        title: '신작 게임 캐릭터 스튜디오 조명 A컷',
-        url: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80',
-        date: '10월 11일',
-        tierRequired: '골드 래빗 이상'
-      }
-    ]
-  },
-  {
-    id: 'chibi_artist',
-    handle: '@Chibi_Artist',
-    name: '치비 (Chibi)',
-    category: 'SD 캐릭터 & 이모티콘 작가',
-    bio: '귀여운 말랑 토끼 캐릭터와 일상 툰을 그립니다 🐰 매달 후원 랭킹 1위 서포터님께 커스텀 SD 프로필 일러스트를 그려드려요!',
-    avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=400&q=80',
-    coverImage: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=80',
-    tags: ['#SD캐릭터', '#이모티콘', '#웹툰', '#캐릭터디자인'],
-    followers: 12900,
-    supporters: 180,
-    sns: {
-      instagram: 'https://instagram.com',
-      youtube: 'https://youtube.com'
-    },
-    fundingGoal: {
-      title: '2026 말랑 토끼 탁상 캘린더 & 스티커팩 인쇄',
-      currentCarrots: 6500,
-      targetCarrots: 6000,
-      endDate: '2026. 10. 25'
-    },
-    bankInfo: {
-      bank: '신한은행',
-      account: '110-345-678901',
-      holder: '치비'
-    },
-    voiceReward: {
-      title: '치비의 귀여운 응원 보이스',
-      duration: '0:12',
-      message: '오늘 하루도 정말 고생 많으셨어요! 말랑 토끼가 항상 응원할게요.'
-    },
-    secretPhotos: [
-      {
-        id: 21,
-        title: '2026 캘린더 미공개 표지 러프 스케치',
-        url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80',
-        date: '10월 09일',
-        tierRequired: '실버 래빗 이상'
-      }
-    ]
-  },
-  {
-    id: 'neon_vibe',
-    handle: '@Neon_Vibe',
-    name: '네온 바이브',
-    category: 'Lo-Fi 작곡 & 비트메이커',
-    bio: '새벽 감성 Lo-Fi & 신스웨이브 음악을 작곡합니다. 후원자 전원에게 매주 미공개 음원 데모 트랙을 보내드려요 🎧',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
-    coverImage: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=80',
-    tags: ['#로파이', '#작곡', '#비트메이커', '#신스웨이브'],
-    followers: 31400,
-    supporters: 389,
-    sns: {
-      youtube: 'https://youtube.com',
-      twitter: 'https://twitter.com'
-    },
-    fundingGoal: {
-      title: '첫 정규 바이닐(LP) 한정판 프레싱 펀딩',
-      currentCarrots: 9800,
-      targetCarrots: 12000,
-      endDate: '2026. 11. 20'
-    },
-    bankInfo: {
-      bank: '국민은행',
-      account: '234502-04-123456',
-      holder: '네온바이브'
-    },
-    voiceReward: {
-      title: 'LP 제작 비하인드 코멘터리 트랙',
-      duration: '0:25',
-      message: 'LP 믹싱 작업 중 가장 마음에 드는 아날로그 질감 트랙을 먼저 들려드립니다.'
-    },
-    secretPhotos: [
-      {
-        id: 31,
-        title: '아날로그 신디사이저 홈스튜디오 작업실 컷',
-        url: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80',
-        date: '10월 05일',
-        tierRequired: '골드 래빗 이상'
-      }
-    ]
-  }
-];
+// Initial Default Creators (Clean Launch State: empty, real creators register via onboarding)
+export const DEFAULT_CREATORS = [];
 
-// Helper: Get Creators from LocalStorage or Default
+// Helper: Get Creators from LocalStorage or API
 export function getStoredCreators() {
   try {
     const raw = localStorage.getItem('mimibit_creators');
     if (!raw) {
-      localStorage.setItem('mimibit_creators', JSON.stringify(DEFAULT_CREATORS));
-      return DEFAULT_CREATORS;
+      return [];
     }
     const list = JSON.parse(raw);
-    return Array.isArray(list) && list.length > 0 ? list : DEFAULT_CREATORS;
+    if (!Array.isArray(list)) return [];
+    // Purge any legacy dummy showcase creators (Luna, Mochi, Chibi, Neon)
+    const cleaned = list.filter(c => 
+      c && c.id && 
+      !['luna_rabbit', 'mochi_cos', 'chibi_artist', 'neon_vibe'].includes(c.id.toLowerCase()) &&
+      !['@luna_rabbit', '@mochi_cos', '@chibi_artist', '@neon_vibe'].includes(c.handle?.toLowerCase())
+    );
+    if (cleaned.length !== list.length) {
+      localStorage.setItem('mimibit_creators', JSON.stringify(cleaned));
+    }
+    return cleaned;
   } catch (e) {
-    return DEFAULT_CREATORS;
+    return [];
   }
 }
 

@@ -54,7 +54,7 @@ export function App() {
     if (hash === 'bio' || hash.startsWith('@')) return 'bio';
     return validPages.includes(hash) ? hash : 'home';
   });
-  const [selectedBioCreatorId, setSelectedBioCreatorId] = useState('luna_rabbit');
+  const [selectedBioCreatorId, setSelectedBioCreatorId] = useState(null);
 
   // Modal / View Overlay states
   const [activeModal, setActiveModal] = useState(null); // null, 'creator', 'studio', 'secret'
@@ -178,12 +178,22 @@ export function App() {
   };
 
   // Selected Creator for profile view
-  const [activeCreatorProfile, setActiveCreatorProfile] = useState(INITIAL_CREATOR);
+  const [activeCreatorProfile, setActiveCreatorProfile] = useState(null);
 
   // Persisted state simulation
   const [creator, setCreator] = useState(() => {
-    const saved = localStorage.getItem('mimibit_creator');
-    return saved ? JSON.parse(saved) : INITIAL_CREATOR;
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('mimibit_creator');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && parsed.id && parsed.id !== 'luna_rabbit') {
+            return parsed;
+          }
+        }
+      } catch (e) {}
+    }
+    return null;
   });
 
   const [rankings, setRankings] = useState(() => {
@@ -250,7 +260,8 @@ export function App() {
             setSelectedBioCreatorId(queryHandle);
           }
         } else {
-          setSelectedBioCreatorId('luna_rabbit');
+          const stored = getStoredCreators();
+          setSelectedBioCreatorId(stored.length > 0 ? stored[0].id : null);
         }
         setCurrentPage('bio');
       } else {
@@ -272,22 +283,24 @@ export function App() {
   };
 
   const handleSelectCreator = (c) => {
-    if (c?.id) {
-      setSelectedBioCreatorId(c.id);
-      setActiveCreatorProfile(c);
-      window.location.hash = `#/@${(c.handle || c.id).replace('@', '')}`;
+    if (!c) {
+      handleNavigate('bio');
       return;
     }
-    if (c?.handle?.toLowerCase().includes('mochi') || c?.name?.includes('모치')) {
-      setSelectedBioCreatorId('mochi_cos');
-    } else if (c?.handle?.toLowerCase().includes('chibi') || c?.name?.includes('치비')) {
-      setSelectedBioCreatorId('chibi_artist');
-    } else if (c?.handle?.toLowerCase().includes('neon') || c?.name?.includes('네온')) {
-      setSelectedBioCreatorId('neon_vibe');
-    } else {
-      setSelectedBioCreatorId('luna_rabbit');
+    if (typeof c === 'string') {
+      const handleClean = c.replace(/[@#]/g, '');
+      setSelectedBioCreatorId(handleClean);
+      window.location.hash = `#/@${handleClean}`;
+      setCurrentPage('bio');
+      return;
     }
-    handleNavigate('bio');
+    const creatorId = c.id || (c.handle ? c.handle.replace(/[@#]/g, '') : null);
+    setSelectedBioCreatorId(creatorId);
+    setActiveCreatorProfile(c);
+    if (creatorId) {
+      window.location.hash = `#/@${creatorId}`;
+    }
+    setCurrentPage('bio');
   };
 
   // Complete Onboarding Handler: Saves creator, updates user session, syncs to DB
@@ -628,7 +641,7 @@ export function App() {
         onOpenMessenger={() => setIsMessengerOpen(true)}
         onOpenAdmin={() => setIsAdminOpen(true)}
         onLogout={handleLogout}
-        onOpenCreatorDemo={() => setActiveModal('creator')}
+        onOpenCreatorDemo={() => handleNavigate('bio')}
         onOpenStudio={() => setActiveModal('studio')}
         theme={theme}
         onToggleTheme={handleToggleTheme}
@@ -641,8 +654,8 @@ export function App() {
           <BillboardTicker
             topSupporter={rankings[0]}
             onOpenDonate={() => {
-              setActiveModal('creator');
-              handleOpenDonate(rankings[0].carrots + 100);
+              handleNavigate('bio');
+              handleOpenDonate(rankings[0]?.carrots ? rankings[0].carrots + 100 : 100);
             }}
           />
         )}
@@ -660,13 +673,14 @@ export function App() {
           <CreatorsPage
             onSelectCreator={handleSelectCreator}
             onBackToHome={() => handleNavigate('home')}
+            onNavigate={handleNavigate}
           />
         )}
 
         {/* 3. FEATURES & TIER MATRIX GUIDE PAGE */}
         {currentPage === 'features' && (
           <FeaturesPage
-            onOpenCreatorDemo={() => setActiveModal('creator')}
+            onOpenCreatorDemo={() => handleNavigate('bio')}
             onBackToHome={() => handleNavigate('home')}
           />
         )}
@@ -713,6 +727,7 @@ export function App() {
             onOpenCharge={() => setIsChargeOpen(true)}
             onOpenMessenger={() => setIsMessengerOpen(true)}
             onBackToHome={() => handleNavigate('home')}
+            onNavigate={handleNavigate}
           />
         )}
       </main>
@@ -726,95 +741,9 @@ export function App() {
       {/* Corporate Professional Footer */}
       <ToonFooter onNavigate={handleNavigate} />
 
-
-
       {/* ============================================================== */}
-      {/* FULLSCREEN / MODAL EXPERIENCE: CREATOR PROFILE & STUDIO DEMO */}
+      {/* FULLSCREEN / MODAL EXPERIENCE: CREATOR STUDIO                  */}
       {/* ============================================================== */}
-
-      {/* 1. CREATOR PROFILE DEMO MODAL */}
-      {activeModal === 'creator' && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex flex-col items-center justify-start p-2 sm:p-6 overflow-y-auto animate-fade-in custom-scrollbar">
-          {/* Modal Top Control Bar */}
-          <div className="w-full max-w-4xl flex items-center justify-between py-3 px-4 bg-[#1C1215] text-white rounded-2xl mb-4 shadow-xl border border-white/10 shrink-0">
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setActiveModal(null)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-black transition-all cursor-pointer"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-                <span>닫기</span>
-              </button>
-              <span className="text-xs font-bold text-white/70 hidden sm:inline">
-                | 크리에이터 바이오링크 공식 프로필
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              {/* Phone Mockup Toggle */}
-              <button
-                onClick={() => setIsPhoneFrame(!isPhoneFrame)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-white transition-all cursor-pointer"
-                title="모바일 프레임으로 보기"
-              >
-                {isPhoneFrame ? <Monitor className="w-3.5 h-3.5 text-[#FFB703]" /> : <Smartphone className="w-3.5 h-3.5 text-[#FFB703]" />}
-                <span>{isPhoneFrame ? '와이드 뷰' : '모바일 뷰'}</span>
-              </button>
-
-              <button
-                onClick={() => setActiveModal(null)}
-                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-
-          {/* Profile Container */}
-          <div className={`w-full ${isPhoneFrame ? 'iphone-frame shadow-2xl my-2' : 'max-w-4xl'}`}>
-            {isPhoneFrame && (
-              <div className="bg-[#1C1215] text-white pt-2 pb-1.5 px-6 flex items-center justify-between text-[11px] font-bold">
-                <span>09:41</span>
-                <div className="iphone-notch">
-                  <span className="w-2.5 h-2.5 rounded-full bg-slate-800"></span>
-                  <span className="w-10 h-2.5 rounded-full bg-slate-800"></span>
-                </div>
-                <div className="flex items-center gap-1.5 text-[10px]">
-                  <span>5G</span>
-                  <span>100%</span>
-                </div>
-              </div>
-            )}
-            {isPhoneFrame && (
-              <div className="bg-white px-3 py-1.5 border-b border-[#FCD5DC] flex items-center justify-between text-[11px] text-[#6B5E62]">
-                <span className="truncate font-semibold">🔒 mimibit.me/{activeCreatorProfile.handle}</span>
-                <span className="text-[10px] font-bold bg-[#FFF0F2] text-[#E4092B] px-2 py-0.5 rounded-full">인앱 브라우저</span>
-              </div>
-            )}
-
-            <div className={isPhoneFrame ? 'p-3 max-h-[820px] overflow-y-auto custom-scrollbar bg-[#FFF5F6]' : 'bg-[#FFF5F6] p-4 sm:p-6 rounded-3xl'}>
-              <CreatorHeader
-                creator={activeCreatorProfile}
-                onOpenDonate={() => handleOpenDonate()}
-                onOpenTiers={() => setIsTiersOpen(true)}
-              />
-
-              <HallOfFame
-                rankings={rankings}
-                onOpenDonate={() => handleOpenDonate(rankings[0].carrots + 50)}
-                onSelectSupporter={(s) => console.log(s)}
-              />
-
-              <GuestbookFeed
-                guestbook={guestbook}
-                onAddComment={(comment) => setGuestbook([comment, ...guestbook])}
-                userState={userState}
-                onOpenDonate={handleOpenDonate}
-              />
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* 2. CREATOR STUDIO MODAL */}
       {activeModal === 'studio' && (

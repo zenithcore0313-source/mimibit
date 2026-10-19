@@ -56,7 +56,8 @@ export function CreatorStudio({
 
   // Fetch real payout history from backend API on mount
   useEffect(() => {
-    const creatorId = creator?.id || creator?.handle || 'luna_rabbit';
+    const creatorId = creator?.id || creator?.handle;
+    if (!creatorId) return;
     fetchPayouts(creatorId).then(history => {
       if (history && history.length > 0) {
         setPayoutHistory(prev => {

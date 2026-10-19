@@ -14,7 +14,7 @@ export const RABBIT_TIERS = [
     perks: ['첫 후원 환영 배지 부여', '방명록 응원 댓글 작성 권한'],
     ticketCount: 0,
     borderStyle: '1px solid #CBD5E1',
-    description: '작은 첫걸음! 루나의 방명록에 첫 응원을 남길 수 있어요.'
+    description: '작은 첫걸음! 크리에이터 방명록에 첫 응원을 남길 수 있어요.'
   },
   {
     level: 2,
@@ -29,7 +29,7 @@ export const RABBIT_TIERS = [
     perks: ['닉네임 체리 레드 하이라이트', '창작자 전용 감정표현 이모티콘'],
     ticketCount: 0,
     borderStyle: '2px solid #94A3B8',
-    description: '눈에 띄는 체리 레드 닉네임과 루나 전용 이모티콘 팩 지급!'
+    description: '눈에 띄는 체리 레드 닉네임과 창작자 전용 감정표현 팩 지급!'
   },
   {
     level: 3,
@@ -76,47 +76,12 @@ export const RABBIT_TIERS = [
     ticketCount: 30,
     borderStyle: '3px solid #F59E0B',
     isRoyal: true,
-    description: '최상위 로열 서포터! 루나의 단독 음성 리워드 및 왕관 테두리!'
+    description: '최상위 로열 서포터! 크리에이터의 단독 감사 음성 리워드 및 왕관 테두리!'
   }
 ];
 
-export const INITIAL_CREATOR = {
-  id: 'luna_rabbit',
-  handle: '@Luna_Rabbit',
-  name: 'Luna Rabbit (루나)',
-  bio: '일러스트레이터 & 서브컬처 코스어 🎀 주말마다 감성 포토와 드로잉 일상을 공유해요! 따뜻한 커피 한 잔과 당근 후원은 큰 힘이 됩니다 🥕✨',
-  avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-  coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80',
-  tags: ['#일러스트', '#코스어', '#마이크로팬덤', '#서브컬처'],
-  followerCount: '24.5K',
-  postCount: '128',
-  fundingGoal: {
-    title: '🎀 루나의 2026 봄 코스프레 화보집 & 굿즈 제작 펀딩',
-    currentCarrots: 0,
-    targetCarrots: 10000,
-    endDate: '2026. 12. 31'
-  },
-  voiceReward: {
-    title: '루나의 10월 감사 보이스 노트 🎧',
-    duration: '0:18',
-    previewAudio: 'https://cdn.freesound.org/previews/612/612081_5674468-lq.mp3',
-    message: '"항상 곁에서 묵묵히 응원해 주셔서 진심으로 고마워요! 이번 화보집도 온 마음을 다해 준비할게요🥕💕"'
-  },
-  secretPhotos: [
-    {
-      id: 1,
-      title: '가을 핑크 로리타 미공개 B컷 #01',
-      url: 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=600&q=80',
-      date: '10월 18일'
-    },
-    {
-      id: 2,
-      title: '작업실 새벽 드로잉 비하인드 #02',
-      url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80',
-      date: '10월 18일'
-    }
-  ]
-};
+// 런칭용 클린 상태 (실제 활동 크리에이터 가입 시 등록)
+export const INITIAL_CREATOR = null;
 
 // 런칭용 클린 랭킹 (초기 빈 배열 - 실제 유저 후원 시 실시간 등록)
 export const INITIAL_RANKINGS = [];
@@ -135,75 +100,7 @@ export const DONATION_PACKAGES = [
   { carrots: 5000, price: 500000, label: '전광판 1위 정복', tierBenefit: '당근 로열 래빗', isRoyal: true }
 ];
 
-// 카카오톡 형식 멀티 크리에이터 1:1 대화방 (클린 런칭 상태)
-export const INITIAL_CHAT_ROOMS = [
-  {
-    id: 'room_luna',
-    creatorId: 'luna_rabbit',
-    creatorName: 'Luna Rabbit (루나)',
-    handle: '@Luna_Rabbit',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
-    category: '일러스트 & 서브컬처 코스어',
-    tierName: '골드 래빗',
-    tierIcon: '🥇',
-    tierLevel: 3,
-    isUnlocked: false,
-    tickets: 0,
-    unreadCount: 0,
-    lastUpdated: '방금 전',
-    requiredCarrots: 1000,
-    messages: []
-  },
-  {
-    id: 'room_mochi',
-    creatorId: 'mochi_cos',
-    creatorName: '모치 (Mochi)',
-    handle: '@Mochi_Cos',
-    avatar: 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=300&q=80',
-    category: '코스프레 & 화보 일상',
-    tierName: '골드 래빗',
-    tierIcon: '🥇',
-    tierLevel: 3,
-    isUnlocked: false,
-    tickets: 0,
-    unreadCount: 0,
-    lastUpdated: '방금 전',
-    requiredCarrots: 1000,
-    messages: []
-  },
-  {
-    id: 'room_chibi',
-    creatorId: 'chibi_artist',
-    creatorName: '치비 스케치',
-    handle: '@Chibi_Artist',
-    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80',
-    category: 'SD 캐릭터 & 인스타툰',
-    tierName: '골드 래빗',
-    tierIcon: '🥇',
-    tierLevel: 3,
-    isUnlocked: false,
-    tickets: 0,
-    unreadCount: 0,
-    lastUpdated: '방금 전',
-    requiredCarrots: 1000,
-    messages: []
-  },
-  {
-    id: 'room_neon',
-    creatorId: 'neon_vibe',
-    creatorName: '네온 바이브',
-    handle: '@Neon_Vibe',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80',
-    category: 'Lo-Fi 작곡 & 숏폼 일상',
-    tierName: '골드 래빗',
-    tierIcon: '🥇',
-    tierLevel: 3,
-    isUnlocked: false,
-    tickets: 0,
-    unreadCount: 0,
-    lastUpdated: '방금 전',
-    requiredCarrots: 1000,
-    messages: []
-  }
-];
+// 카카오톡 형식 멀티 크리에이터 1:1 대화방 (클린 런칭 상태: 빈 배열)
+export const INITIAL_CHAT_ROOMS = [];
+
 

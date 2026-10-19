@@ -142,16 +142,16 @@ export function ToonContentMarquee({ onOpenCreatorDemo }) {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-amber-300 truncate">
-                        {activeTabRank === 1 ? 'Chibi_Fan (5,400 당근)' : activeTabRank === 2 ? 'SuperK (4,200 당근)' : 'Momo_Berry (3,100 당근)'}
+                        {activeTabRank === 1 ? 'VIP_서포터 (5,400 당근)' : activeTabRank === 2 ? '열혈팬 (4,200 당근)' : '달빛팬 (3,100 당근)'}
                       </span>
-                      <span className="text-[10px] text-slate-400 font-num">10월 시즌 진행 중</span>
+                      <span className="text-[10px] text-slate-400 font-num">시즌 진행 중</span>
                     </div>
                     <p className="text-slate-300 text-[11px] truncate mt-0.5 font-normal">
                       {activeTabRank === 1 
-                        ? '"루나님 이번 일러스트북 대박나세요! 언제나 응원해요"' 
+                        ? '"창작 프로젝트 대박나세요! 언제나 응원합니다"' 
                         : activeTabRank === 2 
-                        ? '"모치 코스 화보집 최고! 1위 탈환 간다!"' 
-                        : '"치비 스케치 매주 챙겨보는 1인 🥕"'}
+                        ? '"새로운 작품 최고! 이번 시즌도 화이팅"' 
+                        : '"멋진 창작 활동 항상 감사드립니다"'}
                     </p>
                   </div>
                 </div>

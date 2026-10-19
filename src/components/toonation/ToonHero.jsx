@@ -190,7 +190,7 @@ export function ToonHero({ onOpenCreatorDemo, onOpenStudio, onOpenOnboarding }) 
               <div className="text-left flex-1 min-w-0">
                 <div className="text-[11px] font-bold text-slate-400">크리에이터 전용 링크</div>
                 <div className="text-base sm:text-lg font-black text-white truncate font-num">
-                  mimibit.me/@Luna_Rabbit
+                  mimibit.me/@yourname
                 </div>
               </div>
               <span className="px-3 py-1.5 rounded-xl bg-white/10 text-white text-xs font-bold">
