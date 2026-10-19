@@ -884,13 +884,80 @@ app.post('/api/charges', (req, res) => {
 });
 
 // 5-1. TOSS PAYMENTS CONFIRM & CARROT CREDIT
-app.post('/api/payments/toss/confirm', (req, res) => {
+app.post('/api/payments/toss/confirm', async (req, res) => {
   const { paymentKey, orderId, amount, userId, carrots, bonusCarrots, method } = req.body;
   const db = readDb();
 
-  const totalCarrots = (parseInt(carrots, 10) || 0) + (parseInt(bonusCarrots, 10) || 0);
+  const amt = parseInt(amount, 10) || 0;
 
-  // Credit user if userId provided
+  // Standard Carrot Package Lookup Table
+  const PACKAGE_TABLE = [
+    { totalPrice: 1100, cash: 1000, bonus: 0 },
+    { totalPrice: 3300, cash: 3000, bonus: 0 },
+    { totalPrice: 5500, cash: 5000, bonus: 200 },
+    { totalPrice: 11000, cash: 10000, bonus: 1000 },
+    { totalPrice: 33000, cash: 30000, bonus: 4000 },
+    { totalPrice: 55000, cash: 50000, bonus: 8000 },
+    { totalPrice: 110000, cash: 100000, bonus: 20000 },
+  ];
+
+  let calculatedCarrots = parseInt(carrots, 10) || 0;
+  let calculatedBonus = parseInt(bonusCarrots, 10) || 0;
+
+  if (calculatedCarrots === 0 && amt > 0) {
+    const matched = PACKAGE_TABLE.find(p => p.totalPrice === amt);
+    if (matched) {
+      calculatedCarrots = matched.cash;
+      calculatedBonus = matched.bonus;
+    } else {
+      calculatedCarrots = Math.round(amt / 1.1);
+    }
+  }
+
+  const totalCarrots = calculatedCarrots + calculatedBonus;
+
+  // Real Toss Payments Live/Test API Verification
+  const secretKey = process.env.TOSS_SECRET_KEY;
+  let tossApprovedData = null;
+
+  if (secretKey && paymentKey && !paymentKey.startsWith('test_pk_sim_')) {
+    try {
+      const basicAuth = Buffer.from(`${secretKey}:`).toString('base64');
+      const tossRes = await fetch('https://api.tosspayments.com/v1/payments/confirm', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${basicAuth}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          paymentKey,
+          orderId,
+          amount: amt
+        })
+      });
+
+      const tossJson = await tossRes.json();
+
+      if (!tossRes.ok) {
+        console.error('[Toss API Confirm Error]', tossJson);
+        return res.status(tossRes.status || 400).json({
+          success: false,
+          message: tossJson.message || '토스페이먼츠 승인 처리에 실패했습니다.',
+          code: tossJson.code
+        });
+      }
+
+      tossApprovedData = tossJson;
+    } catch (netErr) {
+      console.error('[Toss API Network Exception]', netErr);
+      return res.status(502).json({
+        success: false,
+        message: '토스페이먼츠 승인 서버 통신 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.'
+      });
+    }
+  }
+
+  // Credit user balance
   if (userId) {
     const user = db.users.find(u => u.id === userId || u.email === userId);
     if (user) {
@@ -902,14 +969,18 @@ app.post('/api/payments/toss/confirm', (req, res) => {
     id: orderId || `TOSS_${Date.now()}`,
     orderId: orderId || `TOSS_${Date.now()}`,
     paymentKey: paymentKey || `test_pk_${Date.now()}`,
-    amount: parseInt(amount, 10),
-    carrots: parseInt(carrots, 10) || 0,
-    bonusCarrots: parseInt(bonusCarrots, 10) || 0,
+    amount: amt,
+    carrots: calculatedCarrots,
+    bonusCarrots: calculatedBonus,
     totalCarrots,
     userId: userId || 'guest',
-    method: method || '토스페이먼츠 전자결제',
+    method: tossApprovedData?.method || method || '토스페이먼츠 전자결제',
     status: '결제 완료 (승인)',
-    approvalNo: `${Math.floor(10000000 + Math.random() * 90000000)}`,
+    approvalNo: tossApprovedData?.approvedAt 
+      ? (tossApprovedData.card?.approveNo || tossApprovedData.paymentKey.slice(-8)) 
+      : `${Math.floor(10000000 + Math.random() * 90000000)}`,
+    receiptUrl: tossApprovedData?.receipt?.url || null,
+    tossData: tossApprovedData || null,
     createdAt: new Date().toISOString()
   };
 
@@ -921,6 +992,34 @@ app.post('/api/payments/toss/confirm', (req, res) => {
     data: record,
     message: '토스페이먼츠 결제가 정상 승인되어 당근이 충전되었습니다.'
   });
+});
+
+// 5-1-1. TOSS PAYMENTS WEBHOOK (Virtual Account Deposit Notification)
+app.post('/api/payments/toss/webhook', (req, res) => {
+  try {
+    const { eventType, data } = req.body;
+    console.log(`[Toss Webhook] Event: ${eventType}`, data?.orderId);
+
+    if (data && (data.status === 'DONE' || eventType === 'PAYMENT_STATUS_CHANGED')) {
+      const db = readDb();
+      const existingCharge = db.charges.find(c => c.orderId === data.orderId || c.id === data.orderId);
+      if (existingCharge && existingCharge.status !== '결제 완료 (승인)') {
+        existingCharge.status = '결제 완료 (승인)';
+        existingCharge.paidAt = new Date().toISOString();
+        if (existingCharge.userId) {
+          const user = db.users.find(u => u.id === existingCharge.userId || u.email === existingCharge.userId);
+          if (user) {
+            user.carrotsBalance = (user.carrotsBalance || 0) + (existingCharge.totalCarrots || 0);
+          }
+        }
+        writeDb(db);
+      }
+    }
+    return res.status(200).json({ success: true });
+  } catch (err) {
+    console.error('[Toss Webhook Error]', err);
+    return res.status(200).json({ success: false, message: 'Webhook processed' });
+  }
 });
 
 // 5-2. BANK TRANSFER (무통장입금 / 전용 가상계좌 발급)

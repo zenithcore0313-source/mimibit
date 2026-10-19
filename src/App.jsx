@@ -597,7 +597,7 @@ export function App() {
     triggerToast(`+${orderData.totalCarrots.toLocaleString()} 🥕 당근 충전이 완료되었습니다! ✨`);
   };
 
-  // Handle Toss Payments Redirect Success Callback
+  // Handle Toss Payments Redirect Success / Failure Callback
   useEffect(() => {
     try {
       const searchParams = new URLSearchParams(window.location.search);
@@ -608,29 +608,69 @@ export function App() {
       const orderId = searchParams.get('orderId') || queryFromHash?.get('orderId');
       const amount = searchParams.get('amount') || queryFromHash?.get('amount');
 
+      const failCode = searchParams.get('code') || queryFromHash?.get('code');
+      const failMessage = searchParams.get('message') || queryFromHash?.get('message');
+
+      // Failure redirect handling
+      if (failCode || failMessage || hash.includes('payment_fail')) {
+        triggerToast(`결제가 취소되었거나 진행되지 않았습니다. (${failMessage || '사용자 취소'})`);
+        window.history.replaceState({}, document.title, window.location.pathname);
+        return;
+      }
+
+      // Success redirect handling
       if (paymentKey && orderId && amount) {
         const parsedAmount = parseInt(amount, 10);
-        const estimatedCarrots = Math.round(parsedAmount / 1.1);
+
+        // Standard Carrot Package Lookup Table
+        const PACKAGE_TABLE = [
+          { totalPrice: 1100, cash: 1000, bonus: 0 },
+          { totalPrice: 3300, cash: 3000, bonus: 0 },
+          { totalPrice: 5500, cash: 5000, bonus: 200 },
+          { totalPrice: 11000, cash: 10000, bonus: 1000 },
+          { totalPrice: 33000, cash: 30000, bonus: 4000 },
+          { totalPrice: 55000, cash: 50000, bonus: 8000 },
+          { totalPrice: 110000, cash: 100000, bonus: 20000 },
+        ];
+
+        const matchedPkg = PACKAGE_TABLE.find(p => p.totalPrice === parsedAmount);
+        const chargedCarrots = matchedPkg ? matchedPkg.cash : Math.round(parsedAmount / 1.1);
+        const bonusCarrots = matchedPkg ? matchedPkg.bonus : 0;
+        const totalCarrots = chargedCarrots + bonusCarrots;
+
+        // Resolve userId securely from state or persistent storage
+        let activeUserId = currentUser?.id;
+        if (!activeUserId) {
+          try {
+            const rawUser = localStorage.getItem('mimibit_auth_user');
+            if (rawUser) {
+              activeUserId = JSON.parse(rawUser)?.id;
+            }
+          } catch (e) {}
+        }
+
         confirmTossPayment({
           paymentKey,
           orderId,
           amount: parsedAmount,
-          userId: currentUser?.id,
-          carrots: estimatedCarrots,
-          bonusCarrots: 0,
+          userId: activeUserId,
+          carrots: chargedCarrots,
+          bonusCarrots: bonusCarrots,
           method: '토스페이먼츠'
         }).then(record => {
           handleChargeSuccess({
             orderId,
-            chargedCarrots: estimatedCarrots,
-            bonusCarrots: 0,
-            totalCarrots: estimatedCarrots,
+            chargedCarrots,
+            bonusCarrots,
+            totalCarrots,
             price: parsedAmount,
-            paymentMethod: '토스페이먼츠'
+            paymentMethod: record?.method || '토스페이먼츠'
           });
           window.history.replaceState({}, document.title, window.location.pathname);
         }).catch(err => {
           console.warn('[Toss redirect confirm]', err);
+          triggerToast('결제 승인 처리 중 문제가 발생했습니다. 고객센터로 문의해 주세요.');
+          window.history.replaceState({}, document.title, window.location.pathname);
         });
       }
     } catch (e) {
