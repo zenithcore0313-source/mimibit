@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { INITIAL_CHAT_ROOMS } from '../data/initialData';
+import { sendChatMessage, fetchChatMessages } from '../services/api';
 
 export function KakaoSecretMessengerModal({ 
   isOpen, 
@@ -16,9 +17,10 @@ export function KakaoSecretMessengerModal({
   currentUser, 
   onOpenDonate, 
   onOpenCharge,
-  theme: themeProp
+  theme: themeProp,
+  initialRoomId
 }) {
-  const [selectedRoomId, setSelectedRoomId] = useState(() => chatRooms[0]?.id || null);
+  const [selectedRoomId, setSelectedRoomId] = useState(() => initialRoomId || chatRooms[0]?.id || null);
   const [mobileView, setMobileView] = useState('list'); // 'list' or 'chat'
   const [searchQuery, setSearchQuery] = useState('');
   const [inputText, setInputText] = useState('');
@@ -52,6 +54,46 @@ export function KakaoSecretMessengerModal({
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [activeRoom?.messages?.length]);
+
+  // Sync initialRoomId if passed
+  useEffect(() => {
+    if (initialRoomId) {
+      setSelectedRoomId(initialRoomId);
+      setMobileView('chat');
+    }
+  }, [initialRoomId, isOpen]);
+
+  // Real-time backend message polling (2 accounts sync)
+  useEffect(() => {
+    if (!isOpen || !activeRoom?.id) return;
+
+    const syncMessages = async () => {
+      try {
+        const serverMsgs = await fetchChatMessages({ roomId: activeRoom.id });
+        if (serverMsgs && serverMsgs.length > 0) {
+          setChatRooms(prev => prev.map(r => {
+            if (r.id === activeRoom.id) {
+              const currentMsgs = r.messages || [];
+              const merged = [...currentMsgs];
+              let hasNew = false;
+              serverMsgs.forEach(sm => {
+                if (!merged.some(m => m.id === sm.id)) {
+                  merged.push(sm);
+                  hasNew = true;
+                }
+              });
+              return hasNew ? { ...r, messages: merged } : r;
+            }
+            return r;
+          }));
+        }
+      } catch (e) {}
+    };
+
+    syncMessages();
+    const timer = setInterval(syncMessages, 2500);
+    return () => clearInterval(timer);
+  }, [isOpen, activeRoom?.id]);
 
   // Clean up recording timer and audio on unmount or room change
   useEffect(() => {
@@ -297,11 +339,17 @@ export function KakaoSecretMessengerModal({
       const senderName = currentUser?.name || currentUser?.nickname || '서포터';
       const durationFormatted = `0:${duration < 10 ? '0' + duration : duration}`;
 
+      const isSenderCreator = currentUser?.role === 'creator' || currentUser?.id === activeRoom.creatorId;
+
       const newVoiceMsg = {
         id: `msg_voice_${Date.now()}`,
+        roomId: activeRoom.id,
+        creatorId: activeRoom.creatorId,
+        creatorName: activeRoom.creatorName,
+        senderId: currentUser?.id || 'guest',
         sender: senderName,
-        senderTier: isRoot ? 'admin' : 'gold',
-        isCreator: false,
+        senderTier: isRoot ? 'admin' : (isSenderCreator ? 'creator' : 'gold'),
+        isCreator: isSenderCreator,
         text: '',
         voiceNote: {
           duration: durationFormatted,
@@ -309,42 +357,23 @@ export function KakaoSecretMessengerModal({
           audioUrl: audioUrl
         },
         timestamp: '방금 전',
-        ticketCost: 1
+        ticketCost: isRoot || isSenderCreator ? 0 : 1
       };
+
+      // Send to backend DB for cross-account real-time communication
+      sendChatMessage(newVoiceMsg);
 
       setChatRooms(prev => prev.map(r => {
         if (r.id === activeRoom.id) {
           return {
             ...r,
-            tickets: Math.max(0, (r.tickets || 1) - 1),
+            tickets: isRoot || isSenderCreator ? r.tickets : Math.max(0, (r.tickets || 1) - 1),
             lastUpdated: '방금 전',
             messages: [...(r.messages || []), newVoiceMsg]
           };
         }
         return r;
       }));
-
-      // Creator auto acknowledgment
-      setTimeout(() => {
-        const creatorAck = {
-          id: `reply_${Date.now()}`,
-          sender: activeRoom.creatorName,
-          senderTier: 'creator',
-          isCreator: true,
-          text: '소중한 보이스 메모 감사합니다! 확인 후 곧 정성껏 답장 드릴게요.',
-          timestamp: '방금 전'
-        };
-        setChatRooms(prev => prev.map(r => {
-          if (r.id === activeRoom.id) {
-            return {
-              ...r,
-              lastUpdated: '방금 전',
-              messages: [...(r.messages || []), creatorAck]
-            };
-          }
-          return r;
-        }));
-      }, 1500);
 
       setIsRecording(false);
       setRecordingSeconds(0);
@@ -402,23 +431,32 @@ export function KakaoSecretMessengerModal({
     setInputText('');
     setAttachedPhoto(null);
 
+    const isSenderCreator = currentUser?.role === 'creator' || currentUser?.id === activeRoom.creatorId;
+
     const newMsg = {
       id: newMsgId,
-      sender: `${currentUser?.name || currentUser?.nickname || '서포터'}`,
-      senderTier: isRoot ? 'admin' : 'gold',
-      isCreator: false,
+      roomId: activeRoom.id,
+      creatorId: activeRoom.creatorId,
+      creatorName: activeRoom.creatorName,
+      senderId: currentUser?.id || 'guest',
+      sender: `${currentUser?.name || currentUser?.nickname || (isSenderCreator ? activeRoom.creatorName : '서포터')}`,
+      senderTier: isRoot ? 'admin' : (isSenderCreator ? 'creator' : 'gold'),
+      isCreator: isSenderCreator,
       text: userText,
       photoUrl: userPhoto || null,
       timestamp: '방금 전',
-      ticketCost: 1
+      ticketCost: isRoot || isSenderCreator ? 0 : 1
     };
 
-    // Update room messages & deduct 1 ticket
+    // Send to backend DB for cross-account real-time communication
+    sendChatMessage(newMsg);
+
+    // Update room messages & deduct ticket if supporter
     setChatRooms(prev => prev.map(r => {
       if (r.id === activeRoom.id) {
         return {
           ...r,
-          tickets: Math.max(0, (r.tickets || 1) - 1),
+          tickets: isRoot || isSenderCreator ? r.tickets : Math.max(0, (r.tickets || 1) - 1),
           lastUpdated: '방금 전',
           messages: [...(r.messages || []), newMsg]
         };
@@ -430,31 +468,6 @@ export function KakaoSecretMessengerModal({
     try {
       confetti({ particleCount: 20, spread: 45, origin: { y: 0.85 } });
     } catch (err) {}
-
-    // Creator friendly automated acknowledgment
-    setTimeout(() => {
-      const creatorReply = {
-        id: `reply_${Date.now()}`,
-        sender: activeRoom.creatorName,
-        senderTier: 'creator',
-        isCreator: true,
-        text: userPhoto 
-          ? '보내주신 사진 잘 받았습니다! 항상 응원해주셔서 진심으로 감사해요.' 
-          : `"${userText.slice(0, 18)}..." 따뜻한 메시지 감사합니다! 확인 후 답장 남겨드릴게요.`,
-        timestamp: '방금 전'
-      };
-
-      setChatRooms(prev => prev.map(r => {
-        if (r.id === activeRoom.id) {
-          return {
-            ...r,
-            lastUpdated: '방금 전',
-            messages: [...(r.messages || []), creatorReply]
-          };
-        }
-        return r;
-      }));
-    }, 1800);
   };
 
   return (

@@ -44,7 +44,7 @@ import {
   RABBIT_TIERS 
 } from './data/initialData';
 import { X, Smartphone, Monitor, ArrowLeft, Sparkles, CheckCircle2 } from 'lucide-react';
-import { getStoredCreators, findCreatorByIdOrHandle, registerNewCreator, processCreatorDonation, confirmTossPayment } from './services/api';
+import { getStoredCreators, findCreatorByIdOrHandle, registerNewCreator, processCreatorDonation, confirmTossPayment, fetchChatRooms } from './services/api';
 
 export function App() {
   // Page Routing State ('home', 'creators', 'features', 'fees', 'about', 'onboarding', 'faq', 'bio')
@@ -64,6 +64,7 @@ export function App() {
   const [myPageTab, setMyPageTab] = useState('sponsorships');
   const [isChargeOpen, setIsChargeOpen] = useState(false);
   const [isMessengerOpen, setIsMessengerOpen] = useState(false);
+  const [selectedMessengerRoomId, setSelectedMessengerRoomId] = useState(null);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
 
@@ -94,6 +95,33 @@ export function App() {
     } catch (e) {}
     return INITIAL_CHAT_ROOMS; // []
   });
+
+  // Fetch real chat rooms from server on mount & sync across accounts
+  useEffect(() => {
+    fetchChatRooms().then(rooms => {
+      if (rooms && rooms.length > 0) {
+        setChatRooms(prev => {
+          const merged = [...rooms];
+          prev.forEach(p => {
+            const existingIdx = merged.findIndex(m => m.id === p.id);
+            if (existingIdx === -1) {
+              merged.push(p);
+            } else {
+              // merge messages
+              const currentMsgs = merged[existingIdx].messages || [];
+              (p.messages || []).forEach(msg => {
+                if (!currentMsgs.some(m => m.id === msg.id)) {
+                  currentMsgs.push(msg);
+                }
+              });
+              merged[existingIdx].messages = currentMsgs;
+            }
+          });
+          return merged;
+        });
+      }
+    });
+  }, [currentUser?.id]);
 
   // Authenticated User State (Restored reliably from localStorage)
   const [currentUser, setCurrentUser] = useState(() => {
@@ -332,9 +360,17 @@ export function App() {
   // Creator Studio 1:1 Secret Talk reply handler
   const handleCreatorStudioReply = (roomId, replyText, attachVoice, attachPhoto) => {
     const creatorName = currentUser?.name || activeCreatorProfile?.name || creator?.name || '크리에이터';
+    const creatorId = activeCreatorProfile?.id || creator?.id || (roomId ? roomId.replace('room_', '') : 'creator');
+    const effectiveRoomId = roomId || `room_${creatorId}`;
+
     const newReply = {
       id: `msg_reply_${Date.now()}`,
+      roomId: effectiveRoomId,
+      creatorId,
+      creatorName,
+      senderId: currentUser?.id || 'creator',
       sender: creatorName,
+      senderTier: 'creator',
       text: replyText,
       timestamp: '방금 전',
       isCreator: true,
@@ -342,16 +378,19 @@ export function App() {
         label: `${creatorName}의 1:1 보이스 답례 메모`,
         duration: '0:15'
       } : null,
-      secretPhotoUrl: attachPhoto ? 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=800&q=80' : null
+      photoUrl: attachPhoto ? 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=800&q=80' : null
     };
 
+    // Save reply to backend server so supporter on Account 2 receives it
+    sendChatMessage(newReply);
+
     setChatRooms(prev => prev.map(room => {
-      const isMatch = roomId ? room.id === roomId : (room.id === 'room_luna' || room.creatorName?.includes(creatorName));
+      const isMatch = room.id === effectiveRoomId || (room.creatorId && room.creatorId === creatorId);
       if (isMatch) {
         return {
           ...room,
           lastUpdated: '방금 전',
-          messages: [...room.messages, newReply]
+          messages: [...(room.messages || []), newReply]
         };
       }
       return room;
@@ -535,12 +574,12 @@ export function App() {
     };
     setUserState(updatedUser);
 
-    // If logged in supporter, update carrots balance
-    if (currentUser && currentUser.role === 'supporter') {
+    // If logged in user (supporter or admin), update carrots balance
+    if (currentUser) {
       setCurrentUser(prev => ({
         ...prev,
-        carrotsBalance: Math.max(0, prev.carrotsBalance - data.carrots),
-        tickets: prev.tickets + addedTickets
+        carrotsBalance: Math.max(0, (prev.carrotsBalance || 0) - data.carrots),
+        tickets: (prev.tickets || 0) + addedTickets
       }));
     }
 
@@ -609,6 +648,114 @@ export function App() {
   const handleOpenDonate = (preset = null) => {
     setPresetCarrots(preset);
     setIsDonateOpen(true);
+  };
+
+  // Direct Carrot Gifting from Wallet Balance (선물하기 버튼 클릭 시)
+  const handleGiftCarrots = (targetCreator, carrotAmount, cheerMessage) => {
+    if (!currentUser) {
+      setIsAuthOpen(true);
+      return;
+    }
+
+    const availableCarrots = currentUser.carrotsBalance || 0;
+    if (availableCarrots < carrotAmount) {
+      if (window.confirm(`보유 당근(${availableCarrots.toLocaleString()}개)이 부족합니다. 당근 충전소로 이동하시겠습니까?`)) {
+        setIsChargeOpen(true);
+      }
+      return;
+    }
+
+    // 1. Deduct carrots from user wallet
+    const nextBalance = Math.max(0, availableCarrots - carrotAmount);
+    const addedTickets = carrotAmount >= 1000 ? 5 : 1;
+    const updatedUser = {
+      ...currentUser,
+      carrotsBalance: nextBalance,
+      tickets: (currentUser.tickets || 0) + addedTickets
+    };
+    setCurrentUser(updatedUser);
+    localStorage.setItem('mimibit_auth_user', JSON.stringify(updatedUser));
+
+    // 2. Persist donation to backend API
+    processCreatorDonation(targetCreator.id || targetCreator.handle, {
+      carrots: carrotAmount,
+      nickname: currentUser.name || currentUser.nickname || '익명의 팬',
+      message: cheerMessage || '',
+      userId: currentUser.id
+    });
+
+    // 3. Ensure 1:1 chat room is created / unlocked for this creator
+    const isRoot = currentUser.role === 'admin';
+    const rId = `room_${targetCreator.id}`;
+    setChatRooms(prev => {
+      const exists = prev.find(r => r.id === rId);
+      if (exists) {
+        return prev.map(r => r.id === rId ? {
+          ...r,
+          isUnlocked: true,
+          tickets: isRoot ? 9999 : (r.tickets || 0) + addedTickets,
+          lastUpdated: '방금 전'
+        } : r);
+      }
+      return [
+        {
+          id: rId,
+          creatorId: targetCreator.id,
+          creatorName: targetCreator.name,
+          handle: targetCreator.handle,
+          avatar: targetCreator.avatar,
+          category: targetCreator.category,
+          tierName: isRoot ? '최고 관리자' : '골드 래빗',
+          tierIcon: isRoot ? '👑' : '🥇',
+          tierLevel: isRoot ? 5 : 3,
+          isUnlocked: true,
+          tickets: isRoot ? 9999 : addedTickets,
+          unreadCount: 0,
+          lastUpdated: '방금 전',
+          messages: []
+        },
+        ...prev
+      ];
+    });
+
+    triggerToast(`🥕 ${targetCreator.name}님에게 ${carrotAmount.toLocaleString()} 당근을 성공적으로 선물했습니다! (잔여: ${nextBalance.toLocaleString()}개)`);
+  };
+
+  // Open Secret Messenger with a Specific Creator directly
+  const handleOpenBioMessenger = (targetCreator) => {
+    if (targetCreator) {
+      const isRoot = currentUser?.role === 'admin';
+      const cleanId = targetCreator.id || targetCreator.handle?.replace(/[@#]/g, '') || 'creator';
+      const rId = `room_${cleanId}`;
+      setChatRooms(prev => {
+        const exists = prev.find(r => r.id === rId);
+        if (exists) {
+          if (isRoot) return prev.map(r => r.id === rId ? { ...r, isUnlocked: true, tickets: 9999 } : r);
+          return prev;
+        }
+        return [
+          {
+            id: rId,
+            creatorId: cleanId,
+            creatorName: targetCreator.name || '크리에이터',
+            handle: targetCreator.handle || `@${cleanId}`,
+            avatar: targetCreator.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+            category: targetCreator.category || '공식 크리에이터',
+            tierName: isRoot ? '최고 관리자' : '골드 래빗',
+            tierIcon: isRoot ? '👑' : '🥇',
+            tierLevel: isRoot ? 5 : 3,
+            isUnlocked: isRoot || Boolean(targetCreator.isUnlocked),
+            tickets: isRoot ? 9999 : 5,
+            unreadCount: 0,
+            lastUpdated: '방금 전',
+            messages: []
+          },
+          ...prev
+        ];
+      });
+      setSelectedMessengerRoomId(rId);
+    }
+    setIsMessengerOpen(true);
   };
 
   return (
@@ -718,8 +865,9 @@ export function App() {
             initialCreatorId={selectedBioCreatorId}
             currentUser={currentUser}
             onOpenDonate={handleOpenDonate}
+            onGiftCarrots={handleGiftCarrots}
             onOpenCharge={() => setIsChargeOpen(true)}
-            onOpenMessenger={() => setIsMessengerOpen(true)}
+            onOpenMessenger={handleOpenBioMessenger}
             onBackToHome={() => handleNavigate('home')}
             onNavigate={handleNavigate}
           />
@@ -856,11 +1004,15 @@ export function App() {
       {/* KakaoTalk Style 1:1 Secret Messenger Multi-Creator Modal */}
       <KakaoSecretMessengerModal
         isOpen={isMessengerOpen}
-        onClose={() => setIsMessengerOpen(false)}
+        onClose={() => {
+          setIsMessengerOpen(false);
+          setSelectedMessengerRoomId(null);
+        }}
         chatRooms={chatRooms}
         setChatRooms={setChatRooms}
         currentUser={currentUser}
         theme={theme}
+        initialRoomId={selectedMessengerRoomId}
         onOpenDonate={() => {
           setIsMessengerOpen(false);
           setActiveModal('creator');

@@ -17,6 +17,7 @@ export function CreatorBioPage({
   initialCreatorId,
   currentUser,
   onOpenDonate,
+  onGiftCarrots,
   onOpenCharge,
   onOpenMessenger,
   onBackToHome,
@@ -140,6 +141,16 @@ export function CreatorBioPage({
     const carrotAmount = customCarrots ? parseInt(customCarrots, 10) : selectedCarrots;
     if (!carrotAmount || carrotAmount <= 0) {
       alert('후원할 당근 수량을 선택해주세요.');
+      return;
+    }
+
+    if (onGiftCarrots) {
+      onGiftCarrots(activeCreator, carrotAmount, cheerMessage);
+      setCustomCarrots('');
+      setCheerMessage('');
+      try {
+        confetti({ particleCount: 70, spread: 80, origin: { y: 0.7 } });
+      } catch (e) {}
       return;
     }
 
@@ -355,7 +366,7 @@ export function CreatorBioPage({
               {/* Action Buttons: Secret Talk & Follow */}
               <div className="flex items-center justify-center sm:justify-end gap-3 w-full sm:w-auto">
                 <button
-                  onClick={onOpenMessenger}
+                  onClick={() => onOpenMessenger && onOpenMessenger(creator)}
                   className="flex-1 sm:flex-none px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs sm:text-sm border border-white/15 backdrop-blur-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95 group shadow-lg"
                 >
                   <MessageCircle className="w-4 h-4 text-[#FF4D6D] group-hover:scale-110 transition-transform" />

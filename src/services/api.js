@@ -573,6 +573,59 @@ export async function adjustUserCarrots(userId, amount, reason) {
   return null;
 }
 
+// 15. Send Chat Message (1:1 시크릿톡 메시지 전송)
+export async function sendChatMessage(messageData) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/messages`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(messageData)
+    });
+    const data = await res.json();
+    if (data.success && data.data) {
+      return data.data;
+    }
+  } catch (e) {
+    console.warn('[API] Send chat message offline fallback:', e);
+  }
+  return {
+    ...messageData,
+    id: `msg_local_${Date.now()}`,
+    timestamp: '방금 전'
+  };
+}
+
+// 16. Fetch Chat Messages (1:1 시크릿톡 메시지 조회)
+export async function fetchChatMessages(params = {}) {
+  try {
+    const query = new URLSearchParams(params).toString();
+    const res = await fetch(`${API_BASE_URL}/api/messages?${query}`);
+    const data = await res.json();
+    if (data.success && Array.isArray(data.data)) {
+      return data.data;
+    }
+  } catch (e) {
+    console.warn('[API] Fetch chat messages offline fallback:', e);
+  }
+  return [];
+}
+
+// 17. Fetch Chat Rooms (사용자/크리에이터 대화방 목록 조회)
+export async function fetchChatRooms(params = {}) {
+  try {
+    const query = new URLSearchParams(params).toString();
+    const res = await fetch(`${API_BASE_URL}/api/chat-rooms?${query}`);
+    const data = await res.json();
+    if (data.success && Array.isArray(data.data)) {
+      return data.data;
+    }
+  } catch (e) {
+    console.warn('[API] Fetch chat rooms offline fallback:', e);
+  }
+  return [];
+}
+
+
 
 
 

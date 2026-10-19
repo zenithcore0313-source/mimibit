@@ -618,6 +618,15 @@ app.post('/api/donations', (req, res) => {
   const taxWithholding = Math.round(amountKRW * 0.033); // 3.3%
   const netPayout = amountKRW - platformFee - taxWithholding; // 86.7%
 
+  // Deduct donor carrots balance if logged in
+  const donorId = req.body.userId || (req.body.currentUser && req.body.currentUser.id);
+  if (donorId) {
+    const donor = (db.users || []).find(u => u.id === donorId || u.email === donorId);
+    if (donor) {
+      donor.carrotsBalance = Math.max(0, (donor.carrotsBalance || 0) - numCarrots);
+    }
+  }
+
   const donationRecord = {
     id: `DON_${Date.now()}`,
     creatorId,
@@ -636,6 +645,132 @@ app.post('/api/donations', (req, res) => {
   writeDb(db);
 
   res.json({ success: true, data: { creator, donation: donationRecord } });
+});
+
+// =====================================================================
+// 1:1 SECRET MESSENGER & CHAT ROOM API (실시간 메시지 송수신)
+// =====================================================================
+
+// 4-1. GET MESSAGES (by roomId or creatorId)
+app.get('/api/messages', (req, res) => {
+  const { roomId, creatorId, userId } = req.query;
+  const db = readDb();
+  if (!Array.isArray(db.messages)) db.messages = [];
+
+  let list = db.messages;
+  if (roomId) {
+    list = list.filter(m => m.roomId === roomId);
+  } else if (creatorId) {
+    const clean = creatorId.replace(/[@#]/g, '').toLowerCase();
+    list = list.filter(m => (m.creatorId || '').replace(/[@#]/g, '').toLowerCase() === clean || (m.roomId && m.roomId.includes(clean)));
+  } else if (userId) {
+    list = list.filter(m => m.senderId === userId || m.receiverId === userId);
+  }
+
+  res.json({ success: true, data: list });
+});
+
+// 4-2. SEND NEW MESSAGE (텍스트, 사진, 보이스 녹음)
+app.post('/api/messages', (req, res) => {
+  const { 
+    roomId, 
+    creatorId, 
+    creatorName, 
+    senderId, 
+    senderName, 
+    senderTier, 
+    isCreator, 
+    text, 
+    photoUrl, 
+    voiceNote 
+  } = req.body;
+
+  if (!roomId && !creatorId) {
+    return res.status(400).json({ success: false, message: '채팅방 또는 크리에이터 정보가 필요합니다.' });
+  }
+
+  const db = readDb();
+  if (!Array.isArray(db.messages)) db.messages = [];
+
+  const effectiveRoomId = roomId || `room_${creatorId}`;
+
+  const newMsg = {
+    id: `msg_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+    roomId: effectiveRoomId,
+    creatorId: creatorId || effectiveRoomId.replace('room_', ''),
+    creatorName: creatorName || '크리에이터',
+    senderId: senderId || 'guest',
+    sender: senderName || (isCreator ? creatorName : '서포터'),
+    senderTier: senderTier || (isCreator ? 'creator' : 'supporter'),
+    isCreator: Boolean(isCreator),
+    text: text || '',
+    photoUrl: photoUrl || null,
+    voiceNote: voiceNote || null,
+    timestamp: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }),
+    createdAt: new Date().toISOString()
+  };
+
+  db.messages.push(newMsg);
+  writeDb(db);
+
+  res.json({ success: true, data: newMsg });
+});
+
+// 4-3. GET CHAT ROOMS LIST FOR USER OR CREATOR
+app.get('/api/chat-rooms', (req, res) => {
+  const { userId, role, creatorId } = req.query;
+  const db = readDb();
+  if (!Array.isArray(db.messages)) db.messages = [];
+  if (!Array.isArray(db.creators)) db.creators = [];
+
+  const roomsMap = {};
+
+  // Seed rooms from real creators in DB
+  db.creators.forEach(c => {
+    const rId = `room_${c.id}`;
+    roomsMap[rId] = {
+      id: rId,
+      creatorId: c.id,
+      creatorName: c.name,
+      handle: c.handle,
+      avatar: c.avatar,
+      category: c.category,
+      tierName: '골드 래빗',
+      tierIcon: '🥇',
+      tierLevel: 3,
+      isUnlocked: true,
+      tickets: 999,
+      unreadCount: 0,
+      lastUpdated: '방금 전',
+      messages: []
+    };
+  });
+
+  // Attach stored messages
+  db.messages.forEach(m => {
+    const rId = m.roomId || `room_${m.creatorId}`;
+    if (!roomsMap[rId]) {
+      roomsMap[rId] = {
+        id: rId,
+        creatorId: m.creatorId,
+        creatorName: m.creatorName || '크리에이터',
+        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+        category: '공식 크리에이터',
+        tierName: '골드 래빗',
+        tierIcon: '🥇',
+        tierLevel: 3,
+        isUnlocked: true,
+        tickets: 999,
+        unreadCount: 0,
+        lastUpdated: m.timestamp || '방금 전',
+        messages: []
+      };
+    }
+    roomsMap[rId].messages.push(m);
+    roomsMap[rId].lastUpdated = m.timestamp || '방금 전';
+  });
+
+  res.json({ success: true, data: Object.values(roomsMap) });
 });
 
 // 5. RECORD CARROT RECHARGE (PG 결제 내역)

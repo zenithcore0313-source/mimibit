@@ -6,7 +6,7 @@ import {
   Square, RefreshCw, Volume2, Download, CheckCircle2, Lock, ArrowRight, X, Clock, Building2, Send 
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { requestPayout, fetchPayouts, getStoredCreators } from '../services/api';
+import { requestPayout, fetchPayouts, getStoredCreators, fetchChatMessages } from '../services/api';
 
 export function CreatorStudio({ 
   creator, 
@@ -109,7 +109,59 @@ export function CreatorStudio({
     return questions;
   }, [chatRooms, answeredQuestionIds, creator?.name]);
 
-  const unansweredCount = dynamicQuestions.filter(q => !q.isAnswered).length;
+  // Poll backend for new messages addressed to this creator
+  useEffect(() => {
+    const creatorCleanId = (creator?.id || creator?.handle || '').replace(/[@#]/g, '').toLowerCase();
+    if (!creatorCleanId) return;
+
+    const syncServerMessages = async () => {
+      try {
+        const serverMsgs = await fetchChatMessages({ creatorId: creatorCleanId });
+        if (serverMsgs && serverMsgs.length > 0 && setChatRooms) {
+          setChatRooms(prev => {
+            const rId = `room_${creatorCleanId}`;
+            const exists = prev.find(r => r.id === rId);
+            if (!exists) {
+              return [
+                {
+                  id: rId,
+                  creatorId: creatorCleanId,
+                  creatorName: creator?.name || '크리에이터',
+                  handle: creator?.handle || `@${creatorCleanId}`,
+                  avatar: creator?.avatar || '',
+                  category: creator?.category || '창작자',
+                  tierName: '골드 래빗',
+                  tierIcon: '🥇',
+                  tierLevel: 3,
+                  isUnlocked: true,
+                  tickets: 999,
+                  unreadCount: 0,
+                  lastUpdated: '방금 전',
+                  messages: serverMsgs
+                },
+                ...prev
+              ];
+            } else {
+              const currentMsgs = exists.messages || [];
+              const merged = [...currentMsgs];
+              let hasNew = false;
+              serverMsgs.forEach(sm => {
+                if (!merged.some(m => m.id === sm.id)) {
+                  merged.push(sm);
+                  hasNew = true;
+                }
+              });
+              return hasNew ? prev.map(r => r.id === rId ? { ...r, messages: merged } : r) : prev;
+            }
+          });
+        }
+      } catch (e) {}
+    };
+
+    syncServerMessages();
+    const interval = setInterval(syncServerMessages, 2500);
+    return () => clearInterval(interval);
+  }, [creator?.id, creator?.handle]);
 
   // ================= 15초 마이크 직접 녹음 시스템 (Web Audio & MediaRecorder) =================
   const [isRecording, setIsRecording] = useState(false);
@@ -276,7 +328,8 @@ export function CreatorStudio({
     const attachPhoto = attachPhotoMap[q.id] ?? true;
 
     if (onSendCreatorReply) {
-      onSendCreatorReply(q.roomId || 'room_luna', currentReplyText, attachVoice, attachPhoto);
+      const cleanCreatorId = (creator?.id || creator?.handle || 'creator').replace(/[@#]/g, '');
+      onSendCreatorReply(q.roomId || `room_${cleanCreatorId}`, currentReplyText, attachVoice, attachPhoto);
     }
 
     setAnsweredQuestionIds(prev => [...prev, q.id]);
