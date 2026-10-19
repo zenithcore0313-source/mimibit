@@ -36,6 +36,7 @@ export function CreatorBioPage({
   const [audioTimer, setAudioTimer] = useState(15);
   const [ttsPreview, setTtsPreview] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  const [isGifting, setIsGifting] = useState(false);
   const [guestbookList, setGuestbookList] = useState(() => {
     try {
       const saved = localStorage.getItem('mimibit_guestbook');
@@ -160,12 +161,14 @@ export function CreatorBioPage({
 
   // Quick Direct Support Trigger
   const handleQuickDonate = () => {
-    if (!activeCreator) return;
+    if (!activeCreator || isGifting) return;
     const carrotAmount = customCarrots ? parseInt(customCarrots, 10) : selectedCarrots;
     if (!carrotAmount || carrotAmount <= 0) {
       alert('후원할 당근 수량을 선택해주세요.');
       return;
     }
+
+    setIsGifting(true);
 
     if (onGiftCarrots) {
       onGiftCarrots(activeCreator, carrotAmount, cheerMessage);
@@ -184,6 +187,7 @@ export function CreatorBioPage({
       try {
         confetti({ particleCount: 70, spread: 80, origin: { y: 0.7 } });
       } catch (e) {}
+      setTimeout(() => setIsGifting(false), 1200);
       return;
     }
 
@@ -765,14 +769,24 @@ export function CreatorBioPage({
               {/* Big Instant Donation Button */}
               <button
                 type="button"
+                disabled={isGifting}
                 onClick={handleQuickDonate}
-                className="w-full py-4 sm:py-5 rounded-2xl bg-[#E4092B] hover:bg-[#CC0022] text-white font-heading font-black text-base shadow-xl shadow-[#E4092B]/30 transition-all cursor-pointer active:scale-98 flex items-center justify-center gap-2 group"
+                className="w-full py-4 sm:py-5 rounded-2xl bg-[#E4092B] hover:bg-[#CC0022] text-white font-heading font-black text-base shadow-xl shadow-[#E4092B]/30 transition-all cursor-pointer active:scale-98 flex items-center justify-center gap-2 group disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                <Zap className="w-5 h-5 fill-white group-hover:scale-110 transition-transform" />
-                <span>
-                  {customCarrots ? parseInt(customCarrots, 10).toLocaleString() : selectedCarrots.toLocaleString()} 당근
-                  ({((customCarrots ? parseInt(customCarrots, 10) : selectedCarrots) * 100).toLocaleString()}원) 즉시 후원하기
-                </span>
+                {isGifting ? (
+                  <span className="flex items-center gap-2">
+                    <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    후원 처리 중...
+                  </span>
+                ) : (
+                  <>
+                    <Zap className="w-5 h-5 fill-white group-hover:scale-110 transition-transform" />
+                    <span>
+                      {customCarrots ? parseInt(customCarrots, 10).toLocaleString() : selectedCarrots.toLocaleString()} 당근
+                      ({((customCarrots ? parseInt(customCarrots, 10) : selectedCarrots) * 100).toLocaleString()}원) 즉시 후원하기
+                    </span>
+                  </>
+                )}
               </button>
 
               <div className="flex items-center justify-center gap-4 text-[11px] text-slate-400">

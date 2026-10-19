@@ -28,6 +28,7 @@ export function KakaoSecretMessengerModal({
   const [playingAudioId, setPlayingAudioId] = useState(null);
   const [lightboxPhoto, setLightboxPhoto] = useState(null);
   const [aiWarning, setAiWarning] = useState('');
+  const [isSending, setIsSending] = useState(false);
 
   // Voice recording state
   const [isRecording, setIsRecording] = useState(false);
@@ -425,8 +426,11 @@ export function KakaoSecretMessengerModal({
     }
 
     setAiWarning('');
+    if (isSending) return;
+    setIsSending(true);
+
     const newMsgId = `msg_${Date.now()}`;
-    const userText = inputText;
+    const userText = inputText.trim();
     const userPhoto = attachedPhoto;
     setInputText('');
     setAttachedPhoto(null);
@@ -451,18 +455,25 @@ export function KakaoSecretMessengerModal({
     // Send to backend DB for cross-account real-time communication
     sendChatMessage(newMsg);
 
-    // Update room messages & deduct ticket if supporter
+    // Update room messages with deduplication & deduct ticket if supporter
     setChatRooms(prev => prev.map(r => {
       if (r.id === activeRoom.id) {
+        const existingMsgs = r.messages || [];
+        const isAlreadyAdded = existingMsgs.some(m => m.id === newMsg.id);
         return {
           ...r,
           tickets: isRoot || isSenderCreator ? r.tickets : Math.max(0, (r.tickets || 1) - 1),
           lastUpdated: '방금 전',
-          messages: [...(r.messages || []), newMsg]
+          messages: isAlreadyAdded ? existingMsgs : [...existingMsgs, newMsg]
         };
       }
       return r;
     }));
+
+    // Reset sending state after short debounce
+    setTimeout(() => {
+      setIsSending(false);
+    }, 400);
 
     // Trigger subtle confetti
     try {
@@ -1075,7 +1086,12 @@ export function KakaoSecretMessengerModal({
                       <input
                         type="text"
                         value={inputText}
-                        disabled={!isRoomUnlocked}
+                        disabled={!isRoomUnlocked || isSending}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            if (e.nativeEvent.isComposing) return;
+                          }
+                        }}
                         onChange={(e) => setInputText(e.target.value)}
                         placeholder={
                           isRoot
@@ -1095,7 +1111,7 @@ export function KakaoSecretMessengerModal({
                     {/* Send Button */}
                     <button
                       type="submit"
-                      disabled={!isRoomUnlocked || (!inputText.trim() && !attachedPhoto)}
+                      disabled={!isRoomUnlocked || isSending || (!inputText.trim() && !attachedPhoto)}
                       className="w-10 h-10 rounded-2xl bg-[#E4092B] hover:bg-[#CC0022] text-white flex items-center justify-center transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-sm shadow-[#E4092B]/20 cursor-pointer active:scale-95 shrink-0"
                     >
                       <Send className="w-4 h-4 text-white" />

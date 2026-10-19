@@ -42,6 +42,7 @@ export function CreatorStudio({
   const [withdrawAmount, setWithdrawAmount] = useState('0');
   const [isWithdrawSuccess, setIsWithdrawSuccess] = useState(false);
   const [isSubmittingPayout, setIsSubmittingPayout] = useState(false);
+  const [submittingReplyId, setSubmittingReplyId] = useState(null);
   const [payoutHistory, setPayoutHistory] = useState([]);
 
   // Financial Calculations (투네이션 표준 10% 수수료 모델)
@@ -322,8 +323,11 @@ export function CreatorStudio({
   // 1:1 질문 답장 발송
   const handleReplySubmit = (e, q) => {
     e.preventDefault();
+    if (submittingReplyId === q.id) return;
     const currentReplyText = replyTextMap[q.id] || '';
     if (!currentReplyText.trim()) return;
+
+    setSubmittingReplyId(q.id);
 
     const attachVoice = attachVoiceMap[q.id] ?? true;
     const attachPhoto = attachPhotoMap[q.id] ?? true;
@@ -340,6 +344,7 @@ export function CreatorStudio({
       confetti({ particleCount: 40, spread: 60, origin: { y: 0.7 } });
     } catch (e) {}
     alert('서포터의 1:1 시크릿톡으로 답장과 감사 리워드가 성공적으로 발송되었습니다!');
+    setTimeout(() => setSubmittingReplyId(null), 1000);
   };
 
   // 출금 신청 처리 (백엔드 API 연동)
@@ -660,11 +665,11 @@ export function CreatorStudio({
 
                           <button
                             type="submit"
-                            disabled={!currentReply.trim()}
+                            disabled={!currentReply.trim() || submittingReplyId === q.id}
                             className="py-2.5 px-5 rounded-xl bg-[#E4092B] hover:bg-[#CC0022] text-white font-bold text-xs transition-all shadow-xs disabled:opacity-40 cursor-pointer active:scale-95 flex items-center gap-1.5"
                           >
                             <Send className="w-3.5 h-3.5" />
-                            <span>답장 발송하기</span>
+                            <span>{submittingReplyId === q.id ? '답장 전송 중...' : '답장 발송하기'}</span>
                           </button>
                         </div>
                       </form>

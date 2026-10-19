@@ -3,10 +3,11 @@ import { MessageSquare, Heart, Send, Sparkles } from 'lucide-react';
 
 export function GuestbookFeed({ guestbook, onAddComment, userState, onOpenDonate }) {
   const [newComment, setNewComment] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleCommentSubmit = (e) => {
     e.preventDefault();
-    if (!newComment.trim()) return;
+    if (!newComment.trim() || isSubmitting) return;
 
     if (userState.tierLevel < 1) {
       alert('방명록 댓글은 화이트 래빗(1,000원+) 이상부터 작성 가능합니다!');
@@ -14,17 +15,20 @@ export function GuestbookFeed({ guestbook, onAddComment, userState, onOpenDonate
       return;
     }
 
+    setIsSubmitting(true);
+
     onAddComment({
       id: Date.now(),
       nickname: userState.nickname,
       tierId: userState.tierId,
       carrots: userState.totalDonatedCarrots || 10,
-      content: newComment,
+      content: newComment.trim(),
       createdAt: '방금 전',
       likes: 1
     });
 
     setNewComment('');
+    setTimeout(() => setIsSubmitting(false), 500);
   };
 
   return (

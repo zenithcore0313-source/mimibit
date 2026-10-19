@@ -29,7 +29,7 @@ export function DonationModal({ isOpen, onClose, creator, onCompleteDonation, pr
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (finalCarrots <= 0) return;
+    if (finalCarrots <= 0 || isProcessing) return;
 
     setIsProcessing(true);
 
