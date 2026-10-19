@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShieldCheck, Crown, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, Crown, AlertCircle, CheckCircle2, Sun, Moon } from 'lucide-react';
 import { ToonNavbar } from './components/toonation/ToonNavbar';
 import { ToonHero } from './components/toonation/ToonHero';
 import { ToonCreatorShowcase } from './components/toonation/ToonCreatorShowcase';
@@ -1022,6 +1022,7 @@ export function App() {
             isFullPage={true}
             currentUser={currentUser}
             theme={theme}
+            onToggleTheme={handleToggleTheme}
             onClose={() => {
               if (window.location.hostname.startsWith('admin.')) {
                 const parts = window.location.hostname.split('.');
@@ -1041,6 +1042,18 @@ export function App() {
         <div className={`w-full max-w-md rounded-3xl p-8 border shadow-2xl relative text-center backdrop-blur-xl ${
           theme === 'dark' ? 'bg-[#141417]/95 border-white/10' : 'bg-white border-slate-200'
         }`}>
+          {/* Theme Toggle Button */}
+          <button
+            type="button"
+            onClick={handleToggleTheme}
+            className={`absolute top-5 right-5 p-2 rounded-xl border transition-all cursor-pointer ${
+              theme === 'dark' ? 'border-white/10 hover:bg-white/10 text-amber-300' : 'border-slate-200 hover:bg-slate-100 text-amber-600'
+            }`}
+            title={theme === 'dark' ? '라이트 모드로 전환' : '다크 모드로 전환'}
+          >
+            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
+
           <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-amber-500 to-rose-600 flex items-center justify-center text-white mx-auto mb-5 shadow-lg shadow-rose-500/20">
             <ShieldCheck className="w-9 h-9" />
           </div>
@@ -1386,6 +1399,7 @@ export function App() {
         onClose={() => setIsAdminOpen(false)}
         currentUser={currentUser}
         theme={theme}
+        onToggleTheme={handleToggleTheme}
       />
     </div>
   );
