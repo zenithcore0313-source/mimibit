@@ -802,6 +802,21 @@ app.post('/api/messages', (req, res) => {
 
   const effectiveRoomId = roomId || `room_${creatorId}`;
 
+  // Deduplication check: prevent duplicate insertion within 2.5 seconds (Korean IME / double-click protection)
+  const now = Date.now();
+  const isDuplicate = db.messages.some(m => 
+    m.roomId === effectiveRoomId && 
+    m.senderId === (senderId || 'guest') && 
+    m.text === text && 
+    m.createdAt && 
+    (now - new Date(m.createdAt).getTime() < 2500)
+  );
+
+  if (isDuplicate) {
+    const existing = db.messages.find(m => m.roomId === effectiveRoomId && m.senderId === (senderId || 'guest') && m.text === text);
+    return res.json({ success: true, data: existing, duplicated: true });
+  }
+
   const newMsg = {
     id: `msg_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
     roomId: effectiveRoomId,
@@ -1304,129 +1319,6 @@ app.post('/api/admin/users/:userId/carrots', (req, res) => {
     carrotsBalance: user.carrotsBalance,
     user: sanitizeUser(user)
   });
-});
-
-// 9. 1:1 SECRET CHAT MESSAGES & REAL-TIME SYNC
-app.get('/api/messages', (req, res) => {
-  const { roomId, creatorId } = req.query;
-  const db = readDb();
-  let msgs = db.messages || [];
-
-  if (roomId) {
-    msgs = msgs.filter(m => m.roomId === roomId);
-  } else if (creatorId) {
-    const cleanC = creatorId.replace(/[@#/]/g, '').toLowerCase();
-    msgs = msgs.filter(m => (m.creatorId || '').replace(/[@#/]/g, '').toLowerCase() === cleanC);
-  }
-
-  res.json({ success: true, data: msgs });
-});
-
-app.post('/api/messages', (req, res) => {
-  const { 
-    id, 
-    roomId, 
-    creatorId, 
-    creatorName, 
-    senderId, 
-    sender, 
-    senderTier, 
-    isCreator, 
-    text, 
-    photoUrl, 
-    voiceNote, 
-    timestamp, 
-    ticketCost 
-  } = req.body;
-
-  const db = readDb();
-  if (!Array.isArray(db.messages)) db.messages = [];
-
-  // Deduplication check: prevent duplicate insertion within 2.5 seconds
-  const messageId = id || `msg_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
-  const now = Date.now();
-  const isDuplicate = db.messages.some(m => 
-    m.id === messageId || 
-    (m.roomId === roomId && m.senderId === senderId && m.text === text && m.createdAt && (now - new Date(m.createdAt).getTime() < 2500))
-  );
-
-  if (isDuplicate) {
-    const existing = db.messages.find(m => m.id === messageId || (m.roomId === roomId && m.senderId === senderId && m.text === text));
-    return res.json({ success: true, data: existing, duplicated: true });
-  }
-
-  const newMsg = {
-    id: messageId,
-    roomId: roomId || `room_${creatorId || 'general'}`,
-    creatorId: creatorId || '',
-    creatorName: creatorName || '',
-    senderId: senderId || 'guest',
-    sender: sender || '서포터',
-    senderTier: senderTier || 'gold',
-    isCreator: !!isCreator,
-    text: text || '',
-    photoUrl: photoUrl || null,
-    voiceNote: voiceNote || null,
-    timestamp: timestamp || '방금 전',
-    ticketCost: ticketCost || 0,
-    createdAt: new Date().toISOString()
-  };
-
-  db.messages.push(newMsg);
-  writeDb(db);
-
-  res.json({ success: true, data: newMsg });
-});
-
-// 10. CHAT ROOMS AGGREGATION
-app.get('/api/chat-rooms', (req, res) => {
-  const db = readDb();
-  const messages = db.messages || [];
-  const creators = db.creators || [];
-
-  const roomsMap = {};
-
-  // Seed with creators so supporters always have a clean room to talk to
-  creators.forEach(c => {
-    const roomId = `room_${c.id}`;
-    roomsMap[roomId] = {
-      id: roomId,
-      creatorId: c.id,
-      creatorName: c.name,
-      handle: c.handle,
-      avatar: c.avatar,
-      category: c.category || '창작자',
-      isUnlocked: true,
-      tickets: 5,
-      unreadCount: 0,
-      lastUpdated: '방금 전',
-      messages: []
-    };
-  });
-
-  messages.forEach(m => {
-    const rId = m.roomId || `room_${m.creatorId || 'general'}`;
-    if (!roomsMap[rId]) {
-      roomsMap[rId] = {
-        id: rId,
-        creatorId: m.creatorId || '',
-        creatorName: m.creatorName || '크리에이터',
-        handle: `@${m.creatorId || 'creator'}`,
-        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-        category: '1:1 시크릿톡',
-        isUnlocked: true,
-        tickets: 5,
-        unreadCount: 0,
-        lastUpdated: m.timestamp || '최근',
-        messages: []
-      };
-    }
-    roomsMap[rId].messages.push(m);
-    roomsMap[rId].lastUpdated = m.timestamp || '방금 전';
-  });
-
-  const roomsList = Object.values(roomsMap);
-  res.json({ success: true, data: roomsList });
 });
 
 // Static frontend serving (Optional: if built files in ../dist are present)
