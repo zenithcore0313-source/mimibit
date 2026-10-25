@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CheckCircle2, ArrowLeft, X } from 'lucide-react';
+import { CheckCircle2, ArrowLeft, X, ExternalLink } from 'lucide-react';
 import { ToonNavbar } from './components/toonation/ToonNavbar';
 import { ToonHero } from './components/toonation/ToonHero';
 import { ToonCreatorShowcase } from './components/toonation/ToonCreatorShowcase';
@@ -1095,7 +1095,7 @@ export function App() {
       {/* 2. CREATOR STUDIO MODAL */}
       {activeModal === 'studio' && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex flex-col items-center justify-start p-2 sm:p-6 overflow-y-auto animate-fade-in custom-scrollbar">
-          <div className="w-full max-w-4xl flex items-center justify-between py-3 px-4 bg-[#1C1215] text-white rounded-2xl mb-4 shadow-xl border border-white/10 shrink-0">
+          <div className="w-full max-w-6xl flex items-center justify-between py-3 px-4 bg-[#1C1215] text-white rounded-2xl mb-4 shadow-xl border border-white/10 shrink-0">
             <button
               onClick={() => setActiveModal(null)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-black transition-all cursor-pointer"
@@ -1103,9 +1103,20 @@ export function App() {
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>닫기</span>
             </button>
-            <span className="text-xs font-bold text-white/70">
-              미미빗 창작자 전용 관리자 대시보드
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-bold text-white/70">
+                미미비트 창작자 전용 관리자 스튜디오
+              </span>
+              <a
+                href="/dashboard.html"
+                target="_blank"
+                rel="noreferrer"
+                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#E4092B] hover:bg-[#CC0022] text-[11px] font-black text-white shadow-xs transition-all"
+              >
+                <ExternalLink className="w-3 h-3" />
+                <span>18종 올인원 방송 콘솔 새 창 열기</span>
+              </a>
+            </div>
             <button
               onClick={() => setActiveModal(null)}
               className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white cursor-pointer"
@@ -1114,7 +1125,7 @@ export function App() {
             </button>
           </div>
 
-          <div className="w-full max-w-4xl">
+          <div className="w-full max-w-6xl">
             <CreatorStudio
               creator={(currentUser?.role === 'creator' && currentUser?.handle) ? (findCreatorByIdOrHandle(currentUser.handle) || activeCreatorProfile || creator) : (activeCreatorProfile || creator)}
               setCreator={setCreator}

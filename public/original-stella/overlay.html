@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>스텔라 오버레이 위젯 | Stella Studio OBS Overlay</title>
+  <link rel="stylesheet" href="css/style.css?v=20261021_03">
+  <link rel="stylesheet" href="css/overlay.css?v=20261021_03">
+</head>
+<body>
+
+  <!-- 1. Virtual Game/Stream Preview Background (테스트용 가상 배경 토글 레이어) -->
+  <div class="virtual-bg-preview" id="virtualBg"></div>
+
+  <!-- 2. Streamer Test & OBS Setup Helper Toolbar (OBS 브라우저 소스에서는 자동 숨김 가능) -->
+  <aside class="streamer-helper-toolbar" id="streamerToolbar">
+    <div class="toolbar-brand">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="#c4b5fd"><path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z"/></svg>
+      <span>OBS Overlay Setup</span>
+    </div>
+
+    <!-- Background Toggle Button -->
+    <button class="toolbar-btn" id="btnToggleBg" title="투명 배경 위에 가상 게임 화면을 띄워 가독성을 테스트합니다">
+      <span>🎮 가상 배경 켜기</span>
+    </button>
+
+    <!-- Widget Filter Mode -->
+    <select class="toolbar-select" id="widgetSelect" title="위젯 표시 모드 선택">
+      <option value="all">🌟 전체 위젯 통합 오버레이</option>
+      <option value="avatar">👤 캐릭터 아바타 전용</option>
+      <option value="chat">💬 채팅창 전용 위젯</option>
+      <option value="alert">🧀 후원 & 룰렛 알림창 전용</option>
+      <option value="goal">🎯 후원 목표치 바 전용</option>
+      <option value="bgm">🎵 BGM 플레이어 전용</option>
+      <option value="roulette">🎡 방송 룰렛 원판 전용</option>
+    </select>
+
+    <!-- Simulation Test Triggers -->
+    <button class="toolbar-btn" id="btnTestDonation" title="치즈 후원 알림 테스트">
+      <span>⚡ 후원 테스트</span>
+    </button>
+    <button class="toolbar-btn" id="btnTestAvatar" title="스트리머 아바타 리액션 & 말풍선 테스트">
+      <span>👤 아바타 리액션</span>
+    </button>
+    <button class="toolbar-btn" id="btnTestRoulette" title="룰렛 회전 및 알림 테스트">
+      <span>🎯 룰렛 회전</span>
+    </button>
+    <button class="toolbar-btn" id="btnTestChat" title="새 채팅 메시지 추가 테스트">
+      <span>💬 채팅 테스트</span>
+    </button>
+
+    <!-- Layout Drag & Resize Mode Toggle -->
+    <button class="toolbar-btn btn-layout-edit" id="btnToggleLayoutEdit" title="위젯의 위치를 마우스로 자유롭게 드래그하고 크기를 조절합니다">
+      <span>📐 위젯 위치/크기 편집</span>
+    </button>
+
+    <!-- OBS URL Copy -->
+    <button class="toolbar-btn" id="btnCopyObsUrl" title="OBS 브라우저 소스 전용 무툴바 URL 복사">
+      <span>🔗 OBS 소스 복사</span>
+    </button>
+
+    <!-- Hide Toolbar -->
+    <button class="btn-hide-toolbar" id="btnHideToolbar" title="도우미 툴바 숨기기 (상단 탭으로 복구 가능)">✕</button>
+  </aside>
+
+  <!-- Reopen Toolbar Tab (툴바 숨겼을 때 재오픈 탭) -->
+  <div class="toolbar-reopen-tab" id="toolbarReopenTab" style="display: none;">
+    <span>⚙️ OBS 오버레이 도우미 열기</span>
+  </div>
+
+  <!-- Layout Edit Floating Banner (위젯 배치 편집 활성화 시 상단 고정) -->
+  <div class="layout-edit-banner" id="layoutEditBanner" style="display: none;">
+    <div class="edit-banner-info">
+      <span class="edit-badge">LAYOUT EDIT MODE</span>
+      <span>위젯을 마우스로 드래그하여 배치하고, 우측 상단 슬라이더로 크기(0.5x~2.0x)를 조절하세요.</span>
+    </div>
+    <div class="edit-banner-actions">
+      <button class="btn-edit-action" id="btnResetLayout">🔄 기본 위치로 초기화</button>
+      <button class="btn-edit-action btn-save-layout" id="btnSaveLayout">💾 배치 완료</button>
+    </div>
+  </div>
+
+  <!-- 3. Main Transparent Overlay Stage (OBS 소스 캔버스) -->
+  <main class="overlay-stage" id="overlayStage">
+
+    <!-- WIDGET 1: Top Goal Progress Bar -->
+    <div class="widget-box widget-goal-container" id="widgetGoal">
+      <div class="overlay-goal-card">
+        <div class="goal-card-header">
+          <div class="goal-title">
+            <span class="goal-badge">GOAL</span>
+            <span id="goalTitle">신작 게임 켠왕 장비 펀딩</span>
+          </div>
+          <div class="goal-numbers" id="goalNumbers">
+            382,000 / 500,000 치즈 <span class="percent">76%</span>
+          </div>
+        </div>
+        <div class="goal-track">
+          <div class="goal-fill" id="goalFill" style="width: 76%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WIDGET 2: Bottom-Left Chat Stream -->
+    <div class="widget-box widget-chat-container theme-lavender" id="widgetChat">
+      <div class="chat-stream-list" id="chatStreamList">
+        <!-- Chat bubbles appended dynamically by overlay.js -->
+      </div>
+    </div>
+
+    <!-- WIDGET 3: Bottom-Right Now Playing BGM -->
+    <div class="widget-box widget-bgm-container" id="widgetBgm">
+      <div class="overlay-bgm-capsule">
+        <div class="bgm-disc">💿</div>
+        <div class="bgm-details">
+          <div class="bgm-title" id="bgmTitle">Neon Starlight (Lo-Fi Ver.)</div>
+          <div class="bgm-artist" id="bgmArtist">Stella Studio Original Soundtrack</div>
+        </div>
+        <div class="bgm-visualizer">
+          <span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- WIDGET 4: Center Alert Box (Donation & Roulette Popup) -->
+    <div class="widget-box widget-alert-container" id="widgetAlert">
+      <div class="overlay-alert-card" id="overlayAlertCard">
+        <div class="alert-sparkles"></div>
+        <div class="alert-custom-media-wrap" id="alertCustomMediaWrap" style="display: none;">
+          <img id="alertCustomImg" src="" alt="Custom Alert" class="alert-custom-img">
+        </div>
+        <div class="alert-badge" id="alertBadge">🧀 치즈 후원 도착</div>
+        <div class="alert-title" id="alertTitle">
+          <span class="alert-user" id="alertUser">별빛기사단</span>님의 따뜻한 후원!
+        </div>
+        <div class="alert-amount" id="alertAmount">10,000 치즈</div>
+        <div class="alert-message-box" id="alertMsg">"스텔라님 방송 오늘도 최고예요! 💜"</div>
+        <audio id="alertCustomAudio" preload="auto"></audio>
+      </div>
+    </div>
+
+    <!-- WIDGET 5: Right Center Broadcast Roulette Wheel -->
+    <div class="widget-box widget-roulette-container" id="widgetRoulette">
+      <div class="broadcast-roulette-wrap">
+        <div class="broadcast-wheel-pointer">▼</div>
+        <canvas id="broadcastRouletteCanvas" width="304" height="304"></canvas>
+        <div class="broadcast-wheel-center">STELLA</div>
+      </div>
+    </div>
+
+    <!-- WIDGET 6: BRB Intermission 5-Min Timer -->
+    <div class="widget-box overlay-brb-container" id="brbWidget">
+      <div class="overlay-brb-card">
+        <div class="brb-header">
+          <div class="brb-title">
+            <span>☕</span>
+            <span>잠시 자리를 비웁니다 (휴식 / 수분 충전)</span>
+          </div>
+          <div class="brb-timer-text" id="brbTimerText">05:00</div>
+        </div>
+        <div class="brb-progress-track">
+          <div class="brb-progress-fill" id="brbProgressFill" style="width: 100%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WIDGET 7: Sip & Cough Mute Floating Indicator -->
+    <div class="overlay-sip-badge" id="sipBadge">
+      <span class="sip-dot"></span>
+      <span>🧋 수분 충전 중 (MIC OFF)</span>
+    </div>
+
+    <!-- WIDGET 8: Soundboard FX Realtime Notification -->
+    <div class="overlay-sound-fx-badge" id="soundFxBadge">
+      <span id="soundFxIcon" style="font-size: 1.3rem;">👏</span>
+      <span id="soundFxLabel">박수와 환호</span>
+    </div>
+
+    <!-- WIDGET 9: Streamer Custom Character / Avatar (스트리머 본인 캐릭터 아바타) -->
+    <div class="widget-box widget-avatar-container" id="widgetAvatar">
+      <div class="avatar-speech-bubble" id="avatarSpeechBubble">
+        <span class="speech-text" id="avatarSpeechText">오늘도 함께해 주셔서 감사합니다! 💜</span>
+      </div>
+      <div class="avatar-character-wrap" id="avatarCharacterWrap">
+        <div class="avatar-glow-halo"></div>
+        <img src="assets/images/frame_01.png" alt="Streamer Character" class="avatar-character-img anim-float" id="avatarImg">
+        <div class="avatar-reaction-particles" id="avatarParticles"></div>
+      </div>
+      <div class="avatar-nameplate" id="avatarNameplate">
+        <span class="avatar-status-dot"></span>
+        <span class="avatar-name" id="avatarName">스텔라★루나</span>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- 4. Emergency Privacy Shield (비상 가림막 / 최상위 레이어) -->
+  <div class="overlay-emergency-shield" id="emergencyShield">
+    <div class="shield-content-box">
+      <div class="shield-avatar-wrap">
+        <img src="assets/images/frame_01.png" alt="Stella" class="shield-avatar-img">
+      </div>
+      <div class="shield-badge-warning">
+        <span>🚨</span>
+        <span>개인정보 보호 & 비상 화면 조정 중</span>
+      </div>
+      <h1 class="shield-title">잠시 화면을 조정하고 있어요!</h1>
+      <p class="shield-desc">스트리머의 프라이버시 보호를 위해 화면과 마이크를 임시 차단 중입니다.<br>금방 다시 돌아올 테니 잠시만 기다려주세요 ✨</p>
+      <div class="shield-dots">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/overlay.js?v=20261021_03"></script>
+</body>
+</html>

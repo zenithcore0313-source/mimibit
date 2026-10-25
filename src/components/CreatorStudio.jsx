@@ -45,6 +45,160 @@ export function CreatorStudio({
   const [submittingReplyId, setSubmittingReplyId] = useState(null);
   const [payoutHistory, setPayoutHistory] = useState([]);
 
+  // Broadcast & Signature Media Custom State (OBS / Excel / Personal Stream)
+  const defaultBroadcastMedia = {
+    mode: 'personal',
+    tiers: {
+      tier100: { img: '', sfx: '', sfxType: 'preset', sfxKey: 'chime', sfxName: '기본 차임벨' },
+      tier500: { img: '', sfx: '', sfxType: 'preset', sfxKey: 'coin', sfxName: '당근 코인 샤워' },
+      tier1k: { img: '', sfx: '', sfxType: 'preset', sfxKey: 'fanfare', sfxName: '팡파레 축하' },
+      tier10k: { img: '', sfx: '', sfxType: 'preset', sfxKey: 'jackpot', sfxName: '엑셀 잭팟 사운드' }
+    }
+  };
+
+  const [broadcastMedia, setBroadcastMedia] = useState(() => {
+    try {
+      const creatorKey = creator?.id || creator?.handle || 'default';
+      const saved = localStorage.getItem(`mimibit_broadcast_media_${creatorKey}`);
+      if (saved) return JSON.parse(saved);
+    } catch(e) {}
+    return defaultBroadcastMedia;
+  });
+
+  const [broadcastActiveTier, setBroadcastActiveTier] = useState('tier100');
+  const [isPlayingSfx, setIsPlayingSfx] = useState(false);
+  const [isCopiedObsUrl, setIsCopiedObsUrl] = useState(false);
+  const [isSavedBroadcast, setIsSavedBroadcast] = useState(false);
+  const broadcastAudioRef = useRef(null);
+
+  const playProceduralSfx = (key) => {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      if (key === 'chime') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.9);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.9);
+      } else if (key === 'coin') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(987.77, ctx.currentTime);
+        osc.frequency.setValueAtTime(1318.51, ctx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.35, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.5);
+      } else if (key === 'fanfare') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+        osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.12);
+        osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.24);
+        osc.frequency.setValueAtTime(1046.50, ctx.currentTime + 0.36);
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
+        osc.start();
+        osc.stop(ctx.currentTime + 1.2);
+      } else if (key === 'jackpot') {
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(440, ctx.currentTime);
+        osc.frequency.linearRampToValueAtTime(880, ctx.currentTime + 0.15);
+        osc.frequency.linearRampToValueAtTime(1320, ctx.currentTime + 0.3);
+        osc.frequency.linearRampToValueAtTime(1760, ctx.currentTime + 0.45);
+        gain.gain.setValueAtTime(0.18, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.4);
+        osc.start();
+        osc.stop(ctx.currentTime + 1.4);
+      }
+    } catch(e) {}
+  };
+
+  const handlePlayPreview = (tierData) => {
+    if (broadcastAudioRef.current) {
+      broadcastAudioRef.current.pause();
+      broadcastAudioRef.current = null;
+    }
+    if (tierData?.sfx) {
+      const audio = new Audio(tierData.sfx);
+      broadcastAudioRef.current = audio;
+      setIsPlayingSfx(true);
+      audio.onended = () => setIsPlayingSfx(false);
+      audio.play().catch(() => setIsPlayingSfx(false));
+    } else if (tierData?.sfxType === 'preset' && tierData?.sfxKey) {
+      playProceduralSfx(tierData.sfxKey);
+    }
+  };
+
+  const handleStopPreview = () => {
+    if (broadcastAudioRef.current) {
+      broadcastAudioRef.current.pause();
+      broadcastAudioRef.current = null;
+    }
+    setIsPlayingSfx(false);
+  };
+
+  const handleSaveBroadcast = () => {
+    try {
+      const creatorKey = creator?.id || creator?.handle || 'default';
+      localStorage.setItem(`mimibit_broadcast_media_${creatorKey}`, JSON.stringify(broadcastMedia));
+      try {
+        const channel = new BroadcastChannel('stella_overlay_channel');
+        channel.postMessage({ type: 'UPDATE_MEDIA_CUSTOM', settings: broadcastMedia });
+        channel.close();
+      } catch(e) {}
+      setIsSavedBroadcast(true);
+      setTimeout(() => setIsSavedBroadcast(false), 2500);
+    } catch(e) {
+      console.error(e);
+    }
+  };
+
+  const handleTriggerTest = (amount, tierKey, defaultMsg) => {
+    const tierData = broadcastMedia.tiers[tierKey] || broadcastMedia.tiers.tier100;
+    const testUser = broadcastMedia.mode === 'excel' ? '엑셀큰손_회장님' : '당근서포터_미미';
+
+    handlePlayPreview(tierData);
+
+    if (amount >= 10000) {
+      confetti({
+        particleCount: 120,
+        spread: 80,
+        origin: { y: 0.6 }
+      });
+    }
+
+    try {
+      const channel = new BroadcastChannel('stella_overlay_channel');
+      channel.postMessage({
+        type: 'DONATION_ALERT',
+        user: testUser,
+        amount: amount,
+        message: defaultMsg,
+        mode: broadcastMedia.mode,
+        media: tierData
+      });
+      channel.close();
+
+      localStorage.setItem('stella_overlay_event', JSON.stringify({
+        type: 'DONATION_ALERT',
+        user: testUser,
+        amount: amount,
+        message: defaultMsg,
+        mode: broadcastMedia.mode,
+        media: tierData,
+        timestamp: Date.now()
+      }));
+    } catch(e) {}
+  };
+
   // Financial Calculations (투네이션 표준 10% 수수료 모델)
   const totalCarrots = creator?.totalCarrots || creator?.fundingGoal?.currentCarrots || 0;
   const grossRevenue = totalCarrots * 100; // 1당근 = 100원
@@ -415,21 +569,26 @@ export function CreatorStudio({
           isDark ? 'bg-white/5 border border-white/10' : 'bg-white/10'
         }`}>
           {[
+            { id: 'dashboard', label: '방송 스튜디오 콘솔 (18종 신규)', isNew: true },
             { id: 'record', label: '15초 보이스 녹음' },
             { id: 'messages', label: `1:1 질문 답장함${unansweredCount > 0 ? ` (${unansweredCount})` : ''}` },
             { id: 'settlement', label: '10% 정산 & 출금' },
+            { id: 'broadcast', label: '방송 위젯 & 시그니처 (OBS)' },
             { id: 'settings', label: '펀딩 목표 설정' }
           ].map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap ${
+              className={`px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                 activeTab === tab.id
                   ? (isDark ? 'bg-[#E4092B] text-white shadow-xs' : 'bg-white text-slate-900 shadow-xs')
                   : 'text-slate-400 hover:text-white'
               }`}
             >
-              {tab.label}
+              {tab.isNew && (
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              )}
+              <span>{tab.label}</span>
             </button>
           ))}
         </div>
@@ -437,6 +596,44 @@ export function CreatorStudio({
 
       {/* Main Studio Body */}
       <div className="p-5 sm:p-8">
+
+        {/* ================= TAB 0: 18종 올인원 방송 스튜디오 콘솔 ================= */}
+        {activeTab === 'dashboard' && (
+          <div className="space-y-4 animate-fade-in w-full">
+            <div className={`p-4 rounded-2xl border flex items-center justify-between flex-wrap gap-3 ${
+              isDark ? 'bg-white/5 border-white/10' : 'bg-slate-50 border-slate-200'
+            }`}>
+              <div>
+                <span className="text-xs font-bold text-[#E4092B] uppercase tracking-wider block">
+                  ALL-IN-ONE BROADCAST STUDIO CONSOLE
+                </span>
+                <h3 className={`text-lg font-black mt-0.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                  미미비트 18종 방송 대시보드 & 16:9 라이브 모니터
+                </h3>
+                <p className={`text-xs mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                  실시간 챗봇, 후원 기차, 16:9 실시간 방송 씬 시뮬레이터, OBS 브라우저 소스를 한곳에서 관리합니다.
+                </p>
+              </div>
+              <a
+                href="/dashboard.html"
+                target="_blank"
+                rel="noreferrer"
+                className="py-2.5 px-4 rounded-xl bg-[#E4092B] hover:bg-[#CC0022] text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-md cursor-pointer"
+              >
+                <ExternalLink size={14} />
+                <span>독립 새 창으로 열기</span>
+              </a>
+            </div>
+
+            <div className="w-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-[#090d16]">
+              <iframe
+                src="/dashboard.html"
+                title="Mimibit Studio Dashboard"
+                className="w-full h-[760px] border-0"
+              />
+            </div>
+          </div>
+        )}
 
         {/* ================= TAB 1: 15초 감사 보이스 녹음 스튜디오 ================= */}
         {activeTab === 'record' && (
@@ -865,6 +1062,485 @@ export function CreatorStudio({
               </div>
             </div>
 
+          </div>
+        )}
+
+        {/* ================= TAB: 방송 위젯 & 시그니처 미디어 커스텀 (OBS/엑셀/개인방송) ================= */}
+        {activeTab === 'broadcast' && (
+          <div className="space-y-6 animate-fade-in max-w-3xl mx-auto text-xs">
+            {/* Header */}
+            <div className={`border-b pb-4 flex items-center justify-between flex-wrap gap-3 ${isDark ? 'border-white/10' : 'border-slate-100'}`}>
+              <div>
+                <span className="text-xs font-bold text-[#E4092B] uppercase tracking-wider block">
+                  BROADCAST MEDIA & SIGNATURE STUDIO
+                </span>
+                <h3 className={`text-xl font-heading font-black mt-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                  방송 오버레이 & 시그니처 미디어 커스텀
+                </h3>
+                <p className={`mt-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                  본인의 짤방(GIF/PNG)과 효과음(MP3/WAV)을 등록하여 엑셀 방송 및 개인 방송에서 금액별로 리액션과 사운드가 자동 송출되도록 설정합니다.
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleSaveBroadcast}
+                  className="py-2.5 px-4 rounded-xl bg-[#E4092B] hover:bg-[#CC0022] text-white font-bold text-xs transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Check size={14} />
+                  <span>설정 저장 & 동기화</span>
+                </button>
+              </div>
+            </div>
+
+            {isSavedBroadcast && (
+              <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold flex items-center gap-2">
+                <CheckCircle2 size={16} />
+                <span>오버레이 미디어 설정이 성공적으로 저장 및 실시간 동기화되었습니다!</span>
+              </div>
+            )}
+
+            {/* Stream Mode Selector */}
+            <div className={`p-4 rounded-2xl border ${isDark ? 'bg-white/5 border-white/10' : 'bg-slate-50 border-slate-200'}`}>
+              <div className="flex items-center justify-between flex-wrap gap-3">
+                <div>
+                  <div className={`font-bold text-sm ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                    방송 모드 선택 (One-Click Preset)
+                  </div>
+                  <div className={`text-[11px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                    방송 성격에 맞춰 게이지 바와 알림 이펙트를 원클릭으로 최적화합니다.
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setBroadcastMedia(prev => ({ ...prev, mode: 'personal' }));
+                    }}
+                    className={`px-3.5 py-2 rounded-xl font-bold transition-all cursor-pointer ${
+                      broadcastMedia.mode === 'personal'
+                        ? 'bg-[#E4092B] text-white shadow-sm'
+                        : isDark ? 'bg-white/5 text-slate-400 hover:text-white' : 'bg-slate-200 text-slate-700'
+                    }`}
+                  >
+                    🎮 개인방송 모드
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setBroadcastMedia(prev => ({ ...prev, mode: 'excel' }));
+                    }}
+                    className={`px-3.5 py-2 rounded-xl font-bold transition-all cursor-pointer ${
+                      broadcastMedia.mode === 'excel'
+                        ? 'bg-amber-500 text-black shadow-sm font-black'
+                        : isDark ? 'bg-white/5 text-slate-400 hover:text-white' : 'bg-slate-200 text-slate-700'
+                    }`}
+                  >
+                    📊 엑셀방송 / 크루 랭킹 모드
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* OBS Overlay URL Card */}
+            <div className={`p-4 rounded-2xl border flex items-center justify-between flex-wrap gap-3 ${
+              isDark ? 'bg-black/30 border-white/10' : 'bg-slate-100 border-slate-200'
+            }`}>
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-purple-500/20 text-purple-400">
+                  <Sparkles size={20} />
+                </div>
+                <div>
+                  <div className={`font-bold text-xs ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                    OBS 브라우저 소스 연동 URL (18종 위젯 통합)
+                  </div>
+                  <div className="font-mono text-[11px] text-purple-400 mt-0.5">
+                    {typeof window !== 'undefined' ? `${window.location.origin}/overlay.html` : 'https://mimibit.kr/overlay.html'}
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('dashboard')}
+                  className="py-2 px-3.5 rounded-xl bg-[#E4092B] hover:bg-[#CC0022] text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
+                >
+                  <ExternalLink size={14} />
+                  <span>스튜디오 콘솔 열기</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const url = typeof window !== 'undefined' ? `${window.location.origin}/overlay.html` : 'https://mimibit.kr/overlay.html';
+                    navigator.clipboard.writeText(url);
+                    setIsCopiedObsUrl(true);
+                    setTimeout(() => setIsCopiedObsUrl(false), 2000);
+                  }}
+                  className={`py-2 px-3.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer ${
+                    isCopiedObsUrl
+                      ? 'bg-emerald-500 text-white'
+                      : isDark ? 'bg-white/10 text-white hover:bg-white/15' : 'bg-white text-slate-800 border'
+                  }`}
+                >
+                  {isCopiedObsUrl ? <Check size={14} /> : <Copy size={14} />}
+                  <span>{isCopiedObsUrl ? '복사 완료!' : 'URL 복사'}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Tier Tabs */}
+            <div className="flex items-center gap-1 border-b pb-2 overflow-x-auto border-white/10">
+              {[
+                { id: 'tier100', label: '🥕 100 당근 (기본 알림)' },
+                { id: 'tier500', label: '⭐ 500 당근 (시그니처)' },
+                { id: 'tier1k', label: '👑 1,000 당근 (열혈 리액션)' },
+                { id: 'tier10k', label: '🚀 10,000 당근 (엑셀 잭팟)' }
+              ].map(t => (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => {
+                    handleStopPreview();
+                    setBroadcastActiveTier(t.id);
+                  }}
+                  className={`px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap ${
+                    broadcastActiveTier === t.id
+                      ? 'bg-[#E4092B] text-white shadow-xs'
+                      : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Tier Configuration Card */}
+            {(() => {
+              const cur = broadcastMedia.tiers[broadcastActiveTier] || {};
+              return (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Left: GIF / Image Uploader */}
+                  <div className={`p-4 rounded-2xl border space-y-3 ${
+                    isDark ? 'bg-white/5 border-white/10' : 'bg-white border-slate-200'
+                  }`}>
+                    <div className="flex items-center justify-between">
+                      <span className={`font-bold flex items-center gap-1.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                        <Image size={15} className="text-purple-400" />
+                        <span>후원 짤방 / GIF 움짤</span>
+                      </span>
+                      {cur.img && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setBroadcastMedia(prev => ({
+                              ...prev,
+                              tiers: {
+                                ...prev.tiers,
+                                [broadcastActiveTier]: { ...prev.tiers[broadcastActiveTier], img: '' }
+                              }
+                            }));
+                          }}
+                          className="text-rose-400 hover:underline cursor-pointer text-[11px]"
+                        >
+                          제거
+                        </button>
+                      )}
+                    </div>
+
+                    <label className={`block border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all ${
+                      isDark
+                        ? 'border-white/20 hover:border-purple-400 bg-white/2'
+                        : 'border-slate-300 hover:border-purple-500 bg-slate-50'
+                    }`}>
+                      <input
+                        type="file"
+                        accept="image/png, image/gif, image/webp, image/jpeg"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          const reader = new FileReader();
+                          reader.onload = (ev) => {
+                            setBroadcastMedia(prev => ({
+                              ...prev,
+                              tiers: {
+                                ...prev.tiers,
+                                [broadcastActiveTier]: {
+                                  ...prev.tiers[broadcastActiveTier],
+                                  img: ev.target.result
+                                }
+                              }
+                            }));
+                          };
+                          reader.readAsDataURL(file);
+                        }}
+                      />
+                      {cur.img ? (
+                        <div className="space-y-2">
+                          <img
+                            src={cur.img}
+                            alt="Custom GIF"
+                            className="max-h-24 mx-auto rounded-lg object-contain shadow-md"
+                          />
+                          <p className="text-[11px] text-purple-400 font-bold">클릭하여 다른 이미지/GIF로 교체</p>
+                        </div>
+                      ) : (
+                        <div className="space-y-1 py-2">
+                          <div className="text-2xl">📂</div>
+                          <p className={`font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>
+                            본인 캐릭터 짤방/GIF 등록
+                          </p>
+                          <p className={`text-[10px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                            움직이는 GIF 또는 투명 PNG (최대 10MB)
+                          </p>
+                        </div>
+                      )}
+                    </label>
+
+                    {/* Presets */}
+                    <div>
+                      <span className={`text-[11px] font-bold block mb-1.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                        추천 캐릭터 프리셋
+                      </span>
+                      <div className="flex gap-1.5 flex-wrap">
+                        {[
+                          { label: '🐰 토끼 요정', url: 'https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=200&auto=format&fit=crop&q=80' },
+                          { label: '🐱 냥이 리액션', url: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=200&auto=format&fit=crop&q=80' },
+                          { label: '👑 골드 왕관', url: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=200&auto=format&fit=crop&q=80' }
+                        ].map((p, idx) => (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => {
+                              setBroadcastMedia(prev => ({
+                                ...prev,
+                                tiers: {
+                                  ...prev.tiers,
+                                  [broadcastActiveTier]: { ...prev.tiers[broadcastActiveTier], img: p.url }
+                                }
+                              }));
+                            }}
+                            className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-all cursor-pointer ${
+                              cur.img === p.url
+                                ? 'bg-purple-500/20 border-purple-400 text-purple-300'
+                                : isDark ? 'bg-white/5 border-white/10 text-slate-300' : 'bg-slate-100 border-slate-200 text-slate-700'
+                            }`}
+                          >
+                            {p.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right: Audio SFX Uploader */}
+                  <div className={`p-4 rounded-2xl border space-y-3 ${
+                    isDark ? 'bg-white/5 border-white/10' : 'bg-white border-slate-200'
+                  }`}>
+                    <div className="flex items-center justify-between">
+                      <span className={`font-bold flex items-center gap-1.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                        <Volume2 size={15} className="text-emerald-400" />
+                        <span>후원 시그니처 사운드 (SFX)</span>
+                      </span>
+                      {(cur.sfx || cur.sfxKey) && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            handleStopPreview();
+                            setBroadcastMedia(prev => ({
+                              ...prev,
+                              tiers: {
+                                ...prev.tiers,
+                                [broadcastActiveTier]: {
+                                  ...prev.tiers[broadcastActiveTier],
+                                  sfx: '',
+                                  sfxKey: '',
+                                  sfxName: ''
+                                }
+                              }
+                            }));
+                          }}
+                          className="text-rose-400 hover:underline cursor-pointer text-[11px]"
+                        >
+                          제거
+                        </button>
+                      )}
+                    </div>
+
+                    <label className={`block border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all ${
+                      isDark
+                        ? 'border-white/20 hover:border-emerald-400 bg-white/2'
+                        : 'border-slate-300 hover:border-emerald-500 bg-slate-50'
+                    }`}>
+                      <input
+                        type="file"
+                        accept="audio/mp3, audio/wav, audio/ogg, audio/mpeg"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          const reader = new FileReader();
+                          reader.onload = (ev) => {
+                            setBroadcastMedia(prev => ({
+                              ...prev,
+                              tiers: {
+                                ...prev.tiers,
+                                [broadcastActiveTier]: {
+                                  ...prev.tiers[broadcastActiveTier],
+                                  sfx: ev.target.result,
+                                  sfxType: 'custom',
+                                  sfxName: file.name
+                                }
+                              }
+                            }));
+                          };
+                          reader.readAsDataURL(file);
+                        }}
+                      />
+                      {cur.sfx ? (
+                        <div className="space-y-2 py-1">
+                          <div className="text-emerald-400 font-bold flex items-center justify-center gap-1.5">
+                            <Volume2 size={16} />
+                            <span>{cur.sfxName || 'custom_sound.mp3'}</span>
+                          </div>
+                          <p className="text-[11px] text-emerald-400 font-bold">클릭하여 다른 오디오로 교체</p>
+                        </div>
+                      ) : (
+                        <div className="space-y-1 py-2">
+                          <div className="text-2xl">🎵</div>
+                          <p className={`font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>
+                            본인만의 효과음(MP3/WAV) 등록
+                          </p>
+                          <p className={`text-[10px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                            시그니처 벨/음성 파일 (최대 5MB)
+                          </p>
+                        </div>
+                      )}
+                    </label>
+
+                    {/* Audio Preview Controls & Presets */}
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        {isPlayingSfx ? (
+                          <button
+                            type="button"
+                            onClick={handleStopPreview}
+                            className="py-1.5 px-3 rounded-lg bg-rose-500 text-white font-bold flex items-center gap-1 cursor-pointer"
+                          >
+                            <Square size={12} />
+                            <span>정지</span>
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => handlePlayPreview(cur)}
+                            className="py-1.5 px-3 rounded-lg bg-emerald-500 text-white font-bold flex items-center gap-1 cursor-pointer"
+                          >
+                            <Play size={12} />
+                            <span>미리듣기</span>
+                          </button>
+                        )}
+                        <span className={`text-[11px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                          {cur.sfxName ? `재생 대상: ${cur.sfxName}` : '내장 프리셋 사운드 테스트'}
+                        </span>
+                      </div>
+
+                      <div>
+                        <span className={`text-[11px] font-bold block mb-1.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                          내장 프리셋 사운드 선택
+                        </span>
+                        <div className="flex gap-1.5 flex-wrap">
+                          {[
+                            { key: 'chime', label: '🔔 맑은 차임벨' },
+                            { key: 'coin', label: '🪙 당근 코인' },
+                            { key: 'fanfare', label: '🎺 팡파레 축하' },
+                            { key: 'jackpot', label: '🎰 엑셀 잭팟' }
+                          ].map((s) => (
+                            <button
+                              key={s.key}
+                              type="button"
+                              onClick={() => {
+                                setBroadcastMedia(prev => ({
+                                  ...prev,
+                                  tiers: {
+                                    ...prev.tiers,
+                                    [broadcastActiveTier]: {
+                                      ...prev.tiers[broadcastActiveTier],
+                                      sfx: '',
+                                      sfxType: 'preset',
+                                      sfxKey: s.key,
+                                      sfxName: s.label
+                                    }
+                                  }
+                                }));
+                                playProceduralSfx(s.key);
+                              }}
+                              className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-all cursor-pointer ${
+                                cur.sfxType === 'preset' && cur.sfxKey === s.key
+                                  ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
+                                  : isDark ? 'bg-white/5 border-white/10 text-slate-300' : 'bg-slate-100 border-slate-200 text-slate-700'
+                              }`}
+                            >
+                              {s.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Live Test Station (Stella Style) */}
+            <div className={`p-5 rounded-2xl border ${
+              isDark ? 'bg-black/40 border-white/10' : 'bg-slate-100 border-slate-200'
+            }`}>
+              <div className="flex items-center justify-between flex-wrap gap-3 mb-3">
+                <div>
+                  <div className={`font-bold text-sm flex items-center gap-1.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                    <span>⚡ 실시간 시뮬레이션 테스트 스테이션</span>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-400">
+                      LIVE TEST
+                    </span>
+                  </div>
+                  <div className={`text-[11px] mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                    클릭 즉시 등록한 짤방/GIF와 음향 사운드가 재생되고 OBS 오버레이로 실시간 송출됩니다.
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 flex-wrap">
+                <button
+                  type="button"
+                  onClick={() => handleTriggerTest(100, 'tier100', '미미비트 항상 응원해요! 파이팅 🥕')}
+                  className="py-2 px-3.5 rounded-xl bg-orange-500/20 hover:bg-orange-500/30 text-orange-400 border border-orange-500/40 font-bold transition-all cursor-pointer"
+                >
+                  🥕 100 당근 테스트
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleTriggerTest(500, 'tier500', '오늘 방송 텐션 최고예요!! ⭐')}
+                  className="py-2 px-3.5 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 text-purple-400 border border-purple-500/40 font-bold transition-all cursor-pointer"
+                >
+                  ⭐ 500 당근 테스트
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleTriggerTest(1000, 'tier1k', '열혈팬 입장! 대박 리액션 갑시다 👑')}
+                  className="py-2 px-3.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 border border-amber-500/40 font-bold transition-all cursor-pointer"
+                >
+                  👑 1,000 당근 테스트
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleTriggerTest(10000, 'tier10k', '🔥 엑셀 잭팟 10,000 당근 폭격!! 회장님 모십니다 🚀')}
+                  className="py-2 px-4 rounded-xl bg-[#E4092B] hover:bg-[#CC0022] text-white font-black shadow-lg transition-all cursor-pointer"
+                >
+                  🚀 10,000 당근 엑셀 잭팟!
+                </button>
+              </div>
+            </div>
           </div>
         )}
 

@@ -26,7 +26,16 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }) {
 
     try {
       let socialData;
-      if (provider === 'kakao') {
+      if (provider === 'chzzk') {
+        socialData = {
+          provider: 'chzzk',
+          socialId: `chzzk_${Date.now()}`,
+          email: `chzzk_creator_${Date.now().toString().slice(-4)}@naver.com`,
+          name: selectedRole === 'creator' ? '치지직 스트리머' : '치지직 시청자',
+          avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+          role: selectedRole
+        };
+      } else if (provider === 'kakao') {
         socialData = await executeKakaoLogin({ role: selectedRole });
       } else {
         socialData = await executeGoogleLogin({ role: selectedRole });
