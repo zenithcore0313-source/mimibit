@@ -224,16 +224,16 @@ function initChatbotSandbox() {
   if (!feed || !input || !btnSend) return;
 
   const cannedReplies = {
-    '!방제': '오늘 방송: [신작 RPG 켠왕] 스텔라와 함께 떠나는 별빛 모험 1일차!',
-    '!디스코드': '스텔라 스튜디오 공식 팬카페 & 디스코드 아지트: discord.gg/stella 💜',
+    '!방제': '오늘 방송: [신작 RPG 켠왕] 미미비트와 함께 떠나는 별빛 모험 1일차!',
+    '!디스코드': '미미비트 스튜디오 공식 팬카페 & 디스코드 아지트: discord.gg/stella 💜',
     '!사양': 'CPU: i9-14900K / GPU: RTX 4090 / 마이크: Shure SM7B / 오인페: GoXLR 💻',
     '!룰렛': '치즈 1,000개로 룰렛 1회 도전 가능! 꽝 없이 100% 당첨되는 벌칙/보상 룰렛 돌려보세요 🎰'
   };
 
   const personaConversations = {
     sister: [
-      '오빠/언니~ 방송 봐주셔서 너무 고마워요! 오늘도 스텔라랑 즐겁게 놀아요! 헤헤 🌸',
-      '네네! 스텔라는 오빠/언니를 언제나 온 마음으로 응원하고 있어요! 힘내랏! ✨',
+      '오빠/언니~ 방송 봐주셔서 너무 고마워요! 오늘도 미미비트랑 즐겁게 놀아요! 헤헤 🌸',
+      '네네! 미미비트는 오빠/언니를 언제나 온 마음으로 응원하고 있어요! 힘내랏! ✨',
       '오늘 저녁은 치즈 듬뿍 올린 피자 먹었어요! 완전 꿀맛이었답니다 🍕'
     ],
     maid: [
@@ -258,7 +258,7 @@ function initChatbotSandbox() {
     row.className = `chat-msg-row ${isUser ? 'user' : 'bot'}`;
 
     const avatar = isUser ? '👤' : '✨';
-    const personaTitle = isUser ? '시청자 (나)' : `스텔라 AI (${personaNames[activePersona]})`;
+    const personaTitle = isUser ? '시청자 (나)' : `미미비트 AI (${personaNames[activePersona]})`;
 
     row.innerHTML = `
       <div class="chat-sender-avatar">${avatar}</div>
@@ -528,7 +528,7 @@ function initCustomAvatarStudio() {
 
   let currentAvatarSettings = {
     imgUrl: 'assets/images/frame_01.png',
-    name: '스텔라★루나',
+    name: '미미비트★루나',
     animStyle: 'anim-float',
     speechEnabled: true,
     reactionEnabled: true,
@@ -667,7 +667,7 @@ function initCustomAvatarStudio() {
 
       if (speechPreview) {
         const prevText = speechPreview.textContent;
-        speechPreview.textContent = `"${currentAvatarSettings.name || '스텔라'}님 캐릭터 리액션 테스트 중! 💜"`;
+        speechPreview.textContent = `"${currentAvatarSettings.name || '미미비트'}님 캐릭터 리액션 테스트 중! 💜"`;
         speechPreview.style.transform = 'scale(1.05)';
         setTimeout(() => {
           speechPreview.textContent = prevText;
@@ -678,7 +678,7 @@ function initCustomAvatarStudio() {
       // Broadcast test reaction to overlay
       const payload = {
         type: 'TRIGGER_AVATAR_REACTION',
-        speechText: `[${currentAvatarSettings.name || '스텔라'}] 캐릭터 아바타 테스트 리액션 작동 성공! ✨`
+        speechText: `[${currentAvatarSettings.name || '미미비트'}] 캐릭터 아바타 테스트 리액션 작동 성공! ✨`
       };
       if (overlayChannel) overlayChannel.postMessage(payload);
       localStorage.setItem('stella_overlay_event', JSON.stringify(Object.assign(payload, { timestamp: Date.now() })));
@@ -690,7 +690,7 @@ function initCustomAvatarStudio() {
   // 6. Save & Broadcast to Overlay
   if (btnSaveAvatar) {
     btnSaveAvatar.addEventListener('click', () => {
-      currentAvatarSettings.name = nameInput?.value.trim() || '스텔라★루나';
+      currentAvatarSettings.name = nameInput?.value.trim() || '미미비트★루나';
       currentAvatarSettings.animStyle = animSelect?.value || 'anim-float';
       currentAvatarSettings.speechEnabled = speechToggle ? speechToggle.checked : true;
       currentAvatarSettings.reactionEnabled = reactionToggle ? reactionToggle.checked : true;
@@ -891,7 +891,7 @@ function initInteractiveRouletteWheel() {
         if (resultModalBackdrop) resultModalBackdrop.classList.add('show');
 
         // Add to Event Log Feed on Dashboard Home
-        window.addEventFeedItem?.('🎰', '스텔라 룰렛 당첨', `도네이션 룰렛 당첨: <strong>[${winner.text}]</strong>`);
+        window.addEventFeedItem?.('🎰', '미미비트 룰렛 당첨', `도네이션 룰렛 당첨: <strong>[${winner.text}]</strong>`);
         window.showToast?.(`🎰 룰렛 결과: [${winner.text}] 당첨!`);
 
         // Sync with OBS Overlay window
@@ -1105,7 +1105,7 @@ function initQuickTestTriggers() {
   const sampleDonators = ['초승달팬클럽', '치지직마니아', '별빛모험가', '치즈도둑', '보라색토끼', '우주비행사'];
   const sampleAmounts = [10000, 30000, 50000, 100000];
   const sampleMsgs = [
-    '스텔라님 방송 너무 재밌어요 화이팅!',
+    '미미비트님 방송 너무 재밌어요 화이팅!',
     '오늘도 힐링하고 갑니다 치즈 냠냠 🧀',
     '치지직 1등 버튜버 가자아아!',
     '미션 성공 축하드립니다 대박 ✨'
@@ -1541,7 +1541,7 @@ function initVirtualStreamDeck() {
     flashKey(deckKeyNotice);
     playClickSound(650, 'sine', 0.1);
 
-    const announcementText = '📢 [스텔라 방송 공지] 규칙: 과도한 스포일러/도배는 삼가주세요! 팬카페와 디스코드 링크는 채널 소개를 참고해주세요 💜';
+    const announcementText = '📢 [미미비트 방송 공지] 규칙: 과도한 스포일러/도배는 삼가주세요! 팬카페와 디스코드 링크는 채널 소개를 참고해주세요 💜';
     
     // Send to overlay
     overlayChannel?.postMessage({
@@ -1614,7 +1614,7 @@ function initHighlightMarkerSystem() {
   const btnClear = document.getElementById('btnClearMarkers');
 
   let markers = [
-    { id: 1, time: '00:15:20', tag: 'legend', tagText: '🔥 레전드', memo: '스텔라 시그니처 오프닝 댄스 & 보이스 리액션' },
+    { id: 1, time: '00:15:20', tag: 'legend', tagText: '🔥 레전드', memo: '미미비트 시그니처 오프닝 댄스 & 보이스 리액션' },
     { id: 2, time: '01:10:45', tag: 'boss', tagText: '🎯 보스전', memo: '다크소울 신규 보스 1페이즈 노데스 패링 성공' }
   ];
 
@@ -1809,7 +1809,7 @@ function initSoundboardFX() {
   }
 
   // --- IndexedDB for Reliable Audio File Storage ---
-  const DB_NAME = 'StellaSoundpadDB_v2';
+  const DB_NAME = 'MimibitSoundpadDB_v2';
   const STORE_NAME = 'custom_sounds';
 
   function openAudioDB() {
@@ -2414,7 +2414,7 @@ function initPostStreamReport() {
 
     ctx.font = '500 18px sans-serif';
     ctx.fillStyle = '#c4b5fd';
-    ctx.fillText('2026.10.21 | 스트리머: 스텔라★루나 (CHZZK 파트너)', 60, 142);
+    ctx.fillText('2026.10.21 | 스트리머: 미미비트★루나 (CHZZK 파트너)', 60, 142);
 
     // Divider Line
     const lineGrad = ctx.createLinearGradient(60, 0, 1140, 0);
@@ -2482,7 +2482,7 @@ function initPostStreamReport() {
     // AI Coach Header
     ctx.font = 'bold 18px sans-serif';
     ctx.fillStyle = '#fde047';
-    ctx.fillText('🤖 스텔라 AI 코치 종합 평가 & 화력 분석', 90, coachY + 42);
+    ctx.fillText('🤖 미미비트 AI 코치 종합 평가 & 화력 분석', 90, coachY + 42);
 
     ctx.font = '500 13px monospace';
     ctx.fillStyle = '#00ffa3';
@@ -2501,7 +2501,7 @@ function initPostStreamReport() {
 
     ctx.font = '500 13px monospace';
     ctx.fillStyle = '#a78bfa';
-    ctx.fillText('Generated by Stella Studio Pro • discord.gg/stella', 760, 630);
+    ctx.fillText('Generated by Mimibit Studio Pro • discord.gg/stella', 760, 630);
   }
 
   // Rounded rectangle helper
@@ -2592,13 +2592,13 @@ function initPostStreamReport() {
       const liveTimer = document.getElementById('liveTimer')?.textContent || '02:45:12';
       const cheeseVal = document.getElementById('statCheese')?.textContent || '382,000';
       const discordText =
-        "**[🌟 2026.10.21 스텔라 라이브 방송 결산 리포트]**\n" +
+        "**[🌟 2026.10.21 미미비트 라이브 방송 결산 리포트]**\n" +
         "• 방송 일자: 2026-10-21\n" +
         "• 총 방송 시간: " + liveTimer + "\n" +
         "• 최고 동시 시청자: 1,894명 | 누적 치즈 후원: " + cheeseVal + " 치즈\n" +
         "• 편집팀 타임스탬프: 4개 구간 마킹 완료\n" +
         "• AI 총평: 보스전 미션 대성공! 채팅 참여율 94.2% 역대급 화력 달성 ✨\n" +
-        "(상세 챕터 타임라인은 스텔라 콘솔 및 유튜브 설명란을 확인해주세요!)";
+        "(상세 챕터 타임라인은 미미비트 콘솔 및 유튜브 설명란을 확인해주세요!)";
 
       navigator.clipboard.writeText(discordText).then(() => {
         window.showToast?.('💬 [디스코드 가이드 복사 완료!] 편집팀 채널에 붙여넣기 하세요.');
@@ -2791,7 +2791,7 @@ function initPlatformModals() {
   let platformSettings = {
     chzzk: { channelId: 'chzzk_stella_luna', clientId: 'stella_chzzk_client_id_live', clientSecret: '••••••••••••••••••••••••', syncChat: true, syncDonation: true },
     youtube: { channel: '@stella_studio', streamKey: 'live_123456789_abcdefg', syncSuperchat: true },
-    discord: { webhookUrl: 'https://discord.com/api/webhooks/1234567890/stella_stream_bot', msgTemplate: '@everyone 🌟 스텔라 스튜디오 오늘자 방송 On Air! 방제: [신작 RPG 켠왕 1일차] 지금 바로 보러 오세요! 💜' }
+    discord: { webhookUrl: 'https://discord.com/api/webhooks/1234567890/stella_stream_bot', msgTemplate: '@everyone 🌟 미미비트 스튜디오 오늘자 방송 On Air! 방제: [신작 RPG 켠왕 1일차] 지금 바로 보러 오세요! 💜' }
   };
 
   try {
@@ -2962,7 +2962,7 @@ function initPlatformModals() {
 
   if (btnTestDiscord) {
     btnTestDiscord.addEventListener('click', () => {
-      window.showToast?.('📢 [디스코드 웹훅 테스트 성공] \'[LIVE] 스텔라★루나 방송 시작\' 알림이 디스코드 채널로 전송되었습니다!');
+      window.showToast?.('📢 [디스코드 웹훅 테스트 성공] \'[LIVE] 미미비트★루나 방송 시작\' 알림이 디스코드 채널로 전송되었습니다!');
     });
   }
 }
@@ -2982,7 +2982,7 @@ function initStudioBackupRestore() {
       const backupData = {
         version: '4.0.0',
         exportedAt: new Date().toISOString(),
-        studioName: 'Stella Studio',
+        studioName: 'Mimibit Studio',
         layout: JSON.parse(localStorage.getItem('stella_widget_layout') || '{}'),
         avatar: JSON.parse(localStorage.getItem('stella_custom_avatar_data') || '{}'),
         sounds: JSON.parse(localStorage.getItem('stella_custom_sounds') || '[]'),
@@ -3053,7 +3053,7 @@ function initStudioBackupRestore() {
   // Factory Reset
   if (btnReset) {
     btnReset.addEventListener('click', () => {
-      if (confirm('⚠️ 정말 스텔라 스튜디오의 모든 설정을 초기화하시겠습니까?\n\n커스텀 아바타, 등록한 효과음, 큐시트, 챗봇 명령어, 오버레이 배치가 모두 기본 권장 세팅으로 복구됩니다.')) {
+      if (confirm('⚠️ 정말 미미비트 스튜디오의 모든 설정을 초기화하시겠습니까?\n\n커스텀 아바타, 등록한 효과음, 큐시트, 챗봇 명령어, 오버레이 배치가 모두 기본 권장 세팅으로 복구됩니다.')) {
         localStorage.removeItem('stella_widget_layout');
         localStorage.removeItem('stella_custom_avatar_data');
         localStorage.removeItem('stella_custom_sounds');
@@ -3914,7 +3914,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 8. Chatbot Live Testing & AI Stella Auto-reply
+  // 8. Chatbot Live Testing & AI Mimibit Auto-reply
   const btnSendChat = document.getElementById('btnSendTestChat');
   const chatInput = document.getElementById('chatTestInput');
   const chatStreamBox = document.getElementById('chatLiveStreamBox');
@@ -3965,13 +3965,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (chkAiAutoChat && chkAiAutoChat.checked) {
         setTimeout(() => {
           const aiReplies = [
-            '스텔라봇: 반가워요! 방송 재미있게 즐겨주세요~ ✨',
-            '스텔라봇: 치지직 라이브와 완벽하게 동기화 중입니다 🚀',
-            '스텔라봇: 궁금하신 점은 !명령어로 확인하실 수 있어요!',
-            '스텔라봇: 항상 시청해주셔서 감사합니다! 좋은 하루 되세요 💖'
+            '미미비트봇: 반가워요! 방송 재미있게 즐겨주세요~ ✨',
+            '미미비트봇: 치지직 라이브와 완벽하게 동기화 중입니다 🚀',
+            '미미비트봇: 궁금하신 점은 !명령어로 확인하실 수 있어요!',
+            '미미비트봇: 항상 시청해주셔서 감사합니다! 좋은 하루 되세요 💖'
           ];
           const reply = aiReplies[Math.floor(Math.random() * aiReplies.length)];
-          appendChatMessage('스텔라봇', 'AI 봇', 'mod', reply, true);
+          appendChatMessage('미미비트봇', 'AI 봇', 'mod', reply, true);
         }, 600);
       }
     };
@@ -3985,7 +3985,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnTestChatFeed) {
     btnTestChatFeed.addEventListener('click', () => {
       const mockChats = [
-        { sender: '별빛시청자', badge: '구독1티어', class: 'sub', text: '스텔라 스튜디오 대시보드 진짜 깔끔하네요!' },
+        { sender: '별빛시청자', badge: '구독1티어', class: 'sub', text: '미미비트 스튜디오 대시보드 진짜 깔끔하네요!' },
         { sender: '초코쿠키', badge: '치즈팬', class: 'donor', text: '치즈 1,000개 후원합니다! 화이팅!' },
         { sender: '달빛냥이', badge: '일반', class: '', text: '오 노래신청 잘되네요 ㅎㅎ' }
       ];
@@ -4054,13 +4054,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const drawWinnerResultCard = document.getElementById('drawWinnerResultCard');
   const drawWinnerName = document.getElementById('drawWinnerName');
 
-  let entrantList = ['별빛기사단', '치지직고양이', '스텔라팬1호', '민트초코', '골드매니아'];
+  let entrantList = ['별빛기사단', '치지직고양이', '미미비트팬1호', '민트초코', '골드매니아'];
 
   if (btnStartGiveaway && drawEntriesBox) {
     btnStartGiveaway.addEventListener('click', () => {
       const kw = inputDrawKeyword?.value.trim() || '!추첨';
       drawEntriesBox.innerHTML = '';
-      entrantList = ['별빛기사단', '치지직고양이', '스텔라팬1호', '민트초코', '골드매니아', '야행성팬'];
+      entrantList = ['별빛기사단', '치지직고양이', '미미비트팬1호', '민트초코', '골드매니아', '야행성팬'];
       entrantList.forEach((name, i) => {
         setTimeout(() => {
           const div = document.createElement('div');
@@ -4374,9 +4374,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnSimDonation && alertBanner) {
     btnSimDonation.addEventListener('click', () => {
       const donors = [
-        { name: '별빛단장', amount: '10,000', msg: '오늘 방송도 화이팅! 스텔라 최고' },
+        { name: '별빛단장', amount: '10,000', msg: '오늘 방송도 화이팅! 미미비트 최고' },
         { name: '치지직회장', amount: '50,000', msg: '오늘 방제 센스 좋습니다. 응원합니다!' },
-        { name: '새벽요정', amount: '3,000', msg: '스텔라 목소리 힐링 그 자체' },
+        { name: '새벽요정', amount: '3,000', msg: '미미비트 목소리 힐링 그 자체' },
         { name: '크루마스터', amount: '100,000', msg: '엑셀 방송 대박 기원 플렉스 갑니다!' }
       ];
       const pick = donors[Math.floor(Math.random() * donors.length)];
@@ -4410,7 +4410,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const chats = [
         { badge: '[치지직1티어]', color: '#c084fc', user: '달빛냥이', text: '오 노래 선곡 너무 좋습니다.' },
         { badge: '[구독2티어]', color: '#38bdf8', user: '네온드라이버', text: '이 게임 엔딩 오늘 볼 수 있나요?' },
-        { badge: '[VIP]', color: '#f59e0b', user: '골드팬클럽', text: '스텔라 방송 알림 뜨자마자 달려왔습니다.' },
+        { badge: '[VIP]', color: '#f59e0b', user: '골드팬클럽', text: '미미비트 방송 알림 뜨자마자 달려왔습니다.' },
         { badge: '[매니저]', color: '#10b981', user: '채팅방수호자', text: '다들 매너 채팅 부탁드립니다.' },
         { badge: '[팬클럽]', color: '#f472b6', user: '핑크체리', text: '오늘 마이크 음질 깔끔하네요.' }
       ];
@@ -4598,14 +4598,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!kw) return;
       
       const responses = {
-        '!디스코드': '[스텔라봇]: discord.gg/stella 공식 디스코드에서 팬들과 소통해요! 💬',
-        '!사양': '[스텔라봇]: CPU i9-14900K / RTX 4090 / 마이크 Shure SM7B 환경입니다 🎙️',
-        '!업타임': '[스텔라봇]: 현재 방송 송출 시간: 2시간 45분째 순항 중! 🚀',
-        '!규칙': '[스텔라봇]: 서로 존중하는 매너 채팅 부탁드립니다! 친목 및 타스 언급 금지 🛡️',
-        '!후원': '[스텔라봇]: 항상 방송을 응원해주셔서 진심으로 감사드립니다 💖'
+        '!디스코드': '[미미비트봇]: discord.gg/stella 공식 디스코드에서 팬들과 소통해요! 💬',
+        '!사양': '[미미비트봇]: CPU i9-14900K / RTX 4090 / 마이크 Shure SM7B 환경입니다 🎙️',
+        '!업타임': '[미미비트봇]: 현재 방송 송출 시간: 2시간 45분째 순항 중! 🚀',
+        '!규칙': '[미미비트봇]: 서로 존중하는 매너 채팅 부탁드립니다! 친목 및 타스 언급 금지 🛡️',
+        '!후원': '[미미비트봇]: 항상 방송을 응원해주셔서 진심으로 감사드립니다 💖'
       };
 
-      const reply = responses[kw] || `[스텔라봇]: '${kw}' 커스텀 명령어 호출 성공! (정상 응답 출력)`;
+      const reply = responses[kw] || `[미미비트봇]: '${kw}' 커스텀 명령어 호출 성공! (정상 응답 출력)`;
       cmdTestOutput.innerHTML = `<span>${reply}</span>`;
       window.showToast?.(`⚡ 명령어 [${kw}] 테스트 실행 완료`);
     };
@@ -4738,7 +4738,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnTestDonation = document.getElementById('btnTestDonation');
   if (btnTestDonation) {
     btnTestDonation.addEventListener('click', () => {
-      window.showToast?.('🧀 [스텔라단장]님이 10,000 치즈를 후원했습니다! ("스텔라 방송 최고!")');
+      window.showToast?.('🧀 [미미비트단장]님이 10,000 치즈를 후원했습니다! ("미미비트 방송 최고!")');
     });
   }
   const navHome = document.getElementById('navItemHome');
@@ -5175,13 +5175,13 @@ document.addEventListener('DOMContentLoaded', () => {
       tabSignup?.classList.add('active');
       if (formLogin) formLogin.style.display = 'none';
       if (formSignup) formSignup.style.display = 'block';
-      if (modalTitle) modalTitle.textContent = '스텔라 스튜디오 이메일 회원가입';
+      if (modalTitle) modalTitle.textContent = '미미비트 스튜디오 이메일 회원가입';
     } else {
       tabSignup?.classList.remove('active');
       tabLogin?.classList.add('active');
       if (formSignup) formSignup.style.display = 'none';
       if (formLogin) formLogin.style.display = 'block';
-      if (modalTitle) modalTitle.textContent = '스텔라 스튜디오 로그인';
+      if (modalTitle) modalTitle.textContent = '미미비트 스튜디오 로그인';
     }
   }
 
